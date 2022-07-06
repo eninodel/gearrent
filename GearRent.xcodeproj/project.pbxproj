@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2CA5B867CE24D218ADB08BBE /* Pods_GearRent.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0D458830561D8891C60C895 /* Pods_GearRent.framework */; };
+		706383251FFFE27651E8BE72 /* Pods_GearRent_GearRentUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07D95042386DA8ED8E86EA32 /* Pods_GearRent_GearRentUITests.framework */; };
+		A2B6BF89C8D2145E19D0B141 /* Pods_GearRentTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70AD9F94053C29564CD02015 /* Pods_GearRentTests.framework */; };
 		E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BB32874A6AB0021FC02 /* AppDelegate.m */; };
 		E3A97BB72874A6AB0021FC02 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BB62874A6AB0021FC02 /* SceneDelegate.m */; };
-		E3A97BBA2874A6AB0021FC02 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BB92874A6AB0021FC02 /* ViewController.m */; };
 		E3A97BBD2874A6AB0021FC02 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3A97BBB2874A6AB0021FC02 /* Main.storyboard */; };
 		E3A97BBF2874A6AC0021FC02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E3A97BBE2874A6AC0021FC02 /* Assets.xcassets */; };
 		E3A97BC22874A6AC0021FC02 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E3A97BC02874A6AC0021FC02 /* LaunchScreen.storyboard */; };
@@ -17,6 +19,10 @@
 		E3A97BCF2874A6AC0021FC02 /* GearRentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BCE2874A6AC0021FC02 /* GearRentTests.m */; };
 		E3A97BD92874A6AC0021FC02 /* GearRentUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BD82874A6AC0021FC02 /* GearRentUITests.m */; };
 		E3A97BDB2874A6AC0021FC02 /* GearRentUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BDA2874A6AC0021FC02 /* GearRentUITestsLaunchTests.m */; };
+		E3A97BEB2874C15E0021FC02 /* GettingStartedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BEA2874C15E0021FC02 /* GettingStartedViewController.m */; };
+		E3A97BEE2874CEB10021FC02 /* VerifyEmailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BED2874CEB10021FC02 /* VerifyEmailViewController.m */; };
+		E3A97BF12874F1070021FC02 /* SignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BF02874F1070021FC02 /* SignInViewController.m */; };
+		E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BF32874F37F0021FC02 /* GearForRentViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,13 +43,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		07D95042386DA8ED8E86EA32 /* Pods_GearRent_GearRentUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GearRent_GearRentUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		395A364520B98F5ED0F49EE7 /* Pods-GearRentTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRentTests.debug.xcconfig"; path = "Target Support Files/Pods-GearRentTests/Pods-GearRentTests.debug.xcconfig"; sourceTree = "<group>"; };
+		4671344B06E788815D81F53E /* Pods-GearRent-GearRentUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.debug.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		4A58D89B4E7A5B273D8798E2 /* Pods-GearRent.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent.debug.xcconfig"; path = "Target Support Files/Pods-GearRent/Pods-GearRent.debug.xcconfig"; sourceTree = "<group>"; };
+		70AD9F94053C29564CD02015 /* Pods_GearRentTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GearRentTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C08150371371905A22EECDC /* Pods-GearRent.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent.release.xcconfig"; path = "Target Support Files/Pods-GearRent/Pods-GearRent.release.xcconfig"; sourceTree = "<group>"; };
+		B2D4487FBD0EE0FA5AFB4151 /* Pods-GearRentTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRentTests.release.xcconfig"; path = "Target Support Files/Pods-GearRentTests/Pods-GearRentTests.release.xcconfig"; sourceTree = "<group>"; };
+		D0D458830561D8891C60C895 /* Pods_GearRent.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GearRent.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A97BAF2874A6AB0021FC02 /* GearRent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GearRent.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A97BB22874A6AB0021FC02 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E3A97BB32874A6AB0021FC02 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		E3A97BB52874A6AB0021FC02 /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		E3A97BB62874A6AB0021FC02 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
-		E3A97BB82874A6AB0021FC02 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		E3A97BB92874A6AB0021FC02 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		E3A97BBC2874A6AB0021FC02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E3A97BBE2874A6AC0021FC02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E3A97BC12874A6AC0021FC02 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -54,6 +66,15 @@
 		E3A97BD42874A6AC0021FC02 /* GearRentUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GearRentUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3A97BD82874A6AC0021FC02 /* GearRentUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GearRentUITests.m; sourceTree = "<group>"; };
 		E3A97BDA2874A6AC0021FC02 /* GearRentUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GearRentUITestsLaunchTests.m; sourceTree = "<group>"; };
+		E3A97BE92874C15E0021FC02 /* GettingStartedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GettingStartedViewController.h; sourceTree = "<group>"; };
+		E3A97BEA2874C15E0021FC02 /* GettingStartedViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GettingStartedViewController.m; sourceTree = "<group>"; };
+		E3A97BEC2874CEB10021FC02 /* VerifyEmailViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VerifyEmailViewController.h; sourceTree = "<group>"; };
+		E3A97BED2874CEB10021FC02 /* VerifyEmailViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VerifyEmailViewController.m; sourceTree = "<group>"; };
+		E3A97BEF2874F1070021FC02 /* SignInViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SignInViewController.h; sourceTree = "<group>"; };
+		E3A97BF02874F1070021FC02 /* SignInViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SignInViewController.m; sourceTree = "<group>"; };
+		E3A97BF22874F37F0021FC02 /* GearForRentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GearForRentViewController.h; sourceTree = "<group>"; };
+		E3A97BF32874F37F0021FC02 /* GearForRentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GearForRentViewController.m; sourceTree = "<group>"; };
+		EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.release.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2CA5B867CE24D218ADB08BBE /* Pods_GearRent.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +90,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A2B6BF89C8D2145E19D0B141 /* Pods_GearRentTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,12 +98,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				706383251FFFE27651E8BE72 /* Pods_GearRent_GearRentUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A01BC731F561C320022C2FEE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D0D458830561D8891C60C895 /* Pods_GearRent.framework */,
+				07D95042386DA8ED8E86EA32 /* Pods_GearRent_GearRentUITests.framework */,
+				70AD9F94053C29564CD02015 /* Pods_GearRentTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D1640F42FB8FEFF94582EB37 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4A58D89B4E7A5B273D8798E2 /* Pods-GearRent.debug.xcconfig */,
+				7C08150371371905A22EECDC /* Pods-GearRent.release.xcconfig */,
+				4671344B06E788815D81F53E /* Pods-GearRent-GearRentUITests.debug.xcconfig */,
+				EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */,
+				395A364520B98F5ED0F49EE7 /* Pods-GearRentTests.debug.xcconfig */,
+				B2D4487FBD0EE0FA5AFB4151 /* Pods-GearRentTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		E3A97BA62874A6AB0021FC02 = {
 			isa = PBXGroup;
 			children = (
@@ -88,6 +135,8 @@
 				E3A97BCD2874A6AC0021FC02 /* GearRentTests */,
 				E3A97BD72874A6AC0021FC02 /* GearRentUITests */,
 				E3A97BB02874A6AB0021FC02 /* Products */,
+				D1640F42FB8FEFF94582EB37 /* Pods */,
+				A01BC731F561C320022C2FEE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -104,12 +153,8 @@
 		E3A97BB12874A6AB0021FC02 /* GearRent */ = {
 			isa = PBXGroup;
 			children = (
-				E3A97BB22874A6AB0021FC02 /* AppDelegate.h */,
-				E3A97BB32874A6AB0021FC02 /* AppDelegate.m */,
-				E3A97BB52874A6AB0021FC02 /* SceneDelegate.h */,
-				E3A97BB62874A6AB0021FC02 /* SceneDelegate.m */,
-				E3A97BB82874A6AB0021FC02 /* ViewController.h */,
-				E3A97BB92874A6AB0021FC02 /* ViewController.m */,
+				E3A97BE72874A6C30021FC02 /* Delegates */,
+				E3A97BE82874A6D20021FC02 /* ViewControllers */,
 				E3A97BBB2874A6AB0021FC02 /* Main.storyboard */,
 				E3A97BBE2874A6AC0021FC02 /* Assets.xcassets */,
 				E3A97BC02874A6AC0021FC02 /* LaunchScreen.storyboard */,
@@ -136,6 +181,40 @@
 			path = GearRentUITests;
 			sourceTree = "<group>";
 		};
+		E3A97BE72874A6C30021FC02 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				E3A97BB22874A6AB0021FC02 /* AppDelegate.h */,
+				E3A97BB32874A6AB0021FC02 /* AppDelegate.m */,
+				E3A97BB52874A6AB0021FC02 /* SceneDelegate.h */,
+				E3A97BB62874A6AB0021FC02 /* SceneDelegate.m */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		E3A97BE82874A6D20021FC02 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				E3A97BF52874F3840021FC02 /* LoginViewControllers */,
+				E3A97BF22874F37F0021FC02 /* GearForRentViewController.h */,
+				E3A97BF32874F37F0021FC02 /* GearForRentViewController.m */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		E3A97BF52874F3840021FC02 /* LoginViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				E3A97BE92874C15E0021FC02 /* GettingStartedViewController.h */,
+				E3A97BEA2874C15E0021FC02 /* GettingStartedViewController.m */,
+				E3A97BEC2874CEB10021FC02 /* VerifyEmailViewController.h */,
+				E3A97BED2874CEB10021FC02 /* VerifyEmailViewController.m */,
+				E3A97BEF2874F1070021FC02 /* SignInViewController.h */,
+				E3A97BF02874F1070021FC02 /* SignInViewController.m */,
+			);
+			path = LoginViewControllers;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -143,9 +222,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E3A97BDE2874A6AC0021FC02 /* Build configuration list for PBXNativeTarget "GearRent" */;
 			buildPhases = (
+				1553A00B1DBE0567BF75A060 /* [CP] Check Pods Manifest.lock */,
 				E3A97BAB2874A6AB0021FC02 /* Sources */,
 				E3A97BAC2874A6AB0021FC02 /* Frameworks */,
 				E3A97BAD2874A6AB0021FC02 /* Resources */,
+				F1FD4B09EEA9FEC8760846E6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -160,6 +241,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E3A97BE12874A6AC0021FC02 /* Build configuration list for PBXNativeTarget "GearRentTests" */;
 			buildPhases = (
+				AA6B3BCC1529114DC1CD01C0 /* [CP] Check Pods Manifest.lock */,
 				E3A97BC62874A6AC0021FC02 /* Sources */,
 				E3A97BC72874A6AC0021FC02 /* Frameworks */,
 				E3A97BC82874A6AC0021FC02 /* Resources */,
@@ -178,9 +260,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E3A97BE42874A6AC0021FC02 /* Build configuration list for PBXNativeTarget "GearRentUITests" */;
 			buildPhases = (
+				0F41F2C05CFA65C761CABD4A /* [CP] Check Pods Manifest.lock */,
 				E3A97BD02874A6AC0021FC02 /* Sources */,
 				E3A97BD12874A6AC0021FC02 /* Frameworks */,
 				E3A97BD22874A6AC0021FC02 /* Resources */,
+				A794F8254A5E4FD1EA70F403 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -261,15 +345,121 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0F41F2C05CFA65C761CABD4A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GearRent-GearRentUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1553A00B1DBE0567BF75A060 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GearRent-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A794F8254A5E4FD1EA70F403 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AA6B3BCC1529114DC1CD01C0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GearRentTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F1FD4B09EEA9FEC8760846E6 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GearRent/Pods-GearRent-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-GearRent/Pods-GearRent-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-GearRent/Pods-GearRent-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		E3A97BAB2874A6AB0021FC02 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E3A97BBA2874A6AB0021FC02 /* ViewController.m in Sources */,
 				E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */,
+				E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */,
+				E3A97BEB2874C15E0021FC02 /* GettingStartedViewController.m in Sources */,
 				E3A97BC52874A6AC0021FC02 /* main.m in Sources */,
 				E3A97BB72874A6AB0021FC02 /* SceneDelegate.m in Sources */,
+				E3A97BF12874F1070021FC02 /* SignInViewController.m in Sources */,
+				E3A97BEE2874CEB10021FC02 /* VerifyEmailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +627,7 @@
 		};
 		E3A97BDF2874A6AC0021FC02 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4A58D89B4E7A5B273D8798E2 /* Pods-GearRent.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -464,6 +655,7 @@
 		};
 		E3A97BE02874A6AC0021FC02 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7C08150371371905A22EECDC /* Pods-GearRent.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -491,6 +683,7 @@
 		};
 		E3A97BE22874A6AC0021FC02 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 395A364520B98F5ED0F49EE7 /* Pods-GearRentTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -509,6 +702,7 @@
 		};
 		E3A97BE32874A6AC0021FC02 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B2D4487FBD0EE0FA5AFB4151 /* Pods-GearRentTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -527,6 +721,7 @@
 		};
 		E3A97BE52874A6AC0021FC02 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4671344B06E788815D81F53E /* Pods-GearRent-GearRentUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -543,6 +738,7 @@
 		};
 		E3A97BE62874A6AC0021FC02 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;

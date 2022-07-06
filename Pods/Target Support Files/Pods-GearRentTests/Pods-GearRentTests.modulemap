@@ -1,0 +1,6 @@
+framework module Pods_GearRentTests {
+  umbrella header "Pods-GearRentTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
