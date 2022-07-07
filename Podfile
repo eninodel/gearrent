@@ -7,7 +7,7 @@ target 'GearRent' do
 
   # Pods for GearRent
   pod 'Parse'
-
+  pod 'AFNetworking'
   target 'GearRentTests' do
     inherit! :search_paths
     # Pods for testing

@@ -23,6 +23,8 @@
 		E3A97BEE2874CEB10021FC02 /* VerifyEmailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BED2874CEB10021FC02 /* VerifyEmailViewController.m */; };
 		E3A97BF12874F1070021FC02 /* SignInViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BF02874F1070021FC02 /* SignInViewController.m */; };
 		E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BF32874F37F0021FC02 /* GearForRentViewController.m */; };
+		E3A97BF8287622170021FC02 /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BF7287622170021FC02 /* ProfileViewController.m */; };
+		E3A97BFB287648C20021FC02 /* ProfileImagePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BFA287648C20021FC02 /* ProfileImagePickerViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +76,10 @@
 		E3A97BF02874F1070021FC02 /* SignInViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SignInViewController.m; sourceTree = "<group>"; };
 		E3A97BF22874F37F0021FC02 /* GearForRentViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GearForRentViewController.h; sourceTree = "<group>"; };
 		E3A97BF32874F37F0021FC02 /* GearForRentViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GearForRentViewController.m; sourceTree = "<group>"; };
+		E3A97BF6287622170021FC02 /* ProfileViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
+		E3A97BF7287622170021FC02 /* ProfileViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
+		E3A97BF9287648C20021FC02 /* ProfileImagePickerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProfileImagePickerViewController.h; sourceTree = "<group>"; };
+		E3A97BFA287648C20021FC02 /* ProfileImagePickerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProfileImagePickerViewController.m; sourceTree = "<group>"; };
 		EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.release.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -198,6 +204,10 @@
 				E3A97BF52874F3840021FC02 /* LoginViewControllers */,
 				E3A97BF22874F37F0021FC02 /* GearForRentViewController.h */,
 				E3A97BF32874F37F0021FC02 /* GearForRentViewController.m */,
+				E3A97BF6287622170021FC02 /* ProfileViewController.h */,
+				E3A97BF7287622170021FC02 /* ProfileViewController.m */,
+				E3A97BF9287648C20021FC02 /* ProfileImagePickerViewController.h */,
+				E3A97BFA287648C20021FC02 /* ProfileImagePickerViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -455,10 +465,12 @@
 			files = (
 				E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */,
 				E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */,
+				E3A97BF8287622170021FC02 /* ProfileViewController.m in Sources */,
 				E3A97BEB2874C15E0021FC02 /* GettingStartedViewController.m in Sources */,
 				E3A97BC52874A6AC0021FC02 /* main.m in Sources */,
 				E3A97BB72874A6AB0021FC02 /* SceneDelegate.m in Sources */,
 				E3A97BF12874F1070021FC02 /* SignInViewController.m in Sources */,
+				E3A97BFB287648C20021FC02 /* ProfileImagePickerViewController.m in Sources */,
 				E3A97BEE2874CEB10021FC02 /* VerifyEmailViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
