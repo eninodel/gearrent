@@ -7,32 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7540527B-5050-4621-8FCC-A9CD36B12530"
+            uuid = "F8F421D0-92B3-4E8E-A05B-6C7982AA3C54"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "GearRent/ViewControllers/CreateListingViewController.m"
+            filePath = "GearRent/ViewControllers/ListingTableViewCell.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "255"
-            endingLineNumber = "255"
-            landmarkName = "-didTapBack:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "08ED4A4C-67FA-4150-830D-13A895EA95E3"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "GearRent/ViewControllers/CreateListingViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "256"
-            endingLineNumber = "256"
-            landmarkName = "-didTapBack:"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
+            landmarkName = "-initializeCell"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

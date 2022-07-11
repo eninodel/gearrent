@@ -261,22 +261,57 @@
                                 <rect key="frame" x="0.0" y="139" width="414" height="674"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" rowHeight="142" id="IqP-dv-z0y">
-                                        <rect key="frame" x="0.0" y="44.5" width="414" height="142"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ListingTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListingTableViewCell" rowHeight="198" id="IqP-dv-z0y" customClass="ListingTableViewCell">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="198"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="IqP-dv-z0y" id="zR1-5O-X9L">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="142"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="198"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CYt-HW-bxM">
-                                                    <rect key="frame" x="179" y="60" width="42" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bDN-zu-21H">
+                                                    <rect key="frame" x="39" y="27" width="33" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pfQ-mY-0Vy">
+                                                    <rect key="frame" x="39" y="56" width="66" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="czR-Hf-1K3">
+                                                    <rect key="frame" x="39" y="93" width="39" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ye5-bl-8HF">
+                                                    <rect key="frame" x="216" y="0.0" width="198" height="198"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="ye5-bl-8HF" secondAttribute="height" multiplier="1:1" id="kEO-Jk-PGj"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ye5-bl-8HF" firstAttribute="top" secondItem="zR1-5O-X9L" secondAttribute="top" id="9ss-k2-9m2"/>
+                                                <constraint firstItem="czR-Hf-1K3" firstAttribute="leading" secondItem="bDN-zu-21H" secondAttribute="leading" id="EyV-EQ-HWr"/>
+                                                <constraint firstItem="czR-Hf-1K3" firstAttribute="top" secondItem="pfQ-mY-0Vy" secondAttribute="bottom" constant="16" id="GkU-dY-Nmi"/>
+                                                <constraint firstAttribute="trailing" secondItem="ye5-bl-8HF" secondAttribute="trailing" id="Hvn-on-H2O"/>
+                                                <constraint firstAttribute="bottom" secondItem="ye5-bl-8HF" secondAttribute="bottom" id="K5g-Ol-KOM"/>
+                                                <constraint firstAttribute="bottom" secondItem="czR-Hf-1K3" secondAttribute="bottom" constant="84" id="Y9q-e2-Wc2"/>
+                                                <constraint firstItem="bDN-zu-21H" firstAttribute="leading" secondItem="zR1-5O-X9L" secondAttribute="leading" constant="39" id="YNU-aF-sCX"/>
+                                                <constraint firstItem="bDN-zu-21H" firstAttribute="top" secondItem="zR1-5O-X9L" secondAttribute="top" constant="27" id="hZv-xy-QFG"/>
+                                                <constraint firstItem="pfQ-mY-0Vy" firstAttribute="leading" secondItem="bDN-zu-21H" secondAttribute="leading" id="xEw-K1-Z7u"/>
+                                                <constraint firstItem="pfQ-mY-0Vy" firstAttribute="top" secondItem="bDN-zu-21H" secondAttribute="bottom" constant="8" symbolic="YES" id="znw-zC-5d3"/>
+                                            </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="listingImageView" destination="ye5-bl-8HF" id="bjN-qX-1MD"/>
+                                            <outlet property="locationLabel" destination="pfQ-mY-0Vy" id="6fi-qv-x7n"/>
+                                            <outlet property="priceLabel" destination="czR-Hf-1K3" id="1HO-fw-DTr"/>
+                                            <outlet property="titleLabel" destination="bDN-zu-21H" id="YeC-J0-iaH"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
@@ -304,10 +339,13 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="Home" id="tQ9-AA-FDZ"/>
                     <navigationItem key="navigationItem" id="sVQ-4h-WeU"/>
+                    <connections>
+                        <outlet property="listingsTableView" destination="duf-Qh-adg" id="wQj-SV-Aih"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bBk-WV-n2b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="194" y="1523"/>
+            <point key="canvasLocation" x="192.75362318840581" y="1522.7678571428571"/>
         </scene>
         <!--My Listings-->
         <scene sceneID="4Qb-b1-0qA">
