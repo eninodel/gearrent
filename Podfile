@@ -8,6 +8,7 @@ target 'GearRent' do
   # Pods for GearRent
   pod 'Parse'
   pod 'AFNetworking'
+  pod 'JTCalendar', '~> 2.0'
   target 'GearRentTests' do
     inherit! :search_paths
     # Pods for testing

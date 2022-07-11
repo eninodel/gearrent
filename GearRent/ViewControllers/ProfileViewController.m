@@ -64,6 +64,7 @@
     
     self.profileImageView.layer.cornerRadius = 50.0;
     self.profileImageView.layer.masksToBounds = true;
+
     
     PFQuery *query = [PFUser query];
     [query whereKey: @"objectId" equalTo:[user objectId]];
@@ -96,6 +97,7 @@
 - (IBAction)didCancelEditingProfile:(id)sender {
     [self.profileImageView setImage:self.prevProfileImage];
     [self setEditingHidden:(Boolean *) false];
+    [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
 - (IBAction)didSaveProfile:(id)sender {
@@ -121,9 +123,11 @@
             }];
         }else{
             NSLog(@"END: Error in saving user in didSaveProfile");
+            NSLog(@"%@", error.description);
         }
     }];
     [self setEditingHidden:(Boolean *) false];
+    [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
 - (PFFileObject *)getPFFileFromImage: (UIImage * _Nullable)image {

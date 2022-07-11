@@ -25,6 +25,13 @@
 		E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BF32874F37F0021FC02 /* GearForRentViewController.m */; };
 		E3A97BF8287622170021FC02 /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BF7287622170021FC02 /* ProfileViewController.m */; };
 		E3A97BFB287648C20021FC02 /* ProfileImagePickerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BFA287648C20021FC02 /* ProfileImagePickerViewController.m */; };
+		E3A97BFE287766D40021FC02 /* MyListingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97BFD287766D40021FC02 /* MyListingsViewController.m */; };
+		E3A97C01287787A10021FC02 /* CreateListingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C00287787A10021FC02 /* CreateListingViewController.m */; };
+		E3A97C0428778BA80021FC02 /* ImageCarouselCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C0328778BA80021FC02 /* ImageCarouselCollectionViewCell.m */; };
+		E3A97C0B2878D46E0021FC02 /* Reservation.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C0A2878D46E0021FC02 /* Reservation.m */; };
+		E3A97C0E2878D5290021FC02 /* Item.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C0D2878D5290021FC02 /* Item.m */; };
+		E3A97C112878D5E10021FC02 /* TimeInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C102878D5E10021FC02 /* TimeInterval.m */; };
+		E3A97C132878EEBF0021FC02 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3A97C122878EEBF0021FC02 /* MapKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +87,19 @@
 		E3A97BF7287622170021FC02 /* ProfileViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
 		E3A97BF9287648C20021FC02 /* ProfileImagePickerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProfileImagePickerViewController.h; sourceTree = "<group>"; };
 		E3A97BFA287648C20021FC02 /* ProfileImagePickerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProfileImagePickerViewController.m; sourceTree = "<group>"; };
+		E3A97BFC287766D40021FC02 /* MyListingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MyListingsViewController.h; sourceTree = "<group>"; };
+		E3A97BFD287766D40021FC02 /* MyListingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyListingsViewController.m; sourceTree = "<group>"; };
+		E3A97BFF287787A10021FC02 /* CreateListingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CreateListingViewController.h; sourceTree = "<group>"; };
+		E3A97C00287787A10021FC02 /* CreateListingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CreateListingViewController.m; sourceTree = "<group>"; };
+		E3A97C0228778BA80021FC02 /* ImageCarouselCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageCarouselCollectionViewCell.h; sourceTree = "<group>"; };
+		E3A97C0328778BA80021FC02 /* ImageCarouselCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageCarouselCollectionViewCell.m; sourceTree = "<group>"; };
+		E3A97C092878D46E0021FC02 /* Reservation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Reservation.h; sourceTree = "<group>"; };
+		E3A97C0A2878D46E0021FC02 /* Reservation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Reservation.m; sourceTree = "<group>"; };
+		E3A97C0C2878D5290021FC02 /* Item.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Item.h; sourceTree = "<group>"; };
+		E3A97C0D2878D5290021FC02 /* Item.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Item.m; sourceTree = "<group>"; };
+		E3A97C0F2878D5E10021FC02 /* TimeInterval.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TimeInterval.h; sourceTree = "<group>"; };
+		E3A97C102878D5E10021FC02 /* TimeInterval.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TimeInterval.m; sourceTree = "<group>"; };
+		E3A97C122878EEBF0021FC02 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.release.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -88,6 +108,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A97C132878EEBF0021FC02 /* MapKit.framework in Frameworks */,
 				2CA5B867CE24D218ADB08BBE /* Pods_GearRent.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -114,6 +135,7 @@
 		A01BC731F561C320022C2FEE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E3A97C122878EEBF0021FC02 /* MapKit.framework */,
 				D0D458830561D8891C60C895 /* Pods_GearRent.framework */,
 				07D95042386DA8ED8E86EA32 /* Pods_GearRent_GearRentUITests.framework */,
 				70AD9F94053C29564CD02015 /* Pods_GearRentTests.framework */,
@@ -159,6 +181,7 @@
 		E3A97BB12874A6AB0021FC02 /* GearRent */ = {
 			isa = PBXGroup;
 			children = (
+				E3A97C052878CEAE0021FC02 /* Models */,
 				E3A97BE72874A6C30021FC02 /* Delegates */,
 				E3A97BE82874A6D20021FC02 /* ViewControllers */,
 				E3A97BBB2874A6AB0021FC02 /* Main.storyboard */,
@@ -208,6 +231,12 @@
 				E3A97BF7287622170021FC02 /* ProfileViewController.m */,
 				E3A97BF9287648C20021FC02 /* ProfileImagePickerViewController.h */,
 				E3A97BFA287648C20021FC02 /* ProfileImagePickerViewController.m */,
+				E3A97BFC287766D40021FC02 /* MyListingsViewController.h */,
+				E3A97BFD287766D40021FC02 /* MyListingsViewController.m */,
+				E3A97BFF287787A10021FC02 /* CreateListingViewController.h */,
+				E3A97C00287787A10021FC02 /* CreateListingViewController.m */,
+				E3A97C0228778BA80021FC02 /* ImageCarouselCollectionViewCell.h */,
+				E3A97C0328778BA80021FC02 /* ImageCarouselCollectionViewCell.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -223,6 +252,19 @@
 				E3A97BF02874F1070021FC02 /* SignInViewController.m */,
 			);
 			path = LoginViewControllers;
+			sourceTree = "<group>";
+		};
+		E3A97C052878CEAE0021FC02 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				E3A97C0C2878D5290021FC02 /* Item.h */,
+				E3A97C0D2878D5290021FC02 /* Item.m */,
+				E3A97C092878D46E0021FC02 /* Reservation.h */,
+				E3A97C0A2878D46E0021FC02 /* Reservation.m */,
+				E3A97C0F2878D5E10021FC02 /* TimeInterval.h */,
+				E3A97C102878D5E10021FC02 /* TimeInterval.m */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -463,6 +505,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A97C0B2878D46E0021FC02 /* Reservation.m in Sources */,
+				E3A97C0428778BA80021FC02 /* ImageCarouselCollectionViewCell.m in Sources */,
 				E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */,
 				E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */,
 				E3A97BF8287622170021FC02 /* ProfileViewController.m in Sources */,
@@ -470,8 +514,12 @@
 				E3A97BC52874A6AC0021FC02 /* main.m in Sources */,
 				E3A97BB72874A6AB0021FC02 /* SceneDelegate.m in Sources */,
 				E3A97BF12874F1070021FC02 /* SignInViewController.m in Sources */,
+				E3A97C112878D5E10021FC02 /* TimeInterval.m in Sources */,
+				E3A97C01287787A10021FC02 /* CreateListingViewController.m in Sources */,
 				E3A97BFB287648C20021FC02 /* ProfileImagePickerViewController.m in Sources */,
 				E3A97BEE2874CEB10021FC02 /* VerifyEmailViewController.m in Sources */,
+				E3A97C0E2878D5290021FC02 /* Item.m in Sources */,
+				E3A97BFE287766D40021FC02 /* MyListingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

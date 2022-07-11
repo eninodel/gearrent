@@ -37,6 +37,7 @@
     newUser.email = self.emailTextField.text;
     newUser.password = self.passwordTextField.text;
     newUser[@"name"] = self.nameTextField.text;
+    newUser[@"userEmail"] = self.emailTextField.text;
     
     [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError * error) {
         if (error != nil) {
