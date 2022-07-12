@@ -62,6 +62,7 @@
     UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:gestureRecognizer];
     gestureRecognizer.cancelsTouchesInView = NO;
+    
     self.mapView.delegate = self;
     self.locationManager = [CLLocationManager new];
     self.locationManager.delegate = self;

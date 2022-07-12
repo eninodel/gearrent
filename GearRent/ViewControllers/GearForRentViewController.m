@@ -10,6 +10,7 @@
 #import "LoginViewControllers/SignInViewController.h"
 #import "Parse/Parse.h"
 #import "ListingTableViewCell.h"
+#import "DetailsViewController.h"
 
 @interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) NSArray *tableData;
@@ -38,6 +39,15 @@
             NSLog(@"END: Error in querying listings");
         }
     }];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewNavigationController"];
+    [self presentViewController:navigationVC animated:YES completion:nil];
+    DetailsViewController *detailsVC = (DetailsViewController *) [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewController"];
+    detailsVC.listing = (Item *) self.tableData[indexPath.row];
+    [navigationVC pushViewController:detailsVC animated:YES];
 }
 
 - (IBAction)didLogOut:(id)sender {
