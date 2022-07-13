@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ListingTableViewCell : UITableViewCell
 
 @property (strong, nonatomic) Item *listing;
+
+@property (assign, nonatomic) Boolean findStatus;
+
 - (void) initializeCell;
 
 @end
