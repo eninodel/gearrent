@@ -42,6 +42,10 @@ AirBnb for outdoor gear. Users can rent outdoor gear such as kayaks, climbing ge
 * Ability to report listing for inappropriate content
 * Dark mode support
 
+**Ambiguous Technical Problems**
+* Filter results based on location, search based on geofencing
+* Auto suggest listing prices based on market supply and demand on individual days (Ex: tell user to list an item for X amount because it’s trending at Y price on a certain day)
+
 ### 2. Screen Archetypes
 
 * Login
