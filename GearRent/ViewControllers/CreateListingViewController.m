@@ -34,12 +34,15 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (weak, nonatomic) IBOutlet UISwitch *isAlwaysAvailableSwitch;
 @property (weak, nonatomic) IBOutlet UIButton *addImagesButton;
+@property (weak, nonatomic) IBOutlet UIButton *deleteListingButton;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navigationTitle;
 
 
 - (IBAction)didAddImages:(id)sender;
 - (IBAction)didList:(id)sender;
 - (IBAction)didSwitchAvailability:(id)sender;
 - (IBAction)didTapBack:(id)sender;
+- (IBAction)didDeleteListing:(id)sender;
 
 @end
 
@@ -48,6 +51,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.deleteListingButton.hidden = YES;
+    self.navigationItem.title = @"Create a Listing";
     self.nameLabel.text =  [PFUser currentUser][@"name"];
     self.imageCarouselCollectionView.delegate = self;
     self.imageCarouselCollectionView.dataSource = self;
@@ -76,6 +81,8 @@
     fingerTap.numberOfTouchesRequired = 1;
     [self.mapView addGestureRecognizer:fingerTap];
     if(self.listing != nil){
+        self.navigationItem.title = @"Edit Listing";
+        self.deleteListingButton.hidden = NO;
         self.addImagesButton.hidden = YES;
         self.titleTextField.text = self.listing.title;
         self.priceTextField.text = [[NSNumber numberWithFloat: self.listing.price] stringValue];
@@ -326,6 +333,17 @@
         [result addObject:[self getPFFileFromImage: (UIImage *) images[i]]];
     }
     return result;
+}
+
+- (IBAction)didDeleteListing:(id)sender {
+    [self.listing deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if(error == nil){
+            NSLog(@"END: Successfully deleted listing");
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }else{
+            NSLog(@"END: Failed to delete listing");
+        }
+    }];
 }
 
 - (IBAction)didTapBack:(id)sender {
