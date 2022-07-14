@@ -25,7 +25,7 @@
              repeats:YES];
 }
 
-- (void) checkEmailVerified{
+- (void)checkEmailVerified {
     PFUser *currentUser = [PFUser currentUser];
     
     [currentUser fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
