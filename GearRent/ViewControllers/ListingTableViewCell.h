@@ -10,13 +10,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol ListingTableViewCellDelegate <NSObject>
+
+- (void) didEditListing: (Item *) listing;
+
+@end
+
 @interface ListingTableViewCell : UITableViewCell
+
+@property (nonatomic, weak) id<ListingTableViewCellDelegate> delegate;
 
 @property (strong, nonatomic) Item *listing;
 
 @property (assign, nonatomic) Boolean findStatus;
 
 - (void) initializeCell;
+
+- (void) displayOptions;
 
 @end
 

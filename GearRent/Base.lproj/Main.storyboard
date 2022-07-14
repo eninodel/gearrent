@@ -290,6 +290,7 @@
                                                     <rect key="frame" x="216" y="0.0" width="198" height="198"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" secondItem="ye5-bl-8HF" secondAttribute="height" multiplier="1:1" id="kEO-Jk-PGj"/>
+                                                        <constraint firstAttribute="height" constant="198" id="ya9-6c-tZo"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -373,7 +374,7 @@
                                 <rect key="frame" x="0.0" y="109" width="414" height="606"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ListingTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListingTableViewCell" rowHeight="198" id="sou-ZW-HdO" customClass="ListingTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ListingTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyListingTableViewCell" rowHeight="198" id="sou-ZW-HdO" customClass="ListingTableViewCell">
                                         <rect key="frame" x="0.0" y="44.5" width="414" height="198"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="sou-ZW-HdO" id="ge8-DN-5QI">
@@ -398,13 +399,6 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hbc-20-THS">
-                                                    <rect key="frame" x="216" y="0.0" width="198" height="198"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" secondItem="hbc-20-THS" secondAttribute="height" multiplier="1:1" id="XHf-Yh-DRj"/>
-                                                        <constraint firstAttribute="height" constant="198" id="wce-xy-sOo"/>
-                                                    </constraints>
-                                                </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hhX-Rl-iVE">
                                                     <rect key="frame" x="39" y="130" width="177" height="21"/>
                                                     <constraints>
@@ -414,6 +408,42 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hbc-20-THS">
+                                                    <rect key="frame" x="216" y="0.0" width="198" height="198"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="hbc-20-THS" secondAttribute="height" multiplier="1:1" id="XHf-Yh-DRj"/>
+                                                        <constraint firstAttribute="height" constant="198" id="wce-xy-sOo"/>
+                                                    </constraints>
+                                                </imageView>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="igt-6D-oaK">
+                                                    <rect key="frame" x="87" y="35" width="240" height="128"/>
+                                                    <subviews>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lu4-ac-GGJ">
+                                                            <rect key="frame" x="48.5" y="9" width="143" height="31"/>
+                                                            <state key="normal" title="Button"/>
+                                                            <buttonConfiguration key="configuration" style="filled" title="View Reservations"/>
+                                                            <connections>
+                                                                <action selector="didViewReservations:" destination="sou-ZW-HdO" eventType="touchUpInside" id="h2P-tG-5et"/>
+                                                            </connections>
+                                                        </button>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fID-Ex-Epi">
+                                                            <rect key="frame" x="72" y="72" width="96" height="31"/>
+                                                            <state key="normal" title="Button"/>
+                                                            <buttonConfiguration key="configuration" style="filled" title="Edit Listing"/>
+                                                            <connections>
+                                                                <action selector="didEditListing:" destination="sou-ZW-HdO" eventType="touchUpInside" id="iw1-aB-DA6"/>
+                                                            </connections>
+                                                        </button>
+                                                    </subviews>
+                                                    <color key="backgroundColor" red="0.01968492195" green="0.26745235919999999" blue="0.36917087440000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <constraints>
+                                                        <constraint firstItem="Lu4-ac-GGJ" firstAttribute="top" secondItem="igt-6D-oaK" secondAttribute="top" constant="9" id="2hd-oC-MsE"/>
+                                                        <constraint firstItem="fID-Ex-Epi" firstAttribute="centerX" secondItem="Lu4-ac-GGJ" secondAttribute="centerX" id="4Q0-yv-EKg"/>
+                                                        <constraint firstItem="fID-Ex-Epi" firstAttribute="top" secondItem="Lu4-ac-GGJ" secondAttribute="bottom" constant="32" id="I6B-y6-fQ1"/>
+                                                        <constraint firstAttribute="height" constant="128" id="Kno-df-hVp"/>
+                                                        <constraint firstItem="Lu4-ac-GGJ" firstAttribute="centerX" secondItem="igt-6D-oaK" secondAttribute="centerX" id="fA0-qK-ZtV"/>
+                                                    </constraints>
+                                                </view>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstAttribute="bottom" secondItem="QXx-GR-r8L" secondAttribute="bottom" constant="84" id="1Jp-PV-9gk"/>
@@ -421,22 +451,31 @@
                                                 <constraint firstItem="QXx-GR-r8L" firstAttribute="top" secondItem="keU-A2-5C7" secondAttribute="bottom" constant="16" id="4kY-hn-Uj1"/>
                                                 <constraint firstAttribute="trailing" secondItem="hbc-20-THS" secondAttribute="trailing" id="7xQ-Rr-Zph"/>
                                                 <constraint firstItem="14D-di-ZLF" firstAttribute="top" secondItem="ge8-DN-5QI" secondAttribute="top" constant="27" id="B0n-gq-SXU"/>
+                                                <constraint firstAttribute="bottom" secondItem="igt-6D-oaK" secondAttribute="bottom" constant="35" id="BT8-TH-wkd"/>
                                                 <constraint firstItem="hhX-Rl-iVE" firstAttribute="leading" secondItem="QXx-GR-r8L" secondAttribute="leading" id="HpA-LS-xpx"/>
                                                 <constraint firstItem="hbc-20-THS" firstAttribute="top" secondItem="ge8-DN-5QI" secondAttribute="top" id="LOm-uK-eOg"/>
                                                 <constraint firstItem="14D-di-ZLF" firstAttribute="leading" secondItem="ge8-DN-5QI" secondAttribute="leading" constant="39" id="SK2-7c-US0"/>
+                                                <constraint firstItem="igt-6D-oaK" firstAttribute="centerY" secondItem="ge8-DN-5QI" secondAttribute="centerY" id="WjN-ms-0TT"/>
+                                                <constraint firstItem="igt-6D-oaK" firstAttribute="leading" secondItem="ge8-DN-5QI" secondAttribute="leading" constant="87" id="ZJ4-ML-VY4"/>
+                                                <constraint firstItem="igt-6D-oaK" firstAttribute="centerX" secondItem="ge8-DN-5QI" secondAttribute="centerX" id="cF0-gP-c36"/>
                                                 <constraint firstItem="QXx-GR-r8L" firstAttribute="leading" secondItem="14D-di-ZLF" secondAttribute="leading" id="eYU-oA-J01"/>
                                                 <constraint firstItem="keU-A2-5C7" firstAttribute="leading" secondItem="14D-di-ZLF" secondAttribute="leading" id="k6i-nh-ZWZ"/>
+                                                <constraint firstItem="igt-6D-oaK" firstAttribute="top" secondItem="ge8-DN-5QI" secondAttribute="top" constant="35" id="m6m-Ex-ulu"/>
                                                 <constraint firstItem="hhX-Rl-iVE" firstAttribute="top" secondItem="QXx-GR-r8L" secondAttribute="bottom" constant="16" id="p1P-hH-qPV"/>
                                                 <constraint firstItem="hbc-20-THS" firstAttribute="leading" secondItem="hhX-Rl-iVE" secondAttribute="trailing" id="tfm-SG-x1i"/>
                                                 <constraint firstItem="keU-A2-5C7" firstAttribute="top" secondItem="14D-di-ZLF" secondAttribute="bottom" constant="8" symbolic="YES" id="uvE-F4-pbZ"/>
+                                                <constraint firstAttribute="trailing" secondItem="igt-6D-oaK" secondAttribute="trailing" constant="87" id="xWh-IT-tnR"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
+                                            <outlet property="cellOptionsView" destination="igt-6D-oaK" id="6IB-zS-X9G"/>
+                                            <outlet property="editListingButton" destination="fID-Ex-Epi" id="sQI-UN-CaO"/>
                                             <outlet property="listingImageView" destination="hbc-20-THS" id="fYM-qQ-JU0"/>
                                             <outlet property="locationLabel" destination="keU-A2-5C7" id="2Nh-j1-24i"/>
                                             <outlet property="priceLabel" destination="QXx-GR-r8L" id="FQD-T7-mdq"/>
                                             <outlet property="statusLabel" destination="hhX-Rl-iVE" id="4vA-um-uHe"/>
                                             <outlet property="titleLabel" destination="14D-di-ZLF" id="l0N-6Y-xLh"/>
+                                            <outlet property="viewReservationsButton" destination="Lu4-ac-GGJ" id="zHJ-jG-ztv"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1179,6 +1218,7 @@
                     </navigationItem>
                     <size key="freeformSize" width="414" height="1935"/>
                     <connections>
+                        <outlet property="addImagesButton" destination="ljb-Xh-r15" id="JbI-kd-ndz"/>
                         <outlet property="addImagesLabel" destination="ewQ-ZD-Ie1" id="FJg-I9-0oT"/>
                         <outlet property="calendarContentView" destination="7eR-cx-kW4" id="6wh-Y2-upc"/>
                         <outlet property="calendarMenuView" destination="irc-OO-9Ua" id="ek2-ee-gU2"/>
@@ -1196,7 +1236,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WCE-5n-FaL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2115.9420289855075" y="2602.5669642857142"/>
+            <point key="canvasLocation" x="2120" y="2611"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ExP-GR-9sw">

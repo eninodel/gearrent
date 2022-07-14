@@ -7,10 +7,13 @@
 
 #import <UIKit/UIKit.h>
 #import <JTCalendar/JTCalendar.h>
+#import "../Models/Item.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
 @interface CreateListingViewController : UIViewController<JTCalendarDelegate>
+
+@property (strong, nonatomic)Item * _Nullable listing;
+
 @property (weak, nonatomic) IBOutlet JTCalendarMenuView *calendarMenuView;
 @property (weak, nonatomic) IBOutlet JTHorizontalCalendarView *calendarContentView;
 

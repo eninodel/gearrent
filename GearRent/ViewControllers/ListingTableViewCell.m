@@ -10,6 +10,7 @@
 #import "../Models/TimeInterval.h"
 #import "../Models/Reservation.h"
 #import "../Models/Item.h"
+#import "CreateListingViewController.h"
 
 @interface ListingTableViewCell ()
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -17,6 +18,12 @@
 @property (weak, nonatomic) IBOutlet UILabel *priceLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *listingImageView;
 @property (weak, nonatomic) IBOutlet UILabel *statusLabel;
+@property (weak, nonatomic) IBOutlet UIView *cellOptionsView;
+@property (weak, nonatomic) IBOutlet UIButton *editListingButton;
+@property (weak, nonatomic) IBOutlet UIButton *viewReservationsButton;
+
+- (IBAction)didViewReservations:(id)sender;
+- (IBAction)didEditListing:(id)sender;
 
 @end
 
@@ -29,11 +36,16 @@
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
-    
     // Configure the view for the selected state
 }
 
+-(void) displayOptions{
+    self.cellOptionsView.hidden = !self.cellOptionsView.hidden;
+    [self bringSubviewToFront:self.cellOptionsView];
+}
+
 - (void) initializeCell{
+    self.cellOptionsView.hidden = YES;
     self.titleLabel.text = self.listing.title;
     self.locationLabel.text = self.listing.city;
     NSString *priceString = @"$";
@@ -53,7 +65,7 @@
 
 - (void) statusForCell{
     NSString *__block status = @"Unavailable Today";
-    NSDate *today = [NSDate date];
+    NSDate *today = [self dateWithHour:0 minute:0 second:0];
     PFQuery *query = [PFQuery queryWithClassName:@"Reservation"];
     [query includeKey:@"dates"];
     [query whereKey:@"itemId" equalTo:[self.listing objectId] ];
@@ -63,7 +75,6 @@
             if(self.listing.isAlwaysAvailable == YES){
                 status = @"Available to Rent today";
             }
-            
             for(int i = 0; i < self.listing.availabilities.count; i++){
                 TimeInterval *interval = (TimeInterval *) self.listing.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate: interval.startDate endDate: interval.endDate];
@@ -71,11 +82,9 @@
                     status =  @"Available to Rent today";
                 }
             }
-            
             // check if reserved
             for(int i = 0; i < objects.count; i++){
                 Reservation *reservation = (Reservation *) objects[i];
-
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
                 if([dateInterval containsDate:today]){
                     NSString *reservationString = @"Reserved: ";
@@ -92,5 +101,26 @@
     }];
 }
 
+-(NSDate *) dateWithHour:(NSInteger)hour
+                  minute:(NSInteger)minute
+                  second:(NSInteger)second
+{
+   NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components: NSCalendarUnitYear|
+                                    NSCalendarUnitMonth|
+                                    NSCalendarUnitDay
+                                               fromDate:[NSDate date]];
+    [components setHour:hour];
+    [components setMinute:minute];
+    [components setSecond:second];
+    NSDate *newDate = [calendar dateFromComponents:components];
+    return newDate;
+}
 
+- (IBAction)didEditListing:(id)sender {
+    [self.delegate didEditListing: self.listing];
+}
+
+- (IBAction)didViewReservations:(id)sender {
+}
 @end

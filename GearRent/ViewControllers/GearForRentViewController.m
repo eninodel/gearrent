@@ -27,6 +27,13 @@
     // Do any additional setup after loading the view.
     self.listingsTableView.delegate = self;
     self.listingsTableView.dataSource = self;
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [self fetchData];
+}
+
+-(void) fetchData{
     PFQuery *query = [PFQuery queryWithClassName: @"Listing"];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"availabilities"];
@@ -61,6 +68,7 @@
     SceneDelegate *sceneDelegate = (SceneDelegate * ) UIApplication.sharedApplication.connectedScenes.allObjects.firstObject.delegate;
     sceneDelegate.window.rootViewController = signInViewController;
 }
+
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
     ListingTableViewCell *cell = [self.listingsTableView dequeueReusableCellWithIdentifier:@"ListingTableViewCell"];
     cell.listing = self.tableData[indexPath.row];

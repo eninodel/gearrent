@@ -32,13 +32,11 @@
 
 - (void) registerUser{
     PFUser *newUser = [PFUser user];
-    
     newUser.username = self.usernameTextField.text;
     newUser.email = self.emailTextField.text;
     newUser.password = self.passwordTextField.text;
     newUser[@"name"] = self.nameTextField.text;
     newUser[@"userEmail"] = self.emailTextField.text;
-    
     [newUser signUpInBackgroundWithBlock:^(BOOL succeeded, NSError * error) {
         if (error != nil) {
             NSLog(@"Error: %@", error.localizedDescription);
@@ -58,4 +56,5 @@
 - (IBAction)didSignUp:(id)sender {
     [self registerUser];
 }
+
 @end

@@ -9,8 +9,10 @@
 #import "ImageCarouselCollectionViewCell.h"
 #import <JTCalendar/JTCalendar.h>
 #import "ProfileImagePickerViewController.h"
+#import "UIImageView+AFNetworking.h"
 #import "../Models/TimeInterval.h"
 #import "../Models/Item.h"
+#import "../Models/Reservation.h"
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
 
@@ -19,7 +21,9 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UICollectionView *imageCarouselCollectionView;
 @property (strong, nonatomic) NSMutableArray *carouselImages;
+@property (strong, nonatomic) NSMutableArray *datesAvailable;
 @property (strong, nonatomic) NSMutableArray *datesSelected;
+@property (strong, nonatomic) NSMutableArray *datesReserved;
 @property (weak, nonatomic) IBOutlet UILabel *addImagesLabel;
 @property (weak, nonatomic) IBOutlet UITextField *titleTextField;
 @property (weak, nonatomic) IBOutlet UITextField *priceTextField;
@@ -29,6 +33,7 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (weak, nonatomic) IBOutlet UISwitch *isAlwaysAvailableSwitch;
+@property (weak, nonatomic) IBOutlet UIButton *addImagesButton;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -48,48 +53,110 @@
     self.imageCarouselCollectionView.dataSource = self;
     self.carouselImages = [[NSMutableArray alloc] init];
     self.datesSelected = [[NSMutableArray alloc] init];
-    
+    self.datesAvailable = [[NSMutableArray alloc] init];
+    self.datesReserved = [[NSMutableArray alloc] init];
     self.imageCarouselCollectionView.hidden = true;
-    
     self.calendarManager = [JTCalendarManager new];
     self.calendarManager.delegate = self;
     [self.calendarManager setMenuView:self.calendarMenuView];
     [self.calendarManager setContentView:self.calendarContentView];
     [self.calendarManager setDate:[NSDate date]];
-    
     self.scrollView.scrollEnabled = YES;
-    
     UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)];
     [self.view addGestureRecognizer:gestureRecognizer];
     gestureRecognizer.cancelsTouchesInView = NO;
-    
     self.mapView.delegate = self;
     self.locationManager = [CLLocationManager new];
     self.locationManager.delegate = self;
     self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     self.locationManager.distanceFilter = 200;
     [self.locationManager requestWhenInUseAuthorization];
-    
-    UITapGestureRecognizer *fingerTap = [[UITapGestureRecognizer alloc]
-                                   initWithTarget:self action:@selector(handleMapFingerTap:)];
+    UITapGestureRecognizer *fingerTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleMapFingerTap:)];
     fingerTap.numberOfTapsRequired = 1;
     fingerTap.numberOfTouchesRequired = 1;
     [self.mapView addGestureRecognizer:fingerTap];
+    if(self.listing != nil){
+        self.addImagesButton.hidden = YES;
+        self.titleTextField.text = self.listing.title;
+        self.priceTextField.text = [[NSNumber numberWithFloat: self.listing.price] stringValue];
+        self.cityTextField.text = self.listing.city;
+        self.descriptionTextField.text = self.listing.itemDescription;
+        [self.isAlwaysAvailableSwitch setOn: self.listing.isAlwaysAvailable];
+        CLLocationCoordinate2D itemCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
+        MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
+        pa.coordinate = itemCoordinate;
+        pa.title = @"Item Location";
+        [self.mapView addAnnotation:pa];
+        PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
+        [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
+        [listingQuery includeKey: @"availabilities"];
+        [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+            if(error == nil){
+                Item *item = (Item *) objects[0];
+                for(int i = 0; i < item.availabilities.count; i++){
+                    TimeInterval *interval = (TimeInterval *) item.availabilities[i];
+                    NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
+                    [self.datesAvailable addObject:dateInterval];
+                }
+                PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
+                [reservationQuery whereKey:@"itemId" equalTo: [self.listing objectId]];
+                [reservationQuery includeKey:@"dates"];
+                [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+                    if(error == nil){
+                        for(int i = 0; i < objects.count; i++){
+                            Reservation *reservation = (Reservation *) objects[i];
+                            NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
+                            [self.datesReserved addObject:dateInterval];
+                        }
+                        [self populateDatesSelected];
+                        [self.calendarManager reload];
+                    }else{
+                        NSLog(@"END: Error in querying reservations");
+                    }
+                }];
+            }else{
+                NSLog(@"END: Error in querying listing in details view");
+            }
+        }];
+        self.imageCarouselCollectionView.hidden = NO;
+        self.addImagesLabel.hidden = true;
+        [self.imageCarouselCollectionView reloadData];
+    }
+}
+
+- (void) populateDatesSelected{
+    for(int i = 0; i < self.datesAvailable.count; i++){
+        NSDateInterval *interval = (NSDateInterval *) self.datesAvailable[i];
+        NSDate *curr = interval.startDate;
+        while([interval containsDate:curr]){
+            [self.datesSelected addObject:curr];
+            curr = [NSDate dateWithTimeInterval:(24*60*60) sinceDate:curr];
+        }
+    }
 }
 
 - (IBAction)didList:(id)sender {
     Item *newItem = [Item new];
+    newItem.reservations = [[NSMutableArray alloc] init];
+    newItem.images = [self imagesToPFFiles:self.carouselImages];
+    if(self.listing != nil){
+        newItem = self.listing;
+    }
     newItem.title = self.titleTextField.text;
     newItem.itemDescription = self.descriptionTextField.text;
     newItem.price = [self.priceTextField.text floatValue];
-    newItem.images = [self imagesToPFFiles:self.carouselImages];
     newItem.videoURL = @"";
     newItem.ownerId = [[PFUser currentUser] objectId];
     newItem.tags = [[NSMutableArray alloc] init];
-    CLLocationCoordinate2D itemCoordinates = self.mapView.annotations[0].coordinate;
-    newItem.geoPoint = [PFGeoPoint geoPointWithLatitude: itemCoordinates.latitude longitude:itemCoordinates.longitude];
+    NSLog(@"%@", self.mapView.annotations);
+    for(int i = 0; i < self.mapView.annotations.count; i++){
+        NSObject *annotation = self.mapView.annotations[i];
+        if([annotation isKindOfClass: [MKPointAnnotation class]]){
+            CLLocationCoordinate2D itemCoordinates = self.mapView.annotations[i].coordinate;
+            newItem.geoPoint = [PFGeoPoint geoPointWithLatitude: itemCoordinates.latitude longitude:itemCoordinates.longitude];
+        }
+    }
     newItem.city = self.cityTextField.text;
-    newItem.reservations = [[NSMutableArray alloc] init];
     newItem.availabilities =  [self getTimeIntervals:self.datesSelected];
     newItem.isAlwaysAvailable = [self.isAlwaysAvailableSwitch isOn];
     
@@ -111,7 +178,6 @@
         NSArray *annotations = self.mapView.annotations;
         [self.mapView removeAnnotations:annotations];
     }
-
     CGPoint touchPoint = [gestureRecognizer locationInView:self.mapView];
     CLLocationCoordinate2D touchMapCoordinate =
     [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
@@ -139,68 +205,78 @@
 }
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView{
-    if([self.isAlwaysAvailableSwitch isOn] == YES){
-        dayView.circleView.hidden = NO;
-    } else if(self.datesSelected.count == 0){
+    dayView.circleView.hidden = NO;
+    if([self isDateReserved:dayView.date] == YES){ // date is reserved already
+        dayView.circleView.backgroundColor = UIColor.blackColor;
+    } else if([self isInDatesSelected: dayView.date] == YES){ // date is available
+        dayView.circleView.backgroundColor = UIColor.blueColor;
+    } else if ([self.isAlwaysAvailableSwitch isOn] == NO){ // date not avaiable
         dayView.circleView.hidden = YES;
-    } else{
-        dayView.circleView.hidden = [dayView.circleView  isHidden];
     }
 }
 
 - (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView{
     // deselect date
+    if([self isDateReserved:dayView.date] == YES) return;
     if([self.isAlwaysAvailableSwitch isOn] == YES){
         [self.datesSelected removeAllObjects];
         [self.isAlwaysAvailableSwitch setOn:NO];
-        [self.calendarManager reload];
-    }
-    if([self isInDatesSelected:dayView.date]){
+    } else if([self isInDatesSelected:dayView.date]){
         [self.datesSelected removeObject:dayView.date];
-        dayView.circleView.hidden = YES;
-        [UIView transitionWithView:dayView
-                          duration:.3
-                           options:0
-                        animations:^{
-                            [self.calendarManager reload];
-                            dayView.circleView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.1, 0.1);
-                        } completion:nil];
-        
     } else{ // select date
         [self.datesSelected addObject:dayView.date];
-        
-        dayView.circleView.hidden = NO;
-        dayView.circleView.transform = CGAffineTransformScale(CGAffineTransformIdentity, 0.1, 0.1);
-        [UIView transitionWithView:dayView
-                          duration:.3
-                           options:0
-                        animations:^{
-                            [self.calendarManager reload];
-                            dayView.circleView.transform = CGAffineTransformIdentity;
-                        } completion:nil];
     }
-    
+    [self.calendarManager reload];
 }
 
 - (BOOL)isInDatesSelected:(NSDate *)date{
+    if([self.isAlwaysAvailableSwitch isOn] == YES) return YES;
     for(NSDate *dateSelected in self.datesSelected){
         if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]){
             return YES;
         }
     }
-    
+    return NO;
+}
+
+- (Boolean) isDateReserved: (NSDate *) date{
+    for(int i = 0; i < self.datesReserved.count; i++){
+        NSDateInterval *interval = self.datesReserved[i];
+        if([interval containsDate:date] == YES){
+            return YES;
+        }
+    }
+    return NO;
+}
+
+- (Boolean) isDateAvailable: (NSDate *) date{
+    if(self.listing.isAlwaysAvailable == YES) return YES;
+    for(int i = 0; i < self.datesAvailable.count; i++){
+        NSDateInterval *interval = self.datesAvailable[i];
+        if([interval containsDate:date] == YES){
+            return YES;
+        }
+    }
     return NO;
 }
 
 - (nonnull __kindof UICollectionViewCell *)collectionView:(nonnull UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
     ImageCarouselCollectionViewCell *cell = [self.imageCarouselCollectionView dequeueReusableCellWithReuseIdentifier:@"ImageCarouselCollectionViewCell" forIndexPath:indexPath];
-    cell.cellImage.image = self.carouselImages[indexPath.row];
+    if(self.listing != nil){
+        PFFileObject *image = (PFFileObject *) self.listing.images[indexPath.row];
+        NSURL *imageURL = [NSURL URLWithString: image.url];
+        [cell.cellImage setImageWithURL: imageURL];
+    } else{
+        cell.cellImage.image = self.carouselImages[indexPath.row];
+    }
     cell.cellImage.contentMode = UIViewContentModeScaleAspectFit;
-//    cell.contentView.frame.size = CGSizeMake(self.imageCarouselCollectionView.frame.size.width, self.imageCarouselCollectionView.frame.size.height);
     return cell;
 }
 
 - (NSInteger)collectionView:(nonnull UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    if(self.listing != nil){
+        return self.listing.images.count;
+    }
     return self.carouselImages.count;
 }
 
@@ -276,7 +352,6 @@
 }
 
 - (PFFileObject *)getPFFileFromImage: (UIImage * _Nullable)image {
- 
     // check if image is not nil
     if (!image) {
         return nil;
@@ -286,7 +361,6 @@
     if (!imageData) {
         return nil;
     }
-    
     return [PFFileObject fileObjectWithName:@"image.png" data:imageData];
 }
 @end

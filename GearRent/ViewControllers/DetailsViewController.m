@@ -58,37 +58,31 @@
     priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
     priceString = [priceString stringByAppendingString:@" / day"];
     self.priceLabel.text = priceString;
-    
     self.calendarManager = [JTCalendarManager new];
     self.calendarManager.delegate = self;
     [self.calendarManager setMenuView:self.calendarMenuView];
     [self.calendarManager setContentView:self.calendarContentView];
     [self.calendarManager setDate:[NSDate date]];
-    
     self.datesSelected = [[NSMutableArray alloc] init];
     self.datesReserved = [[NSMutableArray alloc] init];
     self.datesAvailable = [[NSMutableArray alloc] init];
-
     self.mapView.delegate = self;
     self.locationManager = [CLLocationManager new];
     self.locationManager.delegate = self;
     self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     self.locationManager.distanceFilter = 200;
     [self.locationManager requestWhenInUseAuthorization];
-    
     PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
     [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
     [listingQuery includeKey: @"availabilities"];
     [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         if(error == nil){
             Item *item = (Item *) objects[0];
-            
             for(int i = 0; i < item.availabilities.count; i++){
                 TimeInterval *interval = (TimeInterval *) item.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
                 [self.datesAvailable addObject:dateInterval];
             }
-            
             PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
             [reservationQuery whereKey:@"itemId" equalTo: [self.listing objectId]];
             [reservationQuery includeKey:@"dates"];
@@ -99,7 +93,6 @@
                         NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
                         [self.datesReserved addObject:dateInterval];
                     }
-                    
                     [self.calendarManager reload];
                 }else{
                     NSLog(@"END: Error in querying reservations");
@@ -109,7 +102,6 @@
             NSLog(@"END: Error in querying listing in details view");
         }
     }];
-    
     [self setReserveButtonText];
     CLLocationCoordinate2D itemCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
     MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
@@ -151,6 +143,7 @@
         if(timeInterval > 86400.0 || timeInterval < 0){ // days are not contiguous
             NSLog(@"END: Dates are not contiguous");
         }
+        prevDate = currDate;
     }
     TimeInterval *result = [TimeInterval new];
     result.startDate = self.datesSelected[0];
@@ -206,7 +199,6 @@
         [self setReserveButtonText];
         [self.calendarManager reload];
     }
-    
 }
 
 - (BOOL)isInDatesSelected:(NSDate *)date{

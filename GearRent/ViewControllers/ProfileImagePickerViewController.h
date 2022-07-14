@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface ProfileImagePickerViewController : UIViewController <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+
 @property (nonatomic, weak) id<ProfileImagePickerViewControllerDelegate> delegate;
 
 @end

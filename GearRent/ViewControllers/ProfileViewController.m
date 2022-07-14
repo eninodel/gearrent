@@ -47,11 +47,9 @@
     self.emailLabel.text = user[@"userEmail"];
     self.usernameLabel.text = user.username;
     self.nameLabel.text = user[@"name"];
-    
     double buttonBorderWidth = 1.0;
     double buttonCornerRadius = 5.0;
     struct CGColor *buttonBorderColor = UIColor.grayColor.CGColor;
-    
     self.paymentsUIButton.layer.borderWidth = buttonBorderWidth;
     self.paymentsUIButton.layer.borderColor = buttonBorderColor;
     self.paymentsUIButton.layer.cornerRadius = buttonCornerRadius;
@@ -61,15 +59,11 @@
     self.settingsUIButton.layer.borderWidth = buttonBorderWidth;
     self.settingsUIButton.layer.borderColor = buttonBorderColor;
     self.settingsUIButton.layer.cornerRadius = buttonCornerRadius;
-    
     self.profileImageView.layer.cornerRadius = 50.0;
     self.profileImageView.layer.masksToBounds = true;
-
-    
     PFQuery *query = [PFUser query];
     [query whereKey: @"objectId" equalTo:[user objectId]];
     [query includeKey:@"profileImage"];
-    
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         if(error == nil){
             PFUser *user = (PFUser*) objects[0];
@@ -131,7 +125,6 @@
 }
 
 - (PFFileObject *)getPFFileFromImage: (UIImage * _Nullable)image {
- 
     // check if image is not nil
     if (!image) {
         return nil;
@@ -141,7 +134,6 @@
     if (!imageData) {
         return nil;
     }
-    
     return [PFFileObject fileObjectWithName:@"image.png" data:imageData];
 }
 

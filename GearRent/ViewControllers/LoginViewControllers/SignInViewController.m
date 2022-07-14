@@ -39,7 +39,6 @@
     }];
 }
 
-
 - (IBAction)didSignIn:(id)sender {
     [self signIn];
 }
@@ -48,4 +47,5 @@
     UIStoryboard *story = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     self.view.window.rootViewController = [story instantiateViewControllerWithIdentifier:@"GettingStartedViewController"];
 }
+
 @end
