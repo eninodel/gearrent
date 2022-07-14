@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIButton *reserveNowButton;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (strong, nonatomic) NSMutableArray *reservations;
 @property (strong, nonatomic) NSMutableArray *datesSelected;
 @property (strong, nonatomic) NSMutableArray *datesReserved;
 @property (strong, nonatomic) NSMutableArray *datesAvailable;
@@ -63,6 +64,7 @@
     [self.calendarManager setMenuView:self.calendarMenuView];
     [self.calendarManager setContentView:self.calendarContentView];
     [self.calendarManager setDate:[NSDate date]];
+    self.reservations = [[NSMutableArray alloc] init];
     self.datesSelected = [[NSMutableArray alloc] init];
     self.datesReserved = [[NSMutableArray alloc] init];
     self.datesAvailable = [[NSMutableArray alloc] init];
@@ -91,6 +93,7 @@
                     for(int i = 0; i < objects.count; i++){
                         Reservation *reservation = (Reservation *) objects[i];
                         NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
+                        [self.reservations addObject:reservation];
                         [self.datesReserved addObject:dateInterval];
                     }
                     [self.calendarManager reload];
@@ -132,7 +135,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(TimeInterval *) reservationTimeInterval{
+-(TimeInterval *)reservationTimeInterval{
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:TRUE];
     [self.datesSelected sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
     
@@ -164,17 +167,18 @@
     }
 }
 
-- (Boolean) isDateReserved: (NSDate *) date{
+- (Boolean)isDateReserved:(NSDate *) date{
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
-        if([interval containsDate:date] == YES){
+        Reservation *reservation = (Reservation *) self.reservations[i];
+        if([interval containsDate:date] == YES && [reservation.status isEqualToString:@"ACCEPTED"]){
             return YES;
         }
     }
     return NO;
 }
 
-- (Boolean) isDateAvailable: (NSDate *) date{
+- (Boolean)isDateAvailable:(NSDate *) date{
     if(self.listing.isAlwaysAvailable == YES) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
@@ -210,7 +214,7 @@
     return NO;
 }
 
-- (void) setReserveButtonText{
+- (void)setReserveButtonText{
     if(self.datesSelected.count == 0){
         [self.reserveNowButton setTitle:@"Please select day(s) to reserve item" forState:UIControlStateNormal];
     }else{

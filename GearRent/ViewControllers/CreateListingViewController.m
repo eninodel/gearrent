@@ -124,7 +124,7 @@
     }
 }
 
-- (void) populateDatesSelected{
+- (void)populateDatesSelected{
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = (NSDateInterval *) self.datesAvailable[i];
         NSDate *curr = interval.startDate;
@@ -239,7 +239,7 @@
     return NO;
 }
 
-- (Boolean) isDateReserved: (NSDate *) date{
+- (Boolean)isDateReserved:(NSDate *) date{
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
         if([interval containsDate:date] == YES){
@@ -249,7 +249,7 @@
     return NO;
 }
 
-- (Boolean) isDateAvailable: (NSDate *) date{
+- (Boolean)isDateAvailable:(NSDate *) date{
     if(self.listing.isAlwaysAvailable == YES) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
@@ -289,7 +289,7 @@
     [self.calendarManager reload];
 }
 
-- (NSMutableArray *) getTimeIntervals: (NSMutableArray *) dates{
+- (NSMutableArray *)getTimeIntervals:(NSMutableArray *) dates{
     NSMutableArray *result =[[NSMutableArray alloc] init];
     if(dates.count == 0){
         return result;
@@ -320,7 +320,7 @@
     return result;
 }
 
-- (NSMutableArray *) imagesToPFFiles: (NSMutableArray *) images{
+- (NSMutableArray *)imagesToPFFiles:(NSMutableArray *) images{
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for(int i = 0 ; i < images.count; i ++){
         [result addObject:[self getPFFileFromImage: (UIImage *) images[i]]];
@@ -351,7 +351,7 @@
      [self.view endEditing:YES];
 }
 
-- (PFFileObject *)getPFFileFromImage: (UIImage * _Nullable)image {
+- (PFFileObject *)getPFFileFromImage:(UIImage * _Nullable)image {
     // check if image is not nil
     if (!image) {
         return nil;

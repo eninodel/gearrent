@@ -39,12 +39,12 @@
     // Configure the view for the selected state
 }
 
--(void) displayOptions{
+-(void)displayOptions{
     self.cellOptionsView.hidden = !self.cellOptionsView.hidden;
     [self bringSubviewToFront:self.cellOptionsView];
 }
 
-- (void) initializeCell{
+- (void)initializeCell{
     self.cellOptionsView.hidden = YES;
     self.titleLabel.text = self.listing.title;
     self.locationLabel.text = self.listing.city;
@@ -63,7 +63,7 @@
     }
 }
 
-- (void) statusForCell{
+- (void)statusForCell{
     NSString *__block status = @"Unavailable Today";
     NSDate *today = [self dateWithHour:0 minute:0 second:0];
     PFQuery *query = [PFQuery queryWithClassName:@"Reservation"];
@@ -101,7 +101,7 @@
     }];
 }
 
--(NSDate *) dateWithHour:(NSInteger)hour
+-(NSDate *)dateWithHour:(NSInteger)hour
                   minute:(NSInteger)minute
                   second:(NSInteger)second
 {
@@ -122,5 +122,6 @@
 }
 
 - (IBAction)didViewReservations:(id)sender {
+    [self.delegate didViewReservations: self.listing];
 }
 @end

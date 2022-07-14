@@ -34,6 +34,8 @@
 		E3A97C132878EEBF0021FC02 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3A97C122878EEBF0021FC02 /* MapKit.framework */; };
 		E3A97C16287CE18E0021FC02 /* ListingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */; };
 		E3A97C19287DE2470021FC02 /* DetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C18287DE2470021FC02 /* DetailsViewController.m */; };
+		E3A97C1F288099E40021FC02 /* ListingReservationsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C1E288099E40021FC02 /* ListingReservationsViewController.m */; };
+		E3A97C222880A0410021FC02 /* ReservationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +108,10 @@
 		E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListingTableViewCell.m; sourceTree = "<group>"; };
 		E3A97C17287DE2470021FC02 /* DetailsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailsViewController.h; sourceTree = "<group>"; };
 		E3A97C18287DE2470021FC02 /* DetailsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailsViewController.m; sourceTree = "<group>"; };
+		E3A97C1D288099E40021FC02 /* ListingReservationsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ListingReservationsViewController.h; sourceTree = "<group>"; };
+		E3A97C1E288099E40021FC02 /* ListingReservationsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListingReservationsViewController.m; sourceTree = "<group>"; };
+		E3A97C202880A0410021FC02 /* ReservationTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReservationTableViewCell.h; sourceTree = "<group>"; };
+		E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReservationTableViewCell.m; sourceTree = "<group>"; };
 		EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.release.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -247,6 +253,10 @@
 				E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */,
 				E3A97C17287DE2470021FC02 /* DetailsViewController.h */,
 				E3A97C18287DE2470021FC02 /* DetailsViewController.m */,
+				E3A97C1D288099E40021FC02 /* ListingReservationsViewController.h */,
+				E3A97C1E288099E40021FC02 /* ListingReservationsViewController.m */,
+				E3A97C202880A0410021FC02 /* ReservationTableViewCell.h */,
+				E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -520,6 +530,7 @@
 				E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */,
 				E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */,
 				E3A97BF8287622170021FC02 /* ProfileViewController.m in Sources */,
+				E3A97C222880A0410021FC02 /* ReservationTableViewCell.m in Sources */,
 				E3A97BEB2874C15E0021FC02 /* GettingStartedViewController.m in Sources */,
 				E3A97BC52874A6AC0021FC02 /* main.m in Sources */,
 				E3A97BB72874A6AB0021FC02 /* SceneDelegate.m in Sources */,
@@ -531,6 +542,7 @@
 				E3A97BEE2874CEB10021FC02 /* VerifyEmailViewController.m in Sources */,
 				E3A97C0E2878D5290021FC02 /* Item.m in Sources */,
 				E3A97C16287CE18E0021FC02 /* ListingTableViewCell.m in Sources */,
+				E3A97C1F288099E40021FC02 /* ListingReservationsViewController.m in Sources */,
 				E3A97BFE287766D40021FC02 /* MyListingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
