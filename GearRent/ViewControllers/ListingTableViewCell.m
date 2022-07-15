@@ -119,5 +119,6 @@
 }
 
 - (IBAction)didViewReservations:(id)sender {
+    [self.delegate didViewReservations: self.listing];
 }
 @end

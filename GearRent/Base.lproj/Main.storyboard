@@ -1253,6 +1253,135 @@
             <point key="canvasLocation" x="2118.840579710145" y="2610.6026785714284"/>
         </scene>
         <!--Navigation Controller-->
+        <scene sceneID="IeI-Tw-zTA">
+            <objects>
+                <navigationController storyboardIdentifier="ViewReservationsNavigationController" id="zDI-3b-YLh" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="eWM-O6-McZ">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="u5s-T0-bwm" kind="relationship" relationship="rootViewController" id="A1s-2C-0Us"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dK7-AV-Nt6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1954" y="789"/>
+        </scene>
+        <!--Listing Reservations View Controller-->
+        <scene sceneID="kes-mc-Ph9">
+            <objects>
+                <viewController id="u5s-T0-bwm" customClass="ListingReservationsViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="kVq-yZ-SXw">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="zvl-38-Wyk">
+                                <rect key="frame" x="0.0" y="88" width="414" height="774"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ReservationTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReservationTableViewCell" rowHeight="198" id="4jq-mX-Hoy" customClass="ReservationTableViewCell">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="198"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="4jq-mX-Hoy" id="uOb-ty-ml4">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="198"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Leasee" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MKc-FS-zLc">
+                                                    <rect key="frame" x="35" y="26" width="55" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Dates Leased" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iph-ad-srv">
+                                                    <rect key="frame" x="35" y="55" width="104" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Current Status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Qi-8f-H63">
+                                                    <rect key="frame" x="35" y="84" width="111" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0vC-0j-ev7">
+                                                    <rect key="frame" x="262" y="21" width="97" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="filled" title="Decline"/>
+                                                    <connections>
+                                                        <action selector="didDecline:" destination="4jq-mX-Hoy" eventType="touchUpInside" id="e0v-sa-wXK"/>
+                                                    </connections>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eGa-Wz-eQU">
+                                                    <rect key="frame" x="262" y="79" width="95" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="filled" title="Accept"/>
+                                                </button>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ngr-Np-zDM">
+                                                    <rect key="frame" x="264" y="79" width="95" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal" title="Button"/>
+                                                    <buttonConfiguration key="configuration" style="filled" title="Accept"/>
+                                                    <connections>
+                                                        <action selector="didAccept:" destination="4jq-mX-Hoy" eventType="touchUpInside" id="yRG-Oq-pds"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="MKc-FS-zLc" firstAttribute="leading" secondItem="uOb-ty-ml4" secondAttribute="leading" constant="35" id="0Vg-Db-YGR"/>
+                                                <constraint firstItem="iph-ad-srv" firstAttribute="leading" secondItem="MKc-FS-zLc" secondAttribute="leading" id="5zv-Iy-Umd"/>
+                                                <constraint firstItem="iph-ad-srv" firstAttribute="top" secondItem="MKc-FS-zLc" secondAttribute="bottom" constant="8" symbolic="YES" id="CJX-vt-P4P"/>
+                                                <constraint firstItem="1Qi-8f-H63" firstAttribute="top" secondItem="iph-ad-srv" secondAttribute="bottom" constant="8" symbolic="YES" id="DGa-c8-SFO"/>
+                                                <constraint firstAttribute="bottom" secondItem="1Qi-8f-H63" secondAttribute="bottom" constant="93" id="GjY-0a-Ukd"/>
+                                                <constraint firstItem="MKc-FS-zLc" firstAttribute="top" secondItem="uOb-ty-ml4" secondAttribute="top" constant="26" id="aCL-4L-Jsk"/>
+                                                <constraint firstItem="1Qi-8f-H63" firstAttribute="leading" secondItem="iph-ad-srv" secondAttribute="leading" id="tjG-Ie-cag"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="acceptButton" destination="eGa-Wz-eQU" id="TXO-xG-ugD"/>
+                                            <outlet property="currentStatusLabel" destination="1Qi-8f-H63" id="bzV-9K-HjU"/>
+                                            <outlet property="datesLeasedLabel" destination="iph-ad-srv" id="jaF-fv-jcS"/>
+                                            <outlet property="declineButton" destination="0vC-0j-ev7" id="nqU-M0-Nuz"/>
+                                            <outlet property="leaseeLabel" destination="MKc-FS-zLc" id="o0p-2a-Ra0"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="2mA-Jo-nrb"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="zvl-38-Wyk" firstAttribute="leading" secondItem="2mA-Jo-nrb" secondAttribute="leading" id="OVj-hR-v7g"/>
+                            <constraint firstItem="2mA-Jo-nrb" firstAttribute="trailing" secondItem="zvl-38-Wyk" secondAttribute="trailing" id="P1R-oB-wiY"/>
+                            <constraint firstItem="2mA-Jo-nrb" firstAttribute="bottom" secondItem="zvl-38-Wyk" secondAttribute="bottom" id="X0X-PI-Pwi"/>
+                            <constraint firstItem="zvl-38-Wyk" firstAttribute="top" secondItem="2mA-Jo-nrb" secondAttribute="top" id="oUE-2u-Wfp"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="u0e-Gw-yhC">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="eOi-j1-TJH">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="uvb-uM-Cat">
+                                <rect key="frame" x="20" y="5" width="92" height="34.5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Back"/>
+                                <connections>
+                                    <action selector="didTapBack:" destination="u5s-T0-bwm" eventType="touchUpInside" id="UHy-jg-gFB"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="zvl-38-Wyk" id="vf9-9R-Mkl"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6fG-ey-LIr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3086.9565217391305" y="788.83928571428567"/>
+        </scene>
+        <!--Navigation Controller-->
         <scene sceneID="ExP-GR-9sw">
             <objects>
                 <navigationController storyboardIdentifier="ProfileImagePickerNavigationController" id="YSN-rl-Q3X" sceneMemberID="viewController">

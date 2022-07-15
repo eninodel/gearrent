@@ -9,6 +9,7 @@
 #import "Parse/Parse.h"
 #import "ListingTableViewCell.h"
 #import "CreateListingViewController.h"
+#import "ListingReservationsViewController.h"
 #import "../Models/Item.h"
 #import "../Models/Reservation.h"
 #import "../Models/TimeInterval.h"
@@ -80,6 +81,14 @@
     CreateListingViewController *createVC = (CreateListingViewController *) navigationVC.topViewController;
     createVC.listing = listing;
     [self presentViewController:navigationVC animated:YES completion:nil];
+}
+
+- (void) didViewReservations:(Item *)listing{
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"ViewReservationsNavigationController"];
+    ListingReservationsViewController *reservationsVC = (ListingReservationsViewController *) navigationVC.topViewController;
+    reservationsVC.listing = listing;
+    [self presentViewController: navigationVC animated: YES completion:nil];
 }
 
 @end
