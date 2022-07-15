@@ -34,6 +34,8 @@
 		E3A97C132878EEBF0021FC02 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3A97C122878EEBF0021FC02 /* MapKit.framework */; };
 		E3A97C16287CE18E0021FC02 /* ListingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */; };
 		E3A97C19287DE2470021FC02 /* DetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C18287DE2470021FC02 /* DetailsViewController.m */; };
+		E3A97C252881ED7C0021FC02 /* BookingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C242881ED7C0021FC02 /* BookingsViewController.m */; };
+		E3A97C282881EEC60021FC02 /* ReservationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C272881EEC60021FC02 /* ReservationTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,6 +108,10 @@
 		E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListingTableViewCell.m; sourceTree = "<group>"; };
 		E3A97C17287DE2470021FC02 /* DetailsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DetailsViewController.h; sourceTree = "<group>"; };
 		E3A97C18287DE2470021FC02 /* DetailsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DetailsViewController.m; sourceTree = "<group>"; };
+		E3A97C232881ED7C0021FC02 /* BookingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookingsViewController.h; sourceTree = "<group>"; };
+		E3A97C242881ED7C0021FC02 /* BookingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookingsViewController.m; sourceTree = "<group>"; };
+		E3A97C262881EEC60021FC02 /* ReservationTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReservationTableViewCell.h; sourceTree = "<group>"; };
+		E3A97C272881EEC60021FC02 /* ReservationTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReservationTableViewCell.m; sourceTree = "<group>"; };
 		EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.release.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -247,6 +253,10 @@
 				E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */,
 				E3A97C17287DE2470021FC02 /* DetailsViewController.h */,
 				E3A97C18287DE2470021FC02 /* DetailsViewController.m */,
+				E3A97C232881ED7C0021FC02 /* BookingsViewController.h */,
+				E3A97C242881ED7C0021FC02 /* BookingsViewController.m */,
+				E3A97C262881EEC60021FC02 /* ReservationTableViewCell.h */,
+				E3A97C272881EEC60021FC02 /* ReservationTableViewCell.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -515,10 +525,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A97C252881ED7C0021FC02 /* BookingsViewController.m in Sources */,
 				E3A97C0B2878D46E0021FC02 /* Reservation.m in Sources */,
 				E3A97C0428778BA80021FC02 /* ImageCarouselCollectionViewCell.m in Sources */,
 				E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */,
 				E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */,
+				E3A97C282881EEC60021FC02 /* ReservationTableViewCell.m in Sources */,
 				E3A97BF8287622170021FC02 /* ProfileViewController.m in Sources */,
 				E3A97BEB2874C15E0021FC02 /* GettingStartedViewController.m in Sources */,
 				E3A97BC52874A6AC0021FC02 /* main.m in Sources */,
