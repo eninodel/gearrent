@@ -40,7 +40,7 @@
     [self displayCamera];
 }
 
-- (void) displayCamera{
+- (void)displayCamera {
     UIImagePickerController *imagePickerVC = [UIImagePickerController new];
     imagePickerVC.delegate = self;
     imagePickerVC.allowsEditing = YES;
@@ -55,7 +55,7 @@
     [self presentViewController:imagePickerVC animated:YES completion:nil];
 }
 
--(void) displayGallery{
+-(void)displayGallery {
     UIImagePickerController *imagePickerVC = [UIImagePickerController new];
     imagePickerVC.delegate = self;
     imagePickerVC.allowsEditing = YES;

@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void) didEditListing: (Item *) listing;
 
+- (void) didViewReservations: (Item *) listing;
+
 @end
 
 @interface ListingTableViewCell : UITableViewCell

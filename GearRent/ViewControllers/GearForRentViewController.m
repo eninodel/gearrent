@@ -33,7 +33,7 @@
     [self fetchData];
 }
 
--(void) fetchData{
+-(void)fetchData {
     PFQuery *query = [PFQuery queryWithClassName: @"Listing"];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"availabilities"];
@@ -48,7 +48,7 @@
     }];
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewNavigationController"];
     [self presentViewController:navigationVC animated:YES completion:nil];
@@ -80,7 +80,7 @@
     return self.tableData.count;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 

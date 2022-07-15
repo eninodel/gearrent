@@ -30,7 +30,7 @@
     // Do any additional setup after loading the view.
 }
 
-- (void) registerUser{
+- (void)registerUser {
     PFUser *newUser = [PFUser user];
     newUser.username = self.usernameTextField.text;
     newUser.email = self.emailTextField.text;

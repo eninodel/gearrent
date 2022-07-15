@@ -2,7 +2,7 @@
 //  ReservationTableViewCell.h
 //  GearRent
 //
-//  Created by Edwin Delgado on 7/15/22.
+//  Created by Edwin Delgado on 7/14/22.
 //
 
 #import <UIKit/UIKit.h>
@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ReservationTableViewCell : UITableViewCell
 
-@property (strong, nonatomic)Reservation *reservation;
+@property (strong, nonatomic) Reservation *reservation;
 
 - (void)initializeCell;
 

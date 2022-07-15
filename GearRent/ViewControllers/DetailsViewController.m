@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
 @property (weak, nonatomic) IBOutlet UIButton *reserveNowButton;
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (strong, nonatomic) NSMutableArray *reservations;
 @property (strong, nonatomic) NSMutableArray *datesSelected;
 @property (strong, nonatomic) NSMutableArray *datesReserved;
 @property (strong, nonatomic) NSMutableArray *datesAvailable;
@@ -63,6 +64,7 @@
     [self.calendarManager setMenuView:self.calendarMenuView];
     [self.calendarManager setContentView:self.calendarContentView];
     [self.calendarManager setDate:[NSDate date]];
+    self.reservations = [[NSMutableArray alloc] init];
     self.datesSelected = [[NSMutableArray alloc] init];
     self.datesReserved = [[NSMutableArray alloc] init];
     self.datesAvailable = [[NSMutableArray alloc] init];
@@ -91,6 +93,7 @@
                     for(int i = 0; i < objects.count; i++){
                         Reservation *reservation = (Reservation *) objects[i];
                         NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
+                        [self.reservations addObject:reservation];
                         [self.datesReserved addObject:dateInterval];
                     }
                     [self.calendarManager reload];
@@ -132,7 +135,7 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
--(TimeInterval *) reservationTimeInterval{
+-(TimeInterval *)reservationTimeInterval {
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:TRUE];
     [self.datesSelected sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
     
@@ -151,7 +154,7 @@
     return result;
 }
 
-- (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView{
+- (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
     if([self isInDatesSelected:dayView.date]){ // date is selected
         dayView.circleView.backgroundColor = UIColor.orangeColor;
@@ -164,17 +167,18 @@
     }
 }
 
-- (Boolean) isDateReserved: (NSDate *) date{
+- (Boolean)isDateReserved:(NSDate *)date {
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
-        if([interval containsDate:date] == YES){
+        Reservation *reservation = (Reservation *) self.reservations[i];
+        if([interval containsDate:date] == YES && [reservation.status isEqualToString:@"ACCEPTED"]){
             return YES;
         }
     }
     return NO;
 }
 
-- (Boolean) isDateAvailable: (NSDate *) date{
+- (Boolean)isDateAvailable:(NSDate *)date {
     if(self.listing.isAlwaysAvailable == YES) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
@@ -185,7 +189,7 @@
     return NO;
 }
 
-- (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView{
+- (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     // Don't select date if not available
     if([self isDateAvailable:dayView.date] == NO || [self isDateReserved:dayView.date] == YES) return;
     
@@ -201,7 +205,7 @@
     }
 }
 
-- (BOOL)isInDatesSelected:(NSDate *)date{
+- (BOOL)isInDatesSelected:(NSDate *)date {
     for(NSDate *dateSelected in self.datesSelected){
         if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]){
             return YES;
@@ -210,7 +214,7 @@
     return NO;
 }
 
-- (void) setReserveButtonText{
+- (void)setReserveButtonText {
     if(self.datesSelected.count == 0){
         [self.reserveNowButton setTitle:@"Please select day(s) to reserve item" forState:UIControlStateNormal];
     }else{
@@ -221,17 +225,17 @@
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(status == kCLAuthorizationStatusAuthorizedWhenInUse){
         [self.locationManager startUpdatingLocation];
     }
 }
 
-- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager{
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
     [self.locationManager startUpdatingLocation];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations{
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
     MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
     MKCoordinateRegion region = MKCoordinateRegionMake(locations[0].coordinate, span);
     [self.mapView setRegion:region];
