@@ -1141,6 +1141,16 @@
                                                     <constraint firstAttribute="height" constant="268" id="bgP-oP-4ZP"/>
                                                 </constraints>
                                             </view>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5TT-cX-Aqv">
+                                                <rect key="frame" x="151" y="1661" width="112.5" height="31"/>
+                                                <state key="normal" title="Button"/>
+                                                <buttonConfiguration key="configuration" style="filled" title="Delete Listing">
+                                                    <color key="baseBackgroundColor" systemColor="systemRedColor"/>
+                                                </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="didDeleteListing:" destination="2M3-qR-cIv" eventType="touchUpInside" id="CNG-cg-W82"/>
+                                                </connections>
+                                            </button>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
@@ -1150,6 +1160,7 @@
                                             <constraint firstItem="ewQ-ZD-Ie1" firstAttribute="centerX" secondItem="naq-iO-ggj" secondAttribute="centerX" id="5nL-UI-74h"/>
                                             <constraint firstItem="ewQ-ZD-Ie1" firstAttribute="centerY" secondItem="naq-iO-ggj" secondAttribute="centerY" id="6H4-e0-1pE"/>
                                             <constraint firstItem="Kft-RK-szm" firstAttribute="top" secondItem="F9K-xk-QTY" secondAttribute="bottom" constant="26" id="6qm-qU-voi"/>
+                                            <constraint firstItem="5TT-cX-Aqv" firstAttribute="centerX" secondItem="Xhf-aX-wC9" secondAttribute="centerX" id="7BV-tG-vp6"/>
                                             <constraint firstItem="naq-iO-ggj" firstAttribute="top" secondItem="Xhf-aX-wC9" secondAttribute="top" id="8Wy-M7-MtY"/>
                                             <constraint firstAttribute="trailing" secondItem="vRj-Lf-9YJ" secondAttribute="trailing" constant="38" id="Csf-c4-cdI"/>
                                             <constraint firstItem="Zo3-Uz-YIZ" firstAttribute="top" secondItem="r4J-4U-3NU" secondAttribute="bottom" constant="32.5" id="Hm9-Yx-ywe"/>
@@ -1165,6 +1176,7 @@
                                             <constraint firstItem="F9K-xk-QTY" firstAttribute="leading" secondItem="AeN-At-O31" secondAttribute="trailing" constant="-50" id="YEn-a7-Tf6"/>
                                             <constraint firstItem="ljb-Xh-r15" firstAttribute="top" secondItem="naq-iO-ggj" secondAttribute="bottom" constant="51" id="cH5-Uh-8r0"/>
                                             <constraint firstItem="acW-pQ-2e4" firstAttribute="centerX" secondItem="Xhf-aX-wC9" secondAttribute="centerX" id="dBU-vO-jol"/>
+                                            <constraint firstItem="5TT-cX-Aqv" firstAttribute="top" secondItem="acW-pQ-2e4" secondAttribute="bottom" constant="4" id="gta-0Y-Y5B"/>
                                             <constraint firstItem="irc-OO-9Ua" firstAttribute="centerX" secondItem="Xhf-aX-wC9" secondAttribute="centerX" id="hNp-Y4-WVf"/>
                                             <constraint firstItem="r4J-4U-3NU" firstAttribute="leading" secondItem="Kft-RK-szm" secondAttribute="leading" id="hYH-2P-hCC"/>
                                             <constraint firstAttribute="bottom" secondItem="acW-pQ-2e4" secondAttribute="bottom" constant="43" id="iQI-u8-I09"/>
@@ -1224,11 +1236,13 @@
                         <outlet property="calendarMenuView" destination="irc-OO-9Ua" id="ek2-ee-gU2"/>
                         <outlet property="calendarView" destination="7eR-cx-kW4" id="dk5-rf-oba"/>
                         <outlet property="cityTextField" destination="HfY-kH-XhA" id="xR3-Qk-3HN"/>
+                        <outlet property="deleteListingButton" destination="5TT-cX-Aqv" id="Sas-Rt-l0i"/>
                         <outlet property="descriptionTextField" destination="ZPw-vy-ILV" id="Cyq-59-wTh"/>
                         <outlet property="imageCarouselCollectionView" destination="naq-iO-ggj" id="zce-cf-2Et"/>
                         <outlet property="isAlwaysAvailableSwitch" destination="vRj-Lf-9YJ" id="8li-p9-SnR"/>
                         <outlet property="mapView" destination="Zo3-Uz-YIZ" id="KSv-wG-Ysl"/>
                         <outlet property="nameLabel" destination="KDJ-yM-10W" id="FoZ-dh-yXp"/>
+                        <outlet property="navigationTitle" destination="3BF-4p-U83" id="rZn-TG-0pB"/>
                         <outlet property="priceTextField" destination="oKH-vZ-YfX" id="QxS-VY-qgI"/>
                         <outlet property="scrollView" destination="eAE-EK-Xdg" id="laP-70-RFa"/>
                         <outlet property="titleTextField" destination="hEf-th-Aga" id="1W1-cA-Fxe"/>
@@ -1236,7 +1250,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WCE-5n-FaL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2120" y="2611"/>
+            <point key="canvasLocation" x="2118.840579710145" y="2610.6026785714284"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="IeI-Tw-zTA">
@@ -1539,6 +1553,9 @@
         <image name="EditProfileImage" width="40" height="40"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
