@@ -28,11 +28,11 @@
     self.listingsTableView.dataSource = self;
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated {
     [self fetchData];
 }
 
--(void) fetchData{
+-(void)fetchData {
     PFQuery *query = [PFQuery queryWithClassName:@"Listing"];
     [query whereKey:@"ownerId" equalTo:[[PFUser currentUser] objectId]];
     [query orderByDescending:@"createdAt"];
@@ -69,12 +69,12 @@
     return self.tableData.count;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     ListingTableViewCell *cell = (ListingTableViewCell *) [self.listingsTableView cellForRowAtIndexPath:indexPath];
     [cell displayOptions];
 }
 
-- (void)didEditListing: (Item *) listing {
+- (void)didEditListing:(Item *)listing {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"CreateListingNavigationController"];
     CreateListingViewController *createVC = (CreateListingViewController *) navigationVC.topViewController;

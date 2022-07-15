@@ -34,12 +34,15 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (weak, nonatomic) IBOutlet UISwitch *isAlwaysAvailableSwitch;
 @property (weak, nonatomic) IBOutlet UIButton *addImagesButton;
+@property (weak, nonatomic) IBOutlet UIButton *deleteListingButton;
+@property (weak, nonatomic) IBOutlet UINavigationItem *navigationTitle;
 
 
 - (IBAction)didAddImages:(id)sender;
 - (IBAction)didList:(id)sender;
 - (IBAction)didSwitchAvailability:(id)sender;
 - (IBAction)didTapBack:(id)sender;
+- (IBAction)didDeleteListing:(id)sender;
 
 @end
 
@@ -48,6 +51,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.deleteListingButton.hidden = YES;
+    self.navigationItem.title = @"Create a Listing";
     self.nameLabel.text =  [PFUser currentUser][@"name"];
     self.imageCarouselCollectionView.delegate = self;
     self.imageCarouselCollectionView.dataSource = self;
@@ -76,6 +81,8 @@
     fingerTap.numberOfTouchesRequired = 1;
     [self.mapView addGestureRecognizer:fingerTap];
     if(self.listing != nil){
+        self.navigationItem.title = @"Edit Listing";
+        self.deleteListingButton.hidden = NO;
         self.addImagesButton.hidden = YES;
         self.titleTextField.text = self.listing.title;
         self.priceTextField.text = [[NSNumber numberWithFloat: self.listing.price] stringValue];
@@ -124,7 +131,7 @@
     }
 }
 
-- (void) populateDatesSelected{
+- (void)populateDatesSelected {
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = (NSDateInterval *) self.datesAvailable[i];
         NSDate *curr = interval.startDate;
@@ -188,23 +195,23 @@
     [self.mapView addAnnotation:pa];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
     if(status == kCLAuthorizationStatusAuthorizedWhenInUse){
         [self.locationManager startUpdatingLocation];
     }
 }
 
-- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager{
+- (void)locationManagerDidChangeAuthorization:(CLLocationManager *)manager {
     [self.locationManager startUpdatingLocation];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations{
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
     MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
     MKCoordinateRegion region = MKCoordinateRegionMake(locations[0].coordinate, span);
     [self.mapView setRegion:region];
 }
 
-- (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView{
+- (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
     if([self isDateReserved:dayView.date] == YES){ // date is reserved already
         dayView.circleView.backgroundColor = UIColor.blackColor;
@@ -215,7 +222,7 @@
     }
 }
 
-- (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView{
+- (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     // deselect date
     if([self isDateReserved:dayView.date] == YES) return;
     if([self.isAlwaysAvailableSwitch isOn] == YES){
@@ -229,7 +236,7 @@
     [self.calendarManager reload];
 }
 
-- (BOOL)isInDatesSelected:(NSDate *)date{
+- (BOOL)isInDatesSelected:(NSDate *)date {
     if([self.isAlwaysAvailableSwitch isOn] == YES) return YES;
     for(NSDate *dateSelected in self.datesSelected){
         if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]){
@@ -239,7 +246,7 @@
     return NO;
 }
 
-- (Boolean) isDateReserved: (NSDate *) date{
+- (Boolean)isDateReserved:(NSDate *)date {
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
         if([interval containsDate:date] == YES){
@@ -249,7 +256,7 @@
     return NO;
 }
 
-- (Boolean) isDateAvailable: (NSDate *) date{
+- (Boolean)isDateAvailable:(NSDate *)date {
     if(self.listing.isAlwaysAvailable == YES) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
@@ -280,7 +287,7 @@
     return self.carouselImages.count;
 }
 
-- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
     return 1;
 }
 
@@ -289,7 +296,7 @@
     [self.calendarManager reload];
 }
 
-- (NSMutableArray *) getTimeIntervals: (NSMutableArray *) dates{
+- (NSMutableArray *)getTimeIntervals:(NSMutableArray *)dates {
     NSMutableArray *result =[[NSMutableArray alloc] init];
     if(dates.count == 0){
         return result;
@@ -320,12 +327,23 @@
     return result;
 }
 
-- (NSMutableArray *) imagesToPFFiles: (NSMutableArray *) images{
+- (NSMutableArray *)imagesToPFFiles:(NSMutableArray *)images {
     NSMutableArray *result = [[NSMutableArray alloc] init];
     for(int i = 0 ; i < images.count; i ++){
         [result addObject:[self getPFFileFromImage: (UIImage *) images[i]]];
     }
     return result;
+}
+
+- (IBAction)didDeleteListing:(id)sender {
+    [self.listing deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if(error == nil){
+            NSLog(@"END: Successfully deleted listing");
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }else{
+            NSLog(@"END: Failed to delete listing");
+        }
+    }];
 }
 
 - (IBAction)didTapBack:(id)sender {
@@ -351,7 +369,7 @@
      [self.view endEditing:YES];
 }
 
-- (PFFileObject *)getPFFileFromImage: (UIImage * _Nullable)image {
+- (PFFileObject *)getPFFileFromImage:(UIImage * _Nullable)image {
     // check if image is not nil
     if (!image) {
         return nil;

@@ -124,7 +124,7 @@
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
-- (PFFileObject *)getPFFileFromImage: (UIImage * _Nullable)image {
+- (PFFileObject *)getPFFileFromImage:(UIImage * _Nullable)image {
     // check if image is not nil
     if (!image) {
         return nil;
@@ -154,7 +154,7 @@
     [self setEditingHidden: (Boolean *) true];
 }
 
-- (void) setEditingHidden: (Boolean *) editing{
+- (void)setEditingHidden:(Boolean *)editing {
     self.editing = editing;
     self.paymentsUIButton.hidden = editing;
     self.notificationsUIButton.hidden = editing;

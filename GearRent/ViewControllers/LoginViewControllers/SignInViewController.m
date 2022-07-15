@@ -23,7 +23,7 @@
     // Do any additional setup after loading the view.
 }
 
-- (void) signIn{
+- (void)signIn {
     NSLog(@"END: In signIn");
     NSString *username = self.usernameTextField.text;
     NSString *password = self.passwordTextField.text;
