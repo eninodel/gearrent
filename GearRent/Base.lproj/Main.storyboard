@@ -1557,17 +1557,19 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your Bookings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JhF-B7-gqZ">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Your Bookings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JhF-B7-gqZ">
                                 <rect key="frame" x="135.5" y="68" width="143" height="28"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="23"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="LE7-H0-bFz">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="LE7-H0-bFz">
                                 <rect key="frame" x="0.0" y="96" width="414" height="717"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ReservationTableViewCell" rowHeight="142" id="Mdi-vG-H5g" customClass="ReservationTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="BookingTableViewCell" rowHeight="142" id="Mdi-vG-H5g" customClass="BookingTableViewCell">
                                         <rect key="frame" x="0.0" y="44.5" width="414" height="142"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Mdi-vG-H5g" id="Lcx-ti-dP9">
@@ -1575,14 +1577,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="0qo-pj-aFe">
-                                                    <rect key="frame" x="14" y="0.0" width="128" height="128"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="142" height="142"/>
                                                     <constraints>
+                                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="128" id="CDz-kU-xw3"/>
                                                         <constraint firstAttribute="height" constant="128" id="Wfr-3e-pUq"/>
                                                         <constraint firstAttribute="width" secondItem="0qo-pj-aFe" secondAttribute="height" multiplier="1:1" id="Ws3-wv-ESK"/>
+                                                        <constraint firstAttribute="width" secondItem="0qo-pj-aFe" secondAttribute="height" multiplier="1:1" id="YNt-wh-teQ"/>
+                                                        <constraint firstAttribute="height" relation="lessThanOrEqual" constant="142" id="dao-IV-p3l"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lLL-i6-828">
-                                                    <rect key="frame" x="174" y="11" width="29" height="21"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lLL-i6-828">
+                                                    <rect key="frame" x="174" y="11" width="65" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -1598,7 +1603,7 @@
                                                     <state key="normal" title="Button"/>
                                                     <buttonConfiguration key="configuration" style="filled" title="Cancel reservation"/>
                                                     <connections>
-                                                        <action selector="didCancelReservation:" destination="Mdi-vG-H5g" eventType="touchUpInside" id="1Nv-O6-sIM"/>
+                                                        <action selector="didCancelReservation:" destination="Mdi-vG-H5g" eventType="touchUpInside" id="CFM-yj-pQv"/>
                                                     </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="status" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uvC-bZ-fCo">
@@ -1609,25 +1614,26 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="WpC-Zc-JVm" firstAttribute="bottom" secondItem="Lcx-ti-dP9" secondAttribute="bottomMargin" id="34h-kn-oQC"/>
-                                                <constraint firstAttribute="bottom" secondItem="0qo-pj-aFe" secondAttribute="bottom" constant="14" id="7wy-76-LXV"/>
-                                                <constraint firstItem="WpC-Zc-JVm" firstAttribute="leading" secondItem="0qo-pj-aFe" secondAttribute="trailing" constant="32" id="ESH-8p-f49"/>
-                                                <constraint firstItem="0qo-pj-aFe" firstAttribute="top" secondItem="Lcx-ti-dP9" secondAttribute="top" id="G5c-Hh-657"/>
-                                                <constraint firstItem="uvC-bZ-fCo" firstAttribute="leading" secondItem="tRF-K5-APx" secondAttribute="leading" id="MV6-PM-RnO"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="WpC-Zc-JVm" secondAttribute="trailing" constant="75.5" id="Ytr-4I-rM1"/>
-                                                <constraint firstItem="uvC-bZ-fCo" firstAttribute="top" secondItem="tRF-K5-APx" secondAttribute="bottom" constant="8" symbolic="YES" id="fJV-Tf-cbs"/>
-                                                <constraint firstItem="WpC-Zc-JVm" firstAttribute="top" secondItem="tRF-K5-APx" secondAttribute="bottom" constant="39" id="gfp-im-UzR"/>
-                                                <constraint firstItem="lLL-i6-828" firstAttribute="top" secondItem="Lcx-ti-dP9" secondAttribute="top" constant="11" id="jCt-kk-oQf"/>
-                                                <constraint firstItem="lLL-i6-828" firstAttribute="leading" secondItem="0qo-pj-aFe" secondAttribute="trailing" constant="32" id="rGs-xU-dUz"/>
-                                                <constraint firstItem="tRF-K5-APx" firstAttribute="leading" secondItem="lLL-i6-828" secondAttribute="leading" id="ziL-Pz-n60"/>
+                                                <constraint firstAttribute="bottom" secondItem="0qo-pj-aFe" secondAttribute="bottom" id="4CD-GE-hJC"/>
+                                                <constraint firstItem="0qo-pj-aFe" firstAttribute="top" secondItem="Lcx-ti-dP9" secondAttribute="top" id="APa-v5-cug"/>
+                                                <constraint firstItem="tRF-K5-APx" firstAttribute="leading" secondItem="0qo-pj-aFe" secondAttribute="trailing" constant="32" id="DJv-sT-MMN"/>
+                                                <constraint firstItem="WpC-Zc-JVm" firstAttribute="top" secondItem="uvC-bZ-fCo" secondAttribute="bottom" constant="10" id="JBC-z9-JxM"/>
+                                                <constraint firstItem="WpC-Zc-JVm" firstAttribute="leading" secondItem="0qo-pj-aFe" secondAttribute="trailing" constant="32" id="L85-Qf-TU9"/>
+                                                <constraint firstAttribute="bottom" secondItem="WpC-Zc-JVm" secondAttribute="bottom" constant="11" id="QUu-Cz-Ny6"/>
+                                                <constraint firstItem="uvC-bZ-fCo" firstAttribute="leading" secondItem="0qo-pj-aFe" secondAttribute="trailing" constant="32" id="WbA-dA-P0A"/>
+                                                <constraint firstItem="lLL-i6-828" firstAttribute="leading" secondItem="0qo-pj-aFe" secondAttribute="trailing" constant="32" id="XGV-tq-4hz"/>
+                                                <constraint firstItem="lLL-i6-828" firstAttribute="top" secondItem="Lcx-ti-dP9" secondAttribute="top" constant="11" id="Z85-FX-ag9"/>
+                                                <constraint firstAttribute="bottom" secondItem="uvC-bZ-fCo" secondAttribute="bottom" constant="52" id="frt-kb-zMb"/>
+                                                <constraint firstItem="0qo-pj-aFe" firstAttribute="leading" secondItem="Lcx-ti-dP9" secondAttribute="leading" id="gSw-pF-siv"/>
+                                                <constraint firstItem="uvC-bZ-fCo" firstAttribute="top" secondItem="tRF-K5-APx" secondAttribute="bottom" constant="8" symbolic="YES" id="uEF-JA-PK8"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="cancelReservationButton" destination="WpC-Zc-JVm" id="NMY-Eu-bAR"/>
-                                            <outlet property="datesReservedLabel" destination="tRF-K5-APx" id="aNF-mi-kAf"/>
-                                            <outlet property="reservationImage" destination="0qo-pj-aFe" id="yaM-Ce-r22"/>
-                                            <outlet property="statusLabel" destination="uvC-bZ-fCo" id="cm7-Yn-AKl"/>
-                                            <outlet property="titleLabel" destination="lLL-i6-828" id="RQe-NC-xsq"/>
+                                            <outlet property="bookingImage" destination="0qo-pj-aFe" id="fjq-tI-Ikk"/>
+                                            <outlet property="cancelReservationButton" destination="WpC-Zc-JVm" id="grK-OK-xRC"/>
+                                            <outlet property="datesLeasedLabel" destination="tRF-K5-APx" id="4Sa-Zj-NKM"/>
+                                            <outlet property="statusLabel" destination="uvC-bZ-fCo" id="M2b-YG-U8N"/>
+                                            <outlet property="titleLabel" destination="lLL-i6-828" id="icS-SX-kxA"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -1635,14 +1641,6 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="poV-D8-vVX"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="JhF-B7-gqZ" firstAttribute="centerX" secondItem="poV-D8-vVX" secondAttribute="centerX" id="9d4-jv-hff"/>
-                            <constraint firstItem="JhF-B7-gqZ" firstAttribute="top" secondItem="poV-D8-vVX" secondAttribute="top" constant="24" id="SY0-tk-uG5"/>
-                            <constraint firstItem="LE7-H0-bFz" firstAttribute="leading" secondItem="poV-D8-vVX" secondAttribute="leading" id="cJK-io-Uhk"/>
-                            <constraint firstItem="poV-D8-vVX" firstAttribute="trailing" secondItem="LE7-H0-bFz" secondAttribute="trailing" id="jM8-hb-hgx"/>
-                            <constraint firstItem="LE7-H0-bFz" firstAttribute="top" secondItem="JhF-B7-gqZ" secondAttribute="bottom" id="jvF-u5-nLh"/>
-                            <constraint firstItem="poV-D8-vVX" firstAttribute="bottom" secondItem="LE7-H0-bFz" secondAttribute="bottom" id="zbl-p6-sEQ"/>
-                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Bookings" id="oGY-kn-GP5"/>
                     <connections>
