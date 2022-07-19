@@ -13,8 +13,9 @@
 #import "DetailsViewController.h"
 
 @interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource>
+
 @property (strong, nonatomic) NSArray *tableData;
-@property (weak, nonatomic) IBOutlet UITableView *listingsTableView;
+@property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
 
 - (IBAction)didLogOut:(id)sender;
 
@@ -29,7 +30,7 @@
     self.listingsTableView.dataSource = self;
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated {
     [self fetchData];
 }
 

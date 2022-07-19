@@ -9,6 +9,7 @@
 #import "Parse/Parse.h"
 
 @implementation Reservation
+
 @dynamic itemId;
 @dynamic leaserId;
 @dynamic leaseeId;

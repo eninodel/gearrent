@@ -6,7 +6,7 @@
 //
 
 #import "BookingTableViewCell.h"
-#import "../Models/Item.h"
+#import "Item.h"
 #import "UIImageView+AFNetworking.h"
 
 @interface BookingTableViewCell()
@@ -23,11 +23,7 @@
 
 @implementation BookingTableViewCell
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-}
-
-- (void)initializeCell{
+- (void)initializeCell {
     NSString *datesLeasedString = @"Dates leased: ";
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"dd-MM-yyyy";

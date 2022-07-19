@@ -10,13 +10,15 @@
 #import "ListingTableViewCell.h"
 #import "CreateListingViewController.h"
 #import "ListingReservationsViewController.h"
-#import "../Models/Item.h"
-#import "../Models/Reservation.h"
-#import "../Models/TimeInterval.h"
+#import "Item.h"
+#import "Reservation.h"
+#import "TimeInterval.h"
 
 @interface MyListingsViewController ()<UITableViewDelegate, UITableViewDataSource, ListingTableViewCellDelegate>
-@property (weak, nonatomic) IBOutlet UITableView *listingsTableView;
+
+@property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
 @property (strong, nonatomic) NSArray *tableData;
+
 - (IBAction)didCreateListing:(id)sender;
 
 @end
@@ -50,7 +52,6 @@
     }];
 }
 
-
 - (IBAction)didCreateListing:(id)sender {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"CreateListingNavigationController"];
@@ -83,7 +84,7 @@
     [self presentViewController:navigationVC animated:YES completion:nil];
 }
 
-- (void) didViewReservations:(Item *)listing{
+- (void)didViewReservations:(Item *)listing {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"ViewReservationsNavigationController"];
     ListingReservationsViewController *reservationsVC = (ListingReservationsViewController *) navigationVC.topViewController;

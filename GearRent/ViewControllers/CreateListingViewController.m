@@ -10,32 +10,32 @@
 #import <JTCalendar/JTCalendar.h>
 #import "ProfileImagePickerViewController.h"
 #import "UIImageView+AFNetworking.h"
-#import "../Models/TimeInterval.h"
-#import "../Models/Item.h"
-#import "../Models/Reservation.h"
+#import "TimeInterval.h"
+#import "Item.h"
+#import "Reservation.h"
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
 
 @interface CreateListingViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate,ProfileImagePickerViewControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
-@property (weak, nonatomic) IBOutlet UIView *calendarView;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UICollectionView *imageCarouselCollectionView;
+@property (strong, nonatomic) IBOutlet UIView *calendarView;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) IBOutlet UICollectionView *imageCarouselCollectionView;
 @property (strong, nonatomic) NSMutableArray *carouselImages;
 @property (strong, nonatomic) NSMutableArray *datesAvailable;
 @property (strong, nonatomic) NSMutableArray *datesSelected;
 @property (strong, nonatomic) NSMutableArray *datesReserved;
-@property (weak, nonatomic) IBOutlet UILabel *addImagesLabel;
-@property (weak, nonatomic) IBOutlet UITextField *titleTextField;
-@property (weak, nonatomic) IBOutlet UITextField *priceTextField;
-@property (weak, nonatomic) IBOutlet UITextField *cityTextField;
-@property (weak, nonatomic) IBOutlet UITextField *descriptionTextField;
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-@property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (strong, nonatomic) IBOutlet UILabel *addImagesLabel;
+@property (strong, nonatomic) IBOutlet UITextField *titleTextField;
+@property (strong, nonatomic) IBOutlet UITextField *priceTextField;
+@property (strong, nonatomic) IBOutlet UITextField *cityTextField;
+@property (strong, nonatomic) IBOutlet UITextField *descriptionTextField;
+@property (strong, nonatomic) IBOutlet UILabel *nameLabel;
+@property (strong, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) CLLocationManager *locationManager;
-@property (weak, nonatomic) IBOutlet UISwitch *isAlwaysAvailableSwitch;
-@property (weak, nonatomic) IBOutlet UIButton *addImagesButton;
-@property (weak, nonatomic) IBOutlet UIButton *deleteListingButton;
-@property (weak, nonatomic) IBOutlet UINavigationItem *navigationTitle;
+@property (strong, nonatomic) IBOutlet UISwitch *isAlwaysAvailableSwitch;
+@property (strong, nonatomic) IBOutlet UIButton *addImagesButton;
+@property (strong, nonatomic) IBOutlet UIButton *deleteListingButton;
+@property (strong, nonatomic) IBOutlet UINavigationItem *navigationTitle;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -246,7 +246,7 @@
     return NO;
 }
 
-- (Boolean)isDateReserved:(NSDate *)date {
+- (BOOL)isDateReserved:(NSDate *)date {
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
         if([interval containsDate:date] == YES){
@@ -256,7 +256,7 @@
     return NO;
 }
 
-- (Boolean)isDateAvailable:(NSDate *)date {
+- (BOOL)isDateAvailable:(NSDate *)date {
     if(self.listing.isAlwaysAvailable == YES) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
@@ -365,7 +365,7 @@
     [self.imageCarouselCollectionView reloadData];
 }
 
-- (void)dismissKeyboard{
+- (void)dismissKeyboard {
      [self.view endEditing:YES];
 }
 
@@ -381,4 +381,5 @@
     }
     return [PFFileObject fileObjectWithName:@"image.png" data:imageData];
 }
+
 @end

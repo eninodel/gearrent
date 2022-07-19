@@ -13,20 +13,21 @@
 #import "ProfileImagePickerViewController.h"
 
 @interface ProfileViewController () <ProfileImagePickerViewControllerDelegate>
-@property (weak, nonatomic) IBOutlet UIImageView *profileImageView;
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-@property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
-@property (weak, nonatomic) IBOutlet UILabel *emailLabel;
-@property (weak, nonatomic) IBOutlet UIButton *paymentsUIButton;
-@property (weak, nonatomic) IBOutlet UIButton *notificationsUIButton;
-@property (weak, nonatomic) IBOutlet UIButton *settingsUIButton;
-@property (weak, nonatomic) IBOutlet UIButton *logOutUIButton;
-@property (weak, nonatomic) IBOutlet UITextField *nameTextField;
-@property (weak, nonatomic) IBOutlet UILabel *tapToChangeLabel;
-@property (weak, nonatomic) IBOutlet UITextField *emailTextField;
-@property (weak, nonatomic) IBOutlet UIStackView *saveButtonsStackView;
-@property (weak, nonatomic) IBOutlet UIButton *saveUIButton;
-@property (weak, nonatomic) IBOutlet UIButton *cancelUIButton;
+
+@property (strong, nonatomic) IBOutlet UIImageView *profileImageView;
+@property (strong, nonatomic) IBOutlet UILabel *nameLabel;
+@property (strong, nonatomic) IBOutlet UILabel *usernameLabel;
+@property (strong, nonatomic) IBOutlet UILabel *emailLabel;
+@property (strong, nonatomic) IBOutlet UIButton *paymentsUIButton;
+@property (strong, nonatomic) IBOutlet UIButton *notificationsUIButton;
+@property (strong, nonatomic) IBOutlet UIButton *settingsUIButton;
+@property (strong, nonatomic) IBOutlet UIButton *logOutUIButton;
+@property (strong, nonatomic) IBOutlet UITextField *nameTextField;
+@property (strong, nonatomic) IBOutlet UILabel *tapToChangeLabel;
+@property (strong, nonatomic) IBOutlet UITextField *emailTextField;
+@property (strong, nonatomic) IBOutlet UIStackView *saveButtonsStackView;
+@property (strong, nonatomic) IBOutlet UIButton *saveUIButton;
+@property (strong, nonatomic) IBOutlet UIButton *cancelUIButton;
 @property (strong, nonatomic) UIImage *prevProfileImage;
 
 - (IBAction)didLogOut:(id)sender;
@@ -35,7 +36,7 @@
 - (IBAction)didSaveProfile:(id)sender;
 - (IBAction)didCancelEditingProfile:(id)sender;
 
-@property (assign, nonatomic) Boolean *editing;
+@property (assign, nonatomic) BOOL *editing;
 @end
 
 @implementation ProfileViewController
@@ -43,7 +44,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     PFUser *user =[PFUser currentUser];
-    [self setEditingHidden:(Boolean *) false];
+    [self setEditingHidden:(BOOL *) NO];
     self.emailLabel.text = user[@"userEmail"];
     self.usernameLabel.text = user.username;
     self.nameLabel.text = user[@"name"];
@@ -90,7 +91,7 @@
 
 - (IBAction)didCancelEditingProfile:(id)sender {
     [self.profileImageView setImage:self.prevProfileImage];
-    [self setEditingHidden:(Boolean *) false];
+    [self setEditingHidden:(BOOL *) false];
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
@@ -120,7 +121,7 @@
             NSLog(@"%@", error.description);
         }
     }];
-    [self setEditingHidden:(Boolean *) false];
+    [self setEditingHidden:(BOOL *) false];
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
@@ -151,10 +152,10 @@
 - (IBAction)didEditProfile:(id)sender {
     self.nameTextField.text = [PFUser currentUser][@"name"];
     self.emailTextField.text = [PFUser currentUser][@"userEmail"];
-    [self setEditingHidden: (Boolean *) true];
+    [self setEditingHidden: (BOOL *) true];
 }
 
-- (void)setEditingHidden:(Boolean *)editing {
+- (void)setEditingHidden:(BOOL *)editing {
     self.editing = editing;
     self.paymentsUIButton.hidden = editing;
     self.notificationsUIButton.hidden = editing;
@@ -181,4 +182,5 @@
 - (void)didPickProfileImage:(nonnull UIImage *)image {
     [self.profileImageView setImage:image];
 }
+
 @end
