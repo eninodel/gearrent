@@ -36,6 +36,8 @@
 		E3A97C19287DE2470021FC02 /* DetailsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C18287DE2470021FC02 /* DetailsViewController.m */; };
 		E3A97C1F288099E40021FC02 /* ListingReservationsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C1E288099E40021FC02 /* ListingReservationsViewController.m */; };
 		E3A97C222880A0410021FC02 /* ReservationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */; };
+		E3A97C252881ED7C0021FC02 /* BookingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C242881ED7C0021FC02 /* BookingsViewController.m */; };
+		E3A97C2B28821AB30021FC02 /* BookingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C2A28821AB30021FC02 /* BookingTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -112,6 +114,10 @@
 		E3A97C1E288099E40021FC02 /* ListingReservationsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ListingReservationsViewController.m; sourceTree = "<group>"; };
 		E3A97C202880A0410021FC02 /* ReservationTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReservationTableViewCell.h; sourceTree = "<group>"; };
 		E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReservationTableViewCell.m; sourceTree = "<group>"; };
+		E3A97C232881ED7C0021FC02 /* BookingsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookingsViewController.h; sourceTree = "<group>"; };
+		E3A97C242881ED7C0021FC02 /* BookingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookingsViewController.m; sourceTree = "<group>"; };
+		E3A97C2928821AB30021FC02 /* BookingTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookingTableViewCell.h; sourceTree = "<group>"; };
+		E3A97C2A28821AB30021FC02 /* BookingTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookingTableViewCell.m; sourceTree = "<group>"; };
 		EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.release.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -253,6 +259,10 @@
 				E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */,
 				E3A97C17287DE2470021FC02 /* DetailsViewController.h */,
 				E3A97C18287DE2470021FC02 /* DetailsViewController.m */,
+				E3A97C232881ED7C0021FC02 /* BookingsViewController.h */,
+				E3A97C242881ED7C0021FC02 /* BookingsViewController.m */,
+				E3A97C2928821AB30021FC02 /* BookingTableViewCell.h */,
+				E3A97C2A28821AB30021FC02 /* BookingTableViewCell.m */,
 				E3A97C1D288099E40021FC02 /* ListingReservationsViewController.h */,
 				E3A97C1E288099E40021FC02 /* ListingReservationsViewController.m */,
 				E3A97C202880A0410021FC02 /* ReservationTableViewCell.h */,
@@ -525,6 +535,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A97C252881ED7C0021FC02 /* BookingsViewController.m in Sources */,
 				E3A97C0B2878D46E0021FC02 /* Reservation.m in Sources */,
 				E3A97C0428778BA80021FC02 /* ImageCarouselCollectionViewCell.m in Sources */,
 				E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */,
@@ -535,6 +546,7 @@
 				E3A97BC52874A6AC0021FC02 /* main.m in Sources */,
 				E3A97BB72874A6AB0021FC02 /* SceneDelegate.m in Sources */,
 				E3A97BF12874F1070021FC02 /* SignInViewController.m in Sources */,
+				E3A97C2B28821AB30021FC02 /* BookingTableViewCell.m in Sources */,
 				E3A97C112878D5E10021FC02 /* TimeInterval.m in Sources */,
 				E3A97C19287DE2470021FC02 /* DetailsViewController.m in Sources */,
 				E3A97C01287787A10021FC02 /* CreateListingViewController.m in Sources */,
