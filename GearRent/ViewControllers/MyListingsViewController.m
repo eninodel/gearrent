@@ -42,10 +42,12 @@
     [query includeKey:@"availabilities"];
     [query includeKey:@"reservations"];
     [query includeKey:@"geoPoint"];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error){
-        if(error == nil){
-            self.tableData = objects;
-            [self.listingsTableView reloadData];
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
+            strongSelf.tableData = objects;
+            [strongSelf.listingsTableView reloadData];
         } else{
             NSLog(@"END: Error in querying listings");
         }

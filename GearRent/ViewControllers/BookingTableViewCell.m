@@ -34,13 +34,15 @@
     self.statusLabel.text = self.reservation.status;
     PFQuery *listingPhotoQuery = [PFQuery queryWithClassName:@"Listing"];
     [listingPhotoQuery whereKey:@"objectId" equalTo:self.reservation.itemId];
+    __weak typeof(self) weakSelf = self;
     [listingPhotoQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             Item *listing = (Item *) objects[0];
-            self.titleLabel.text = listing.title;
+            strongSelf.titleLabel.text = listing.title;
             PFFileObject *image = (PFFileObject *) listing.images[0];
             NSURL *imageURL = [NSURL URLWithString: image.url];
-            [self.imageView setImageWithURL:imageURL];
+            [strongSelf.imageView setImageWithURL:imageURL];
         } else{
             NSLog(@"END: Error in fetching photos");
         }

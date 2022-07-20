@@ -39,10 +39,12 @@
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo:self.reservation.leaseeId];
     [query includeKey:@"name"];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             PFUser *leasee = objects[0];
-            self.leaseeLabel.text = leasee[@"name"];
+            strongSelf.leaseeLabel.text = leasee[@"name"];
         }else{
             NSLog(@"END: Error in getting leasee");
         }

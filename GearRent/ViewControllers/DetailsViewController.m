@@ -48,10 +48,12 @@
     self.descriptionLabel.text = self.listing.itemDescription;
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo: self.listing.ownerId];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             PFUser *owner = (PFUser *) objects[0];
-            self.ownerLabel.text = owner[@"name"];
+            strongSelf.ownerLabel.text = owner[@"name"];
         } else{
             NSLog(@"END: Error in getting user in DetailsViewController");
         }
@@ -79,25 +81,26 @@
     [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
     [listingQuery includeKey: @"availabilities"];
     [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             Item *item = (Item *) objects[0];
             for(int i = 0; i < item.availabilities.count; i++){
                 TimeInterval *interval = (TimeInterval *) item.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
-                [self.datesAvailable addObject:dateInterval];
+                [strongSelf.datesAvailable addObject:dateInterval];
             }
             PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
-            [reservationQuery whereKey:@"itemId" equalTo: [self.listing objectId]];
+            [reservationQuery whereKey:@"itemId" equalTo: [strongSelf.listing objectId]];
             [reservationQuery includeKey:@"dates"];
             [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
                 if(error == nil){
                     for(int i = 0; i < objects.count; i++){
                         Reservation *reservation = (Reservation *) objects[i];
                         NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
-                        [self.reservations addObject:reservation];
-                        [self.datesReserved addObject:dateInterval];
+                        [strongSelf.reservations addObject:reservation];
+                        [strongSelf.datesReserved addObject:dateInterval];
                     }
-                    [self.calendarManager reload];
+                    [strongSelf.calendarManager reload];
                 }else{
                     NSLog(@"END: Error in querying reservations");
                 }

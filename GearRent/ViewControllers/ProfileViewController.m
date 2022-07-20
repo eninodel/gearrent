@@ -65,20 +65,25 @@
     PFQuery *query = [PFUser query];
     [query whereKey: @"objectId" equalTo:[user objectId]];
     [query includeKey:@"profileImage"];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             PFUser *user = (PFUser*) objects[0];
             UIImage *defaultProfileImage = [UIImage imageNamed:@"DefaultProfileImage"];
             if(user[@"profileImage"] == nil){
                 UIImage *defaultProfileImage = [UIImage imageNamed:@"DefaultProfileImage"];
-                self.prevProfileImage = defaultProfileImage;
-                [self.profileImageView setImage:defaultProfileImage];
+                strongSelf.prevProfileImage = defaultProfileImage;
+                [strongSelf.profileImageView setImage:defaultProfileImage];
             }else{
                 PFFileObject *image = (PFFileObject *) user[@"profileImage"];
                 NSURL *profileImageURL = [NSURL URLWithString: image.url];
-                [self.profileImageView setImageWithURLRequest:[NSURLRequest requestWithURL:profileImageURL] placeholderImage:defaultProfileImage success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
-                    self.prevProfileImage = image;
-                    [self.profileImageView setImage:image];
+                [strongSelf.profileImageView setImageWithURLRequest:[NSURLRequest requestWithURL:profileImageURL] placeholderImage:defaultProfileImage success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
+                    typeof (self) strongSelf = weakSelf;
+                    if(strongSelf){
+                        strongSelf.prevProfileImage = image;
+                        [strongSelf.profileImageView setImage:image];
+                    }
                 } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
                     NSLog(@"END: Error in setting profileImageView");
                 }];

@@ -65,14 +65,16 @@
     PFQuery *query = [PFQuery queryWithClassName:@"Reservation"];
     [query includeKey:@"dates"];
     [query whereKey:@"itemId" equalTo:[self.listing objectId] ];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             // check if available
-            if(self.listing.isAlwaysAvailable == YES){
+            if(strongSelf.listing.isAlwaysAvailable == YES){
                 status = @"Available to Rent today";
             }
-            for(int i = 0; i < self.listing.availabilities.count; i++){
-                TimeInterval *interval = (TimeInterval *) self.listing.availabilities[i];
+            for(int i = 0; i < strongSelf.listing.availabilities.count; i++){
+                TimeInterval *interval = (TimeInterval *) strongSelf.listing.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate: interval.startDate endDate: interval.endDate];
                 if([dateInterval containsDate:today]){
                     status =  @"Available to Rent today";
@@ -88,9 +90,9 @@
                     status =  reservationString;
                 }
             }
-            self.statusLabel.hidden = NO;
-            self.statusLabel.text = status;
-            [self.statusLabel sizeToFit];
+            strongSelf.statusLabel.hidden = NO;
+            strongSelf.statusLabel.text = status;
+            [strongSelf.statusLabel sizeToFit];
         }else{
             NSLog(@"END: Error fetching reservation dates");
         }
