@@ -38,11 +38,16 @@
     [listingPhotoQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
-            Item *listing = (Item *) objects[0];
-            strongSelf.titleLabel.text = listing.title;
-            PFFileObject *image = (PFFileObject *) listing.images[0];
-            NSURL *imageURL = [NSURL URLWithString: image.url];
-            [strongSelf.imageView setImageWithURL:imageURL];
+            if(objects.count > 0 && [objects[0] isKindOfClass:[Item class]]){
+                Item *listing = (Item *)objects[0];
+                strongSelf.titleLabel.text = listing.title;
+                PFFileObject *image = (PFFileObject *) listing.images[0];
+                NSURL *imageURL = [NSURL URLWithString: image.url];
+                [strongSelf.imageView setImageWithURL:imageURL];
+            } else{
+                UIImage *image = [UIImage imageNamed:@"DefaultListingImage"];
+                [strongSelf.imageView setImage:image];
+            }
         } else{
             NSLog(@"END: Error in fetching photos");
         }

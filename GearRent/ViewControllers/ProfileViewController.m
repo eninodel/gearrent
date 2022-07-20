@@ -36,7 +36,7 @@
 - (IBAction)didSaveProfile:(id)sender;
 - (IBAction)didCancelEditingProfile:(id)sender;
 
-@property (assign, nonatomic) BOOL *editing;
+@property (assign, nonatomic) BOOL editing;
 @end
 
 @implementation ProfileViewController
@@ -44,7 +44,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     PFUser *user =[PFUser currentUser];
-    [self setEditingHidden:(BOOL *) NO];
+    [self setEditingHidden:NO];
     self.emailLabel.text = user[@"userEmail"];
     self.usernameLabel.text = user.username;
     self.nameLabel.text = user[@"name"];
@@ -96,7 +96,7 @@
 
 - (IBAction)didCancelEditingProfile:(id)sender {
     [self.profileImageView setImage:self.prevProfileImage];
-    [self setEditingHidden:(BOOL *) false];
+    [self setEditingHidden:NO];
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
@@ -126,7 +126,7 @@
             NSLog(@"%@", error.description);
         }
     }];
-    [self setEditingHidden:(BOOL *) false];
+    [self setEditingHidden: NO];
     [[UIApplication sharedApplication] sendAction:@selector(resignFirstResponder) to:nil from:nil forEvent:nil];
 }
 
@@ -157,10 +157,10 @@
 - (IBAction)didEditProfile:(id)sender {
     self.nameTextField.text = [PFUser currentUser][@"name"];
     self.emailTextField.text = [PFUser currentUser][@"userEmail"];
-    [self setEditingHidden: (BOOL *) true];
+    [self setEditingHidden:YES];
 }
 
-- (void)setEditingHidden:(BOOL *)editing {
+- (void)setEditingHidden:(BOOL)editing {
     self.editing = editing;
     self.paymentsUIButton.hidden = editing;
     self.notificationsUIButton.hidden = editing;

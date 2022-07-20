@@ -168,7 +168,6 @@
     newItem.city = self.cityTextField.text;
     newItem.availabilities =  [self getTimeIntervals:self.datesSelected];
     newItem.isAlwaysAvailable = [self.isAlwaysAvailableSwitch isOn];
-    
     [newItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(succeeded){
             NSLog(@"END: Item successfully saved");
@@ -215,9 +214,9 @@
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
-    if([self isDateReserved:dayView.date] == YES){ // date is reserved already
+    if([self isDateReserved:dayView.date]){ // date is reserved already
         dayView.circleView.backgroundColor = UIColor.blackColor;
-    } else if([self isInDatesSelected: dayView.date] == YES){ // date is available
+    } else if([self isInDatesSelected: dayView.date]){ // date is available
         dayView.circleView.backgroundColor = UIColor.blueColor;
     } else if ([self.isAlwaysAvailableSwitch isOn] == NO){ // date not avaiable
         dayView.circleView.hidden = YES;
@@ -226,8 +225,8 @@
 
 - (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     // deselect date
-    if([self isDateReserved:dayView.date] == YES) return;
-    if([self.isAlwaysAvailableSwitch isOn] == YES){
+    if([self isDateReserved:dayView.date]) return;
+    if([self.isAlwaysAvailableSwitch isOn]){
         [self.datesSelected removeAllObjects];
         [self.isAlwaysAvailableSwitch setOn:NO];
     } else if([self isInDatesSelected:dayView.date]){
@@ -239,7 +238,7 @@
 }
 
 - (BOOL)isInDatesSelected:(NSDate *)date {
-    if([self.isAlwaysAvailableSwitch isOn] == YES) return YES;
+    if([self.isAlwaysAvailableSwitch isOn]) return YES;
     for(NSDate *dateSelected in self.datesSelected){
         if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]){
             return YES;
@@ -251,7 +250,7 @@
 - (BOOL)isDateReserved:(NSDate *)date {
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
-        if([interval containsDate:date] == YES){
+        if([interval containsDate:date]){
             return YES;
         }
     }
@@ -259,10 +258,10 @@
 }
 
 - (BOOL)isDateAvailable:(NSDate *)date {
-    if(self.listing.isAlwaysAvailable == YES) return YES;
+    if(self.listing.isAlwaysAvailable) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
-        if([interval containsDate:date] == YES){
+        if([interval containsDate:date]){
             return YES;
         }
     }
