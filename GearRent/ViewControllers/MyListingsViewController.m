@@ -10,13 +10,15 @@
 #import "ListingTableViewCell.h"
 #import "CreateListingViewController.h"
 #import "ListingReservationsViewController.h"
-#import "../Models/Item.h"
-#import "../Models/Reservation.h"
-#import "../Models/TimeInterval.h"
+#import "Item.h"
+#import "Reservation.h"
+#import "TimeInterval.h"
 
 @interface MyListingsViewController ()<UITableViewDelegate, UITableViewDataSource, ListingTableViewCellDelegate>
-@property (weak, nonatomic) IBOutlet UITableView *listingsTableView;
+
+@property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
 @property (strong, nonatomic) NSArray *tableData;
+
 - (IBAction)didCreateListing:(id)sender;
 
 @end
@@ -40,16 +42,17 @@
     [query includeKey:@"availabilities"];
     [query includeKey:@"reservations"];
     [query includeKey:@"geoPoint"];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error){
-        if(error == nil){
-            self.tableData = objects;
-            [self.listingsTableView reloadData];
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
+            strongSelf.tableData = objects;
+            [strongSelf.listingsTableView reloadData];
         } else{
             NSLog(@"END: Error in querying listings");
         }
     }];
 }
-
 
 - (IBAction)didCreateListing:(id)sender {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -83,7 +86,7 @@
     [self presentViewController:navigationVC animated:YES completion:nil];
 }
 
-- (void) didViewReservations:(Item *)listing{
+- (void)didViewReservations:(Item *)listing {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"ViewReservationsNavigationController"];
     ListingReservationsViewController *reservationsVC = (ListingReservationsViewController *) navigationVC.topViewController;

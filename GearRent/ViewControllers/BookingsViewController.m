@@ -8,11 +8,11 @@
 #import "BookingsViewController.h"
 #import "Parse/Parse.h"
 #import "BookingTableViewCell.h"
-#import "../Models/Reservation.h"
+#import "Reservation.h"
 
 @interface BookingsViewController () <UITableViewDelegate, UITableViewDataSource>
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *reservations;
 
 @end
@@ -25,18 +25,21 @@
     self.tableView.dataSource = self;
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self fetchData];
 }
 
-- (void)fetchData{
+- (void)fetchData {
     PFQuery *query = [PFQuery queryWithClassName:@"Reservation"];
     [query whereKey:@"leaseeId" equalTo:[[PFUser currentUser] objectId]];
     [query includeKey:@"dates"];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
-            self.reservations = objects;
-            [self.tableView reloadData];
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
+            strongSelf.reservations = objects;
+            [strongSelf.tableView reloadData];
         } else{
             NSLog(@"END: Error fetching reservations for user");
         }
@@ -54,7 +57,7 @@
     return self.reservations.count;
 }
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 

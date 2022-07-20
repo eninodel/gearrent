@@ -9,8 +9,10 @@
 #import "Parse/Parse.h"
 
 @interface SignInViewController ()
-@property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
-@property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
+
+@property (strong, nonatomic) IBOutlet UITextField *usernameTextField;
+@property (strong, nonatomic) IBOutlet UITextField *passwordTextField;
+
 - (IBAction)didSignUp:(id)sender;
 - (IBAction)didSignIn:(id)sender;
 
@@ -18,16 +20,10 @@
 
 @implementation SignInViewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
-
 - (void)signIn {
     NSLog(@"END: In signIn");
     NSString *username = self.usernameTextField.text;
     NSString *password = self.passwordTextField.text;
-    
     [PFUser logInWithUsernameInBackground:username password:password block:^(PFUser * user, NSError *  error) {
         if (error != nil) {
             NSLog(@"User log in failed: %@", error.localizedDescription);

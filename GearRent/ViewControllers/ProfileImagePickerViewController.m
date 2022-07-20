@@ -8,7 +8,9 @@
 #import "ProfileImagePickerViewController.h"
 
 @interface ProfileImagePickerViewController ()
-@property (weak, nonatomic) IBOutlet UIImageView *profileUIImageView;
+
+@property (strong, nonatomic) IBOutlet UIImageView *profileUIImageView;
+
 - (IBAction)didOpenGallery:(id)sender;
 - (IBAction)didOpenCamera:(id)sender;
 - (IBAction)didSave:(id)sender;
@@ -17,11 +19,6 @@
 @end
 
 @implementation ProfileImagePickerViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
 
 - (IBAction)didOpenGallery:(id)sender {
     [self displayGallery];
@@ -74,4 +71,5 @@
     }
     [self dismissViewControllerAnimated:YES completion:nil];
 }
+
 @end

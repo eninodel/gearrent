@@ -8,11 +8,11 @@
 #import "ReservationTableViewCell.h"
 
 @interface ReservationTableViewCell()
-@property (weak, nonatomic) IBOutlet UILabel *leaseeLabel;
-@property (weak, nonatomic) IBOutlet UILabel *datesLeasedLabel;
-@property (weak, nonatomic) IBOutlet UILabel *currentStatusLabel;
-@property (weak, nonatomic) IBOutlet UIButton *declineButton;
-@property (weak, nonatomic) IBOutlet UIButton *acceptButton;
+@property (strong, nonatomic) IBOutlet UILabel *leaseeLabel;
+@property (strong, nonatomic) IBOutlet UILabel *datesLeasedLabel;
+@property (strong, nonatomic) IBOutlet UILabel *currentStatusLabel;
+@property (strong, nonatomic) IBOutlet UIButton *declineButton;
+@property (strong, nonatomic) IBOutlet UIButton *acceptButton;
 
 - (IBAction)didAccept:(id)sender;
 - (IBAction)didDecline:(id)sender;
@@ -20,18 +20,13 @@
 
 @implementation ReservationTableViewCell
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    // Initialization code
-}
-
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 
     // Configure the view for the selected state
 }
 
-- (void)initializeCell{
+- (void)initializeCell {
     self.currentStatusLabel.text = self.reservation.status;
     NSString *datesLeasedString = @"Dates leased: ";
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -44,10 +39,12 @@
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo:self.reservation.leaseeId];
     [query includeKey:@"name"];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             PFUser *leasee = objects[0];
-            self.leaseeLabel.text = leasee[@"name"];
+            strongSelf.leaseeLabel.text = leasee[@"name"];
         }else{
             NSLog(@"END: Error in getting leasee");
         }

@@ -10,32 +10,32 @@
 #import <JTCalendar/JTCalendar.h>
 #import "ProfileImagePickerViewController.h"
 #import "UIImageView+AFNetworking.h"
-#import "../Models/TimeInterval.h"
-#import "../Models/Item.h"
-#import "../Models/Reservation.h"
+#import "TimeInterval.h"
+#import "Item.h"
+#import "Reservation.h"
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
 
 @interface CreateListingViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate,ProfileImagePickerViewControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
-@property (weak, nonatomic) IBOutlet UIView *calendarView;
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UICollectionView *imageCarouselCollectionView;
+@property (strong, nonatomic) IBOutlet UIView *calendarView;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (strong, nonatomic) IBOutlet UICollectionView *imageCarouselCollectionView;
 @property (strong, nonatomic) NSMutableArray *carouselImages;
 @property (strong, nonatomic) NSMutableArray *datesAvailable;
 @property (strong, nonatomic) NSMutableArray *datesSelected;
 @property (strong, nonatomic) NSMutableArray *datesReserved;
-@property (weak, nonatomic) IBOutlet UILabel *addImagesLabel;
-@property (weak, nonatomic) IBOutlet UITextField *titleTextField;
-@property (weak, nonatomic) IBOutlet UITextField *priceTextField;
-@property (weak, nonatomic) IBOutlet UITextField *cityTextField;
-@property (weak, nonatomic) IBOutlet UITextField *descriptionTextField;
-@property (weak, nonatomic) IBOutlet UILabel *nameLabel;
-@property (weak, nonatomic) IBOutlet MKMapView *mapView;
+@property (strong, nonatomic) IBOutlet UILabel *addImagesLabel;
+@property (strong, nonatomic) IBOutlet UITextField *titleTextField;
+@property (strong, nonatomic) IBOutlet UITextField *priceTextField;
+@property (strong, nonatomic) IBOutlet UITextField *cityTextField;
+@property (strong, nonatomic) IBOutlet UITextField *descriptionTextField;
+@property (strong, nonatomic) IBOutlet UILabel *nameLabel;
+@property (strong, nonatomic) IBOutlet MKMapView *mapView;
 @property (strong, nonatomic) CLLocationManager *locationManager;
-@property (weak, nonatomic) IBOutlet UISwitch *isAlwaysAvailableSwitch;
-@property (weak, nonatomic) IBOutlet UIButton *addImagesButton;
-@property (weak, nonatomic) IBOutlet UIButton *deleteListingButton;
-@property (weak, nonatomic) IBOutlet UINavigationItem *navigationTitle;
+@property (strong, nonatomic) IBOutlet UISwitch *isAlwaysAvailableSwitch;
+@property (strong, nonatomic) IBOutlet UIButton *addImagesButton;
+@property (strong, nonatomic) IBOutlet UIButton *deleteListingButton;
+@property (strong, nonatomic) IBOutlet UINavigationItem *navigationTitle;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -97,26 +97,28 @@
         PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
         [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
         [listingQuery includeKey: @"availabilities"];
+        __weak typeof(self) weakSelf = self;
         [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-            if(error == nil){
+            typeof(self) strongSelf = weakSelf;
+            if(error == nil && strongSelf){
                 Item *item = (Item *) objects[0];
                 for(int i = 0; i < item.availabilities.count; i++){
                     TimeInterval *interval = (TimeInterval *) item.availabilities[i];
                     NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
-                    [self.datesAvailable addObject:dateInterval];
+                    [strongSelf.datesAvailable addObject:dateInterval];
                 }
                 PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
-                [reservationQuery whereKey:@"itemId" equalTo: [self.listing objectId]];
+                [reservationQuery whereKey:@"itemId" equalTo: [strongSelf.listing objectId]];
                 [reservationQuery includeKey:@"dates"];
                 [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
                     if(error == nil){
                         for(int i = 0; i < objects.count; i++){
                             Reservation *reservation = (Reservation *) objects[i];
                             NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
-                            [self.datesReserved addObject:dateInterval];
+                            [strongSelf.datesReserved addObject:dateInterval];
                         }
-                        [self populateDatesSelected];
-                        [self.calendarManager reload];
+                        [strongSelf populateDatesSelected];
+                        [strongSelf.calendarManager reload];
                     }else{
                         NSLog(@"END: Error in querying reservations");
                     }
@@ -166,7 +168,6 @@
     newItem.city = self.cityTextField.text;
     newItem.availabilities =  [self getTimeIntervals:self.datesSelected];
     newItem.isAlwaysAvailable = [self.isAlwaysAvailableSwitch isOn];
-    
     [newItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(succeeded){
             NSLog(@"END: Item successfully saved");
@@ -213,9 +214,9 @@
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
-    if([self isDateReserved:dayView.date] == YES){ // date is reserved already
+    if([self isDateReserved:dayView.date]){ // date is reserved already
         dayView.circleView.backgroundColor = UIColor.blackColor;
-    } else if([self isInDatesSelected: dayView.date] == YES){ // date is available
+    } else if([self isInDatesSelected: dayView.date]){ // date is available
         dayView.circleView.backgroundColor = UIColor.blueColor;
     } else if ([self.isAlwaysAvailableSwitch isOn] == NO){ // date not avaiable
         dayView.circleView.hidden = YES;
@@ -224,8 +225,8 @@
 
 - (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     // deselect date
-    if([self isDateReserved:dayView.date] == YES) return;
-    if([self.isAlwaysAvailableSwitch isOn] == YES){
+    if([self isDateReserved:dayView.date]) return;
+    if([self.isAlwaysAvailableSwitch isOn]){
         [self.datesSelected removeAllObjects];
         [self.isAlwaysAvailableSwitch setOn:NO];
     } else if([self isInDatesSelected:dayView.date]){
@@ -237,7 +238,7 @@
 }
 
 - (BOOL)isInDatesSelected:(NSDate *)date {
-    if([self.isAlwaysAvailableSwitch isOn] == YES) return YES;
+    if([self.isAlwaysAvailableSwitch isOn]) return YES;
     for(NSDate *dateSelected in self.datesSelected){
         if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]){
             return YES;
@@ -246,21 +247,21 @@
     return NO;
 }
 
-- (Boolean)isDateReserved:(NSDate *)date {
+- (BOOL)isDateReserved:(NSDate *)date {
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
-        if([interval containsDate:date] == YES){
+        if([interval containsDate:date]){
             return YES;
         }
     }
     return NO;
 }
 
-- (Boolean)isDateAvailable:(NSDate *)date {
-    if(self.listing.isAlwaysAvailable == YES) return YES;
+- (BOOL)isDateAvailable:(NSDate *)date {
+    if(self.listing.isAlwaysAvailable) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
-        if([interval containsDate:date] == YES){
+        if([interval containsDate:date]){
             return YES;
         }
     }
@@ -365,7 +366,7 @@
     [self.imageCarouselCollectionView reloadData];
 }
 
-- (void)dismissKeyboard{
+- (void)dismissKeyboard {
      [self.view endEditing:YES];
 }
 
@@ -381,4 +382,5 @@
     }
     return [PFFileObject fileObjectWithName:@"image.png" data:imageData];
 }
+
 @end

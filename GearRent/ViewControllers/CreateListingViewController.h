@@ -7,7 +7,7 @@
 
 #import <UIKit/UIKit.h>
 #import <JTCalendar/JTCalendar.h>
-#import "../Models/Item.h"
+#import "Item.h"
 
 NS_ASSUME_NONNULL_BEGIN
 @interface CreateListingViewController : UIViewController<JTCalendarDelegate>

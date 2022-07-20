@@ -12,19 +12,20 @@
 #import "Parse/Parse.h"
 #import <JTCalendar/JTCalendar.h>
 #import "UIImageView+AFNetworking.h"
-#import "../Models/TimeInterval.h"
-#import "../Models/Item.h"
-#import "../Models/Reservation.h"
+#import "TimeInterval.h"
+#import "Item.h"
+#import "Reservation.h"
 
 @interface DetailsViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
-@property (weak, nonatomic) IBOutlet UICollectionView *carouselCollectionView;
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *locationLabel;
-@property (weak, nonatomic) IBOutlet UILabel *ownerLabel;
-@property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;
-@property (weak, nonatomic) IBOutlet UILabel *priceLabel;
-@property (weak, nonatomic) IBOutlet MKMapView *mapView;
-@property (weak, nonatomic) IBOutlet UIButton *reserveNowButton;
+
+@property (strong, nonatomic) IBOutlet UICollectionView *carouselCollectionView;
+@property (strong, nonatomic) IBOutlet UILabel *titleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
+@property (strong, nonatomic) IBOutlet UILabel *ownerLabel;
+@property (strong, nonatomic) IBOutlet UILabel *descriptionLabel;
+@property (strong, nonatomic) IBOutlet UILabel *priceLabel;
+@property (strong, nonatomic) IBOutlet MKMapView *mapView;
+@property (strong, nonatomic) IBOutlet UIButton *reserveNowButton;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) NSMutableArray *reservations;
 @property (strong, nonatomic) NSMutableArray *datesSelected;
@@ -47,10 +48,12 @@
     self.descriptionLabel.text = self.listing.itemDescription;
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo: self.listing.ownerId];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             PFUser *owner = (PFUser *) objects[0];
-            self.ownerLabel.text = owner[@"name"];
+            strongSelf.ownerLabel.text = owner[@"name"];
         } else{
             NSLog(@"END: Error in getting user in DetailsViewController");
         }
@@ -78,25 +81,26 @@
     [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
     [listingQuery includeKey: @"availabilities"];
     [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             Item *item = (Item *) objects[0];
             for(int i = 0; i < item.availabilities.count; i++){
                 TimeInterval *interval = (TimeInterval *) item.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
-                [self.datesAvailable addObject:dateInterval];
+                [strongSelf.datesAvailable addObject:dateInterval];
             }
             PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
-            [reservationQuery whereKey:@"itemId" equalTo: [self.listing objectId]];
+            [reservationQuery whereKey:@"itemId" equalTo: [strongSelf.listing objectId]];
             [reservationQuery includeKey:@"dates"];
             [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
                 if(error == nil){
                     for(int i = 0; i < objects.count; i++){
                         Reservation *reservation = (Reservation *) objects[i];
                         NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
-                        [self.reservations addObject:reservation];
-                        [self.datesReserved addObject:dateInterval];
+                        [strongSelf.reservations addObject:reservation];
+                        [strongSelf.datesReserved addObject:dateInterval];
                     }
-                    [self.calendarManager reload];
+                    [strongSelf.calendarManager reload];
                 }else{
                     NSLog(@"END: Error in querying reservations");
                 }
@@ -167,7 +171,7 @@
     }
 }
 
-- (Boolean)isDateReserved:(NSDate *)date {
+- (BOOL)isDateReserved:(NSDate *)date {
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
         Reservation *reservation = (Reservation *) self.reservations[i];
@@ -178,7 +182,7 @@
     return NO;
 }
 
-- (Boolean)isDateAvailable:(NSDate *)date {
+- (BOOL)isDateAvailable:(NSDate *)date {
     if(self.listing.isAlwaysAvailable == YES) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];

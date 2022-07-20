@@ -7,20 +7,21 @@
 
 #import "ListingTableViewCell.h"
 #import "UIImageView+AFNetworking.h"
-#import "../Models/TimeInterval.h"
-#import "../Models/Reservation.h"
-#import "../Models/Item.h"
+#import "TimeInterval.h"
+#import "Reservation.h"
+#import "Item.h"
 #import "CreateListingViewController.h"
 
 @interface ListingTableViewCell ()
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *locationLabel;
-@property (weak, nonatomic) IBOutlet UILabel *priceLabel;
-@property (weak, nonatomic) IBOutlet UIImageView *listingImageView;
-@property (weak, nonatomic) IBOutlet UILabel *statusLabel;
-@property (weak, nonatomic) IBOutlet UIView *cellOptionsView;
-@property (weak, nonatomic) IBOutlet UIButton *editListingButton;
-@property (weak, nonatomic) IBOutlet UIButton *viewReservationsButton;
+
+@property (strong, nonatomic) IBOutlet UILabel *titleLabel;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
+@property (strong, nonatomic) IBOutlet UILabel *priceLabel;
+@property (strong, nonatomic) IBOutlet UIImageView *listingImageView;
+@property (strong, nonatomic) IBOutlet UILabel *statusLabel;
+@property (strong, nonatomic) IBOutlet UIView *cellOptionsView;
+@property (strong, nonatomic) IBOutlet UIButton *editListingButton;
+@property (strong, nonatomic) IBOutlet UIButton *viewReservationsButton;
 
 - (IBAction)didViewReservations:(id)sender;
 - (IBAction)didEditListing:(id)sender;
@@ -28,11 +29,6 @@
 @end
 
 @implementation ListingTableViewCell
-
-- (void)awakeFromNib {
-    [super awakeFromNib];
-    // Initialization code
-}
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
@@ -69,14 +65,16 @@
     PFQuery *query = [PFQuery queryWithClassName:@"Reservation"];
     [query includeKey:@"dates"];
     [query whereKey:@"itemId" equalTo:[self.listing objectId] ];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
             // check if available
-            if(self.listing.isAlwaysAvailable == YES){
+            if(strongSelf.listing.isAlwaysAvailable == YES){
                 status = @"Available to Rent today";
             }
-            for(int i = 0; i < self.listing.availabilities.count; i++){
-                TimeInterval *interval = (TimeInterval *) self.listing.availabilities[i];
+            for(int i = 0; i < strongSelf.listing.availabilities.count; i++){
+                TimeInterval *interval = (TimeInterval *) strongSelf.listing.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate: interval.startDate endDate: interval.endDate];
                 if([dateInterval containsDate:today]){
                     status =  @"Available to Rent today";
@@ -92,9 +90,9 @@
                     status =  reservationString;
                 }
             }
-            self.statusLabel.hidden = NO;
-            self.statusLabel.text = status;
-            [self.statusLabel sizeToFit];
+            strongSelf.statusLabel.hidden = NO;
+            strongSelf.statusLabel.text = status;
+            [strongSelf.statusLabel sizeToFit];
         }else{
             NSLog(@"END: Error fetching reservation dates");
         }
@@ -121,4 +119,5 @@
 - (IBAction)didViewReservations:(id)sender {
     [self.delegate didViewReservations: self.listing];
 }
+
 @end

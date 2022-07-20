@@ -199,6 +199,7 @@
 		E3A97BB12874A6AB0021FC02 /* GearRent */ = {
 			isa = PBXGroup;
 			children = (
+				E3A97C2C288879D40021FC02 /* Views */,
 				E3A97C052878CEAE0021FC02 /* Models */,
 				E3A97BE72874A6C30021FC02 /* Delegates */,
 				E3A97BE82874A6D20021FC02 /* ViewControllers */,
@@ -253,20 +254,12 @@
 				E3A97BFD287766D40021FC02 /* MyListingsViewController.m */,
 				E3A97BFF287787A10021FC02 /* CreateListingViewController.h */,
 				E3A97C00287787A10021FC02 /* CreateListingViewController.m */,
-				E3A97C0228778BA80021FC02 /* ImageCarouselCollectionViewCell.h */,
-				E3A97C0328778BA80021FC02 /* ImageCarouselCollectionViewCell.m */,
-				E3A97C14287CE18E0021FC02 /* ListingTableViewCell.h */,
-				E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */,
 				E3A97C17287DE2470021FC02 /* DetailsViewController.h */,
 				E3A97C18287DE2470021FC02 /* DetailsViewController.m */,
 				E3A97C232881ED7C0021FC02 /* BookingsViewController.h */,
 				E3A97C242881ED7C0021FC02 /* BookingsViewController.m */,
-				E3A97C2928821AB30021FC02 /* BookingTableViewCell.h */,
-				E3A97C2A28821AB30021FC02 /* BookingTableViewCell.m */,
 				E3A97C1D288099E40021FC02 /* ListingReservationsViewController.h */,
 				E3A97C1E288099E40021FC02 /* ListingReservationsViewController.m */,
-				E3A97C202880A0410021FC02 /* ReservationTableViewCell.h */,
-				E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -295,6 +288,21 @@
 				E3A97C102878D5E10021FC02 /* TimeInterval.m */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		E3A97C2C288879D40021FC02 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E3A97C2928821AB30021FC02 /* BookingTableViewCell.h */,
+				E3A97C2A28821AB30021FC02 /* BookingTableViewCell.m */,
+				E3A97C14287CE18E0021FC02 /* ListingTableViewCell.h */,
+				E3A97C15287CE18E0021FC02 /* ListingTableViewCell.m */,
+				E3A97C202880A0410021FC02 /* ReservationTableViewCell.h */,
+				E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */,
+				E3A97C0228778BA80021FC02 /* ImageCarouselCollectionViewCell.h */,
+				E3A97C0328778BA80021FC02 /* ImageCarouselCollectionViewCell.m */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -12,23 +12,19 @@
 #import "Parse/Parse.h"
 
 @interface GettingStartedViewController ()
-@property (weak, nonatomic) IBOutlet UITextField *nameTextField;
-@property (weak, nonatomic) IBOutlet UITextField *emailTextField;
-@property (weak, nonatomic) IBOutlet UITextField *passwordTextField;
-@property (weak, nonatomic) IBOutlet UIButton *signUpButton;
-@property (weak, nonatomic) IBOutlet UITextField *usernameTextField;
+
+@property (strong, nonatomic) IBOutlet UITextField *nameTextField;
+@property (strong, nonatomic) IBOutlet UITextField *emailTextField;
+@property (strong, nonatomic) IBOutlet UITextField *passwordTextField;
+@property (strong, nonatomic) IBOutlet UIButton *signUpButton;
+@property (strong, nonatomic) IBOutlet UITextField *usernameTextField;
+
 - (IBAction)didSignUp:(id)sender;
 - (IBAction)didSignIn:(id)sender;
-
 
 @end
 
 @implementation GettingStartedViewController
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
 
 - (void)registerUser {
     PFUser *newUser = [PFUser user];

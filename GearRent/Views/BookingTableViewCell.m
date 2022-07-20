@@ -6,7 +6,7 @@
 //
 
 #import "BookingTableViewCell.h"
-#import "../Models/Item.h"
+#import "Item.h"
 #import "UIImageView+AFNetworking.h"
 
 @interface BookingTableViewCell()
@@ -23,11 +23,7 @@
 
 @implementation BookingTableViewCell
 
-- (void)awakeFromNib {
-    [super awakeFromNib];
-}
-
-- (void)initializeCell{
+- (void)initializeCell {
     NSString *datesLeasedString = @"Dates leased: ";
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"dd-MM-yyyy";
@@ -38,13 +34,20 @@
     self.statusLabel.text = self.reservation.status;
     PFQuery *listingPhotoQuery = [PFQuery queryWithClassName:@"Listing"];
     [listingPhotoQuery whereKey:@"objectId" equalTo:self.reservation.itemId];
+    __weak typeof(self) weakSelf = self;
     [listingPhotoQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
-            Item *listing = (Item *) objects[0];
-            self.titleLabel.text = listing.title;
-            PFFileObject *image = (PFFileObject *) listing.images[0];
-            NSURL *imageURL = [NSURL URLWithString: image.url];
-            [self.imageView setImageWithURL:imageURL];
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
+            if(objects.count > 0 && [objects[0] isKindOfClass:[Item class]]){
+                Item *listing = (Item *)objects[0];
+                strongSelf.titleLabel.text = listing.title;
+                PFFileObject *image = (PFFileObject *) listing.images[0];
+                NSURL *imageURL = [NSURL URLWithString: image.url];
+                [strongSelf.imageView setImageWithURL:imageURL];
+            } else{
+                UIImage *image = [UIImage imageNamed:@"DefaultListingImage"];
+                [strongSelf.imageView setImage:image];
+            }
         } else{
             NSLog(@"END: Error in fetching photos");
         }

@@ -24,7 +24,6 @@
 @dynamic availabilities;
 @dynamic isAlwaysAvailable;
 
-
 + (nonnull NSString *)parseClassName {
     return @"Listing";
 }

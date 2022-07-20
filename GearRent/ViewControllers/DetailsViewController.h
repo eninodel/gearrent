@@ -6,7 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "../Models/Item.h"
+#import "Item.h"
 #import <JTCalendar/JTCalendar.h>
 
 NS_ASSUME_NONNULL_BEGIN

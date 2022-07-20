@@ -8,8 +8,10 @@
 #import "TimeInterval.h"
 
 @implementation TimeInterval
+
 @dynamic startDate;
 @dynamic endDate;
+
 + (nonnull NSString *)parseClassName {
     return @"TimeInterval";
 }

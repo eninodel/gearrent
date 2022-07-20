@@ -13,8 +13,9 @@
 #import "DetailsViewController.h"
 
 @interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource>
+
 @property (strong, nonatomic) NSArray *tableData;
-@property (weak, nonatomic) IBOutlet UITableView *listingsTableView;
+@property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
 
 - (IBAction)didLogOut:(id)sender;
 
@@ -29,7 +30,7 @@
     self.listingsTableView.dataSource = self;
 }
 
-- (void)viewWillAppear:(BOOL)animated{
+- (void)viewWillAppear:(BOOL)animated {
     [self fetchData];
 }
 
@@ -38,10 +39,12 @@
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"availabilities"];
     [query includeKey:@"reservations"];
+    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-        if(error == nil){
-            self.tableData = objects;
-            [self.listingsTableView reloadData];
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil && strongSelf){
+            strongSelf.tableData = objects;
+            [strongSelf.listingsTableView reloadData];
         } else{
             NSLog(@"END: Error in querying listings");
         }
