@@ -38,6 +38,11 @@
 		E3A97C222880A0410021FC02 /* ReservationTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C212880A0410021FC02 /* ReservationTableViewCell.m */; };
 		E3A97C252881ED7C0021FC02 /* BookingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C242881ED7C0021FC02 /* BookingsViewController.m */; };
 		E3A97C2B28821AB30021FC02 /* BookingTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C2A28821AB30021FC02 /* BookingTableViewCell.m */; };
+		E3A97C38288885660021FC02 /* APIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C37288885660021FC02 /* APIManager.m */; };
+		E3A97C40288885D70021FC02 /* GNBoundingBox.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C3A288885D70021FC02 /* GNBoundingBox.m */; };
+		E3A97C41288885D70021FC02 /* GNWGS84Point.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C3E288885D70021FC02 /* GNWGS84Point.m */; };
+		E3A97C42288885D70021FC02 /* GNGeoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C3F288885D70021FC02 /* GNGeoHash.m */; };
+		E3A97C452888A9510021FC02 /* Edge.m in Sources */ = {isa = PBXBuildFile; fileRef = E3A97C442888A9510021FC02 /* Edge.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +123,16 @@
 		E3A97C242881ED7C0021FC02 /* BookingsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookingsViewController.m; sourceTree = "<group>"; };
 		E3A97C2928821AB30021FC02 /* BookingTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BookingTableViewCell.h; sourceTree = "<group>"; };
 		E3A97C2A28821AB30021FC02 /* BookingTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BookingTableViewCell.m; sourceTree = "<group>"; };
+		E3A97C36288885660021FC02 /* APIManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIManager.h; sourceTree = "<group>"; };
+		E3A97C37288885660021FC02 /* APIManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = APIManager.m; sourceTree = "<group>"; };
+		E3A97C3A288885D70021FC02 /* GNBoundingBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GNBoundingBox.m; sourceTree = "<group>"; };
+		E3A97C3B288885D70021FC02 /* GNWGS84Point.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GNWGS84Point.h; sourceTree = "<group>"; };
+		E3A97C3C288885D70021FC02 /* GNGeoHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GNGeoHash.h; sourceTree = "<group>"; };
+		E3A97C3D288885D70021FC02 /* GNBoundingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GNBoundingBox.h; sourceTree = "<group>"; };
+		E3A97C3E288885D70021FC02 /* GNWGS84Point.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GNWGS84Point.m; sourceTree = "<group>"; };
+		E3A97C3F288885D70021FC02 /* GNGeoHash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GNGeoHash.m; sourceTree = "<group>"; };
+		E3A97C432888A9510021FC02 /* Edge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Edge.h; sourceTree = "<group>"; };
+		E3A97C442888A9510021FC02 /* Edge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Edge.m; sourceTree = "<group>"; };
 		EC76620D764D40435206D1C0 /* Pods-GearRent-GearRentUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GearRent-GearRentUITests.release.xcconfig"; path = "Target Support Files/Pods-GearRent-GearRentUITests/Pods-GearRent-GearRentUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -199,6 +214,8 @@
 		E3A97BB12874A6AB0021FC02 /* GearRent */ = {
 			isa = PBXGroup;
 			children = (
+				E3A97C39288885890021FC02 /* Geohash */,
+				E3A97C35288885510021FC02 /* Networking */,
 				E3A97C2C288879D40021FC02 /* Views */,
 				E3A97C052878CEAE0021FC02 /* Models */,
 				E3A97BE72874A6C30021FC02 /* Delegates */,
@@ -286,6 +303,8 @@
 				E3A97C0A2878D46E0021FC02 /* Reservation.m */,
 				E3A97C0F2878D5E10021FC02 /* TimeInterval.h */,
 				E3A97C102878D5E10021FC02 /* TimeInterval.m */,
+				E3A97C432888A9510021FC02 /* Edge.h */,
+				E3A97C442888A9510021FC02 /* Edge.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -303,6 +322,28 @@
 				E3A97C0328778BA80021FC02 /* ImageCarouselCollectionViewCell.m */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		E3A97C35288885510021FC02 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				E3A97C36288885660021FC02 /* APIManager.h */,
+				E3A97C37288885660021FC02 /* APIManager.m */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		E3A97C39288885890021FC02 /* Geohash */ = {
+			isa = PBXGroup;
+			children = (
+				E3A97C3D288885D70021FC02 /* GNBoundingBox.h */,
+				E3A97C3A288885D70021FC02 /* GNBoundingBox.m */,
+				E3A97C3C288885D70021FC02 /* GNGeoHash.h */,
+				E3A97C3F288885D70021FC02 /* GNGeoHash.m */,
+				E3A97C3B288885D70021FC02 /* GNWGS84Point.h */,
+				E3A97C3E288885D70021FC02 /* GNWGS84Point.m */,
+			);
+			path = Geohash;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -543,16 +584,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3A97C452888A9510021FC02 /* Edge.m in Sources */,
 				E3A97C252881ED7C0021FC02 /* BookingsViewController.m in Sources */,
 				E3A97C0B2878D46E0021FC02 /* Reservation.m in Sources */,
 				E3A97C0428778BA80021FC02 /* ImageCarouselCollectionViewCell.m in Sources */,
 				E3A97BB42874A6AB0021FC02 /* AppDelegate.m in Sources */,
 				E3A97BF42874F37F0021FC02 /* GearForRentViewController.m in Sources */,
+				E3A97C42288885D70021FC02 /* GNGeoHash.m in Sources */,
+				E3A97C40288885D70021FC02 /* GNBoundingBox.m in Sources */,
 				E3A97BF8287622170021FC02 /* ProfileViewController.m in Sources */,
 				E3A97C222880A0410021FC02 /* ReservationTableViewCell.m in Sources */,
 				E3A97BEB2874C15E0021FC02 /* GettingStartedViewController.m in Sources */,
 				E3A97BC52874A6AC0021FC02 /* main.m in Sources */,
 				E3A97BB72874A6AB0021FC02 /* SceneDelegate.m in Sources */,
+				E3A97C38288885660021FC02 /* APIManager.m in Sources */,
 				E3A97BF12874F1070021FC02 /* SignInViewController.m in Sources */,
 				E3A97C2B28821AB30021FC02 /* BookingTableViewCell.m in Sources */,
 				E3A97C112878D5E10021FC02 /* TimeInterval.m in Sources */,
@@ -562,6 +607,7 @@
 				E3A97BEE2874CEB10021FC02 /* VerifyEmailViewController.m in Sources */,
 				E3A97C0E2878D5290021FC02 /* Item.m in Sources */,
 				E3A97C16287CE18E0021FC02 /* ListingTableViewCell.m in Sources */,
+				E3A97C41288885D70021FC02 /* GNWGS84Point.m in Sources */,
 				E3A97C1F288099E40021FC02 /* ListingReservationsViewController.m in Sources */,
 				E3A97BFE287766D40021FC02 /* MyListingsViewController.m in Sources */,
 			);

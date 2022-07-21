@@ -11,13 +11,19 @@
 #import "Parse/Parse.h"
 #import "ListingTableViewCell.h"
 #import "DetailsViewController.h"
+#import "MapKit/MapKit.h"
+#import "CoreLocation/CoreLocation.h"
 
-@interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource>
+@interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate>
 
 @property (strong, nonatomic) NSArray *tableData;
 @property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
+@property (strong, nonatomic) IBOutlet MKMapView *mapView;
+@property (strong, nonatomic) CLLocationManager *locationManager;
+@property (strong, nonatomic) IBOutlet UIButton *listingTypeButton;
 
 - (IBAction)didLogOut:(id)sender;
+- (IBAction)didChangeListing:(id)sender;
 
 @end
 
@@ -28,6 +34,14 @@
     // Do any additional setup after loading the view.
     self.listingsTableView.delegate = self;
     self.listingsTableView.dataSource = self;
+    self.mapView.hidden = YES;
+    self.listingTypeButton.titleLabel.text = @"Map";
+    self.mapView.delegate = self;
+    self.locationManager = [CLLocationManager new];
+    self.locationManager.delegate = self;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+    self.locationManager.distanceFilter = 200;
+    [self.locationManager requestWhenInUseAuthorization];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -58,6 +72,16 @@
     DetailsViewController *detailsVC = (DetailsViewController *) [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewController"];
     detailsVC.listing = (Item *) self.tableData[indexPath.row];
     [navigationVC pushViewController:detailsVC animated:YES];
+}
+
+- (IBAction)didChangeListing:(id)sender {
+    if([self.mapView isHidden]){
+        [self.mapView setHidden:NO];
+        [self.listingTypeButton.titleLabel setText:@"List"];
+    } else{
+        [self.mapView setHidden:YES];
+        [self.listingTypeButton.titleLabel setText:@"Map"];
+    }
 }
 
 - (IBAction)didLogOut:(id)sender {

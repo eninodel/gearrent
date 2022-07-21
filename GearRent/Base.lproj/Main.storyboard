@@ -324,12 +324,28 @@
                                     <action selector="didLogOut:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="2Zp-Te-Cp6"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dui-rG-vLK">
+                                <rect key="frame" x="13" y="44" width="102" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Listing View"/>
+                                <connections>
+                                    <action selector="didChangeListing:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="h4h-hx-gYf"/>
+                                </connections>
+                            </button>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="i0z-mB-Msk">
+                                <rect key="frame" x="0.0" y="83" width="414" height="730"/>
+                            </mapView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ECP-49-BTE"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" id="7Gc-9G-NZu"/>
                             <constraint firstItem="a1G-Da-JK1" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" id="AJA-6M-Bzs"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" constant="39" id="F1c-9X-J3m"/>
                             <constraint firstItem="my2-Dr-Gg9" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" constant="60" id="K6d-PW-813"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="trailing" secondItem="ECP-49-BTE" secondAttribute="trailing" id="QbW-QO-17k"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="bottom" secondItem="ECP-49-BTE" secondAttribute="bottom" id="Tql-Mg-9bJ"/>
                             <constraint firstItem="ECP-49-BTE" firstAttribute="bottom" secondItem="duf-Qh-adg" secondAttribute="bottom" id="WIy-2a-dPt"/>
                             <constraint firstItem="duf-Qh-adg" firstAttribute="top" secondItem="my2-Dr-Gg9" secondAttribute="bottom" constant="8" id="bl8-Zv-rEF"/>
                             <constraint firstItem="duf-Qh-adg" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" id="d8I-kW-0rV"/>
@@ -341,7 +357,9 @@
                     <tabBarItem key="tabBarItem" title="Home" id="tQ9-AA-FDZ"/>
                     <navigationItem key="navigationItem" id="sVQ-4h-WeU"/>
                     <connections>
+                        <outlet property="listingTypeButton" destination="Dui-rG-vLK" id="KaA-hv-bSN"/>
                         <outlet property="listingsTableView" destination="duf-Qh-adg" id="wQj-SV-Aih"/>
+                        <outlet property="mapView" destination="i0z-mB-Msk" id="fzd-iw-Crn"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bBk-WV-n2b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
