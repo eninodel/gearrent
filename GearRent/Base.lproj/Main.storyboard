@@ -240,7 +240,7 @@
             </objects>
             <point key="canvasLocation" x="103" y="789"/>
         </scene>
-        <!--Home-->
+        <!--Gear For Rent View Controller-->
         <scene sceneID="tQb-Ns-RaU">
             <objects>
                 <viewController storyboardIdentifier="GearForRentViewController" id="lfo-Q5-Z1C" customClass="GearForRentViewController" sceneMemberID="viewController">
@@ -249,7 +249,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Gear for rent" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="my2-Dr-Gg9">
-                                <rect key="frame" x="30" y="104" width="146" height="27"/>
+                                <rect key="frame" x="30" y="148" width="146" height="27"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="146" id="301-P5-ZWw"/>
                                 </constraints>
@@ -258,7 +258,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="duf-Qh-adg">
-                                <rect key="frame" x="0.0" y="139" width="414" height="674"/>
+                                <rect key="frame" x="0.0" y="183" width="414" height="630"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="ListingTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListingTableViewCell" rowHeight="198" id="IqP-dv-z0y" customClass="ListingTableViewCell">
@@ -317,20 +317,56 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a1G-Da-JK1">
-                                <rect key="frame" x="323" y="44" width="76" height="31"/>
+                                <rect key="frame" x="323" y="88" width="76" height="31"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="Log Out"/>
                                 <connections>
                                     <action selector="didLogOut:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="2Zp-Te-Cp6"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Dui-rG-vLK">
+                                <rect key="frame" x="13" y="44" width="102" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Listing View"/>
+                                <connections>
+                                    <action selector="didChangeListing:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="h4h-hx-gYf"/>
+                                </connections>
+                            </button>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i0z-mB-Msk">
+                                <rect key="frame" x="0.0" y="127" width="414" height="686"/>
+                            </mapView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EyR-LR-Eqx">
+                                <rect key="frame" x="264" y="752" width="120" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Remove Points"/>
+                                <connections>
+                                    <action selector="didRemovePoints:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="weE-qL-glm"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Q2s-2x-eAY">
+                                <rect key="frame" x="30" y="752" width="124.5" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Search Polygon"/>
+                                <connections>
+                                    <action selector="didSearchPolygon:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="neM-g5-kTS"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ECP-49-BTE"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="Q2s-2x-eAY" firstAttribute="top" secondItem="i0z-mB-Msk" secondAttribute="bottom" constant="-61" id="0IW-oA-u6s"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" id="7Gc-9G-NZu"/>
+                            <constraint firstItem="EyR-LR-Eqx" firstAttribute="trailing" secondItem="i0z-mB-Msk" secondAttribute="trailing" constant="-30" id="9em-hp-4I4"/>
                             <constraint firstItem="a1G-Da-JK1" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" id="AJA-6M-Bzs"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="leading" secondItem="Q2s-2x-eAY" secondAttribute="leading" constant="-30" id="DwV-Il-3GY"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" constant="39" id="F1c-9X-J3m"/>
                             <constraint firstItem="my2-Dr-Gg9" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" constant="60" id="K6d-PW-813"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="trailing" secondItem="ECP-49-BTE" secondAttribute="trailing" id="QbW-QO-17k"/>
+                            <constraint firstItem="i0z-mB-Msk" firstAttribute="bottom" secondItem="ECP-49-BTE" secondAttribute="bottom" id="Tql-Mg-9bJ"/>
                             <constraint firstItem="ECP-49-BTE" firstAttribute="bottom" secondItem="duf-Qh-adg" secondAttribute="bottom" id="WIy-2a-dPt"/>
+                            <constraint firstItem="EyR-LR-Eqx" firstAttribute="bottom" secondItem="i0z-mB-Msk" secondAttribute="bottom" constant="-30" id="az0-hL-kG3"/>
                             <constraint firstItem="duf-Qh-adg" firstAttribute="top" secondItem="my2-Dr-Gg9" secondAttribute="bottom" constant="8" id="bl8-Zv-rEF"/>
                             <constraint firstItem="duf-Qh-adg" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" id="d8I-kW-0rV"/>
                             <constraint firstItem="ECP-49-BTE" firstAttribute="trailing" secondItem="duf-Qh-adg" secondAttribute="trailing" id="htF-Sd-WnZ"/>
@@ -338,15 +374,18 @@
                             <constraint firstItem="my2-Dr-Gg9" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" constant="30" id="xfp-AG-lKc"/>
                         </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Home" id="tQ9-AA-FDZ"/>
                     <navigationItem key="navigationItem" id="sVQ-4h-WeU"/>
                     <connections>
+                        <outlet property="listingTypeButton" destination="Dui-rG-vLK" id="KaA-hv-bSN"/>
                         <outlet property="listingsTableView" destination="duf-Qh-adg" id="wQj-SV-Aih"/>
+                        <outlet property="mapView" destination="i0z-mB-Msk" id="fzd-iw-Crn"/>
+                        <outlet property="removePointsButton" destination="EyR-LR-Eqx" id="SWc-A0-m25"/>
+                        <outlet property="searchPolygonButton" destination="Q2s-2x-eAY" id="I7A-yX-o2Y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bBk-WV-n2b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="192.75362318840581" y="1522.7678571428571"/>
+            <point key="canvasLocation" x="1102.8985507246377" y="1522.7678571428571"/>
         </scene>
         <!--My Listings-->
         <scene sceneID="4Qb-b1-0qA">
@@ -501,7 +540,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kbz-Lc-aVg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1250.7246376811595" y="1522.7678571428571"/>
+            <point key="canvasLocation" x="2160.8695652173915" y="1522.7678571428571"/>
         </scene>
         <!--Profile-->
         <scene sceneID="mI8-wX-Snh">
@@ -733,7 +772,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="2146" y="1523"/>
+            <point key="canvasLocation" x="3055.072463768116" y="1522.7678571428571"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="eXS-Ri-nig">
@@ -1395,7 +1434,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Zk7-Dp-Op6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3088" y="1523"/>
+            <point key="canvasLocation" x="3997.1014492753625" y="1522.7678571428571"/>
         </scene>
         <!--Profile Image Picker View Controller-->
         <scene sceneID="4YY-AQ-JUF">
@@ -1480,7 +1519,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="e8W-O3-wcz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4149" y="1523"/>
+            <point key="canvasLocation" x="5057.971014492754" y="1522.7678571428571"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="ZmT-IS-9Nl">
@@ -1492,7 +1531,7 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="lfo-Q5-Z1C" kind="relationship" relationship="viewControllers" id="o7F-Ql-tug"/>
+                        <segue destination="Wf9-WG-bDB" kind="relationship" relationship="viewControllers" id="o7F-Ql-tug"/>
                         <segue destination="U4Z-gW-dIO" kind="relationship" relationship="viewControllers" id="cnR-d3-Us9"/>
                         <segue destination="21H-Q5-6ef" kind="relationship" relationship="viewControllers" id="4OV-VG-gLW"/>
                         <segue destination="9I9-8h-mJx" kind="relationship" relationship="viewControllers" id="0wT-Tw-f2H"/>
@@ -1650,6 +1689,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UAI-XV-dWa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1879.7101449275365" y="123.88392857142857"/>
+        </scene>
+        <!--Home-->
+        <scene sceneID="Xxs-M7-ouw">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Wf9-WG-bDB" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Home" id="tQ9-AA-FDZ"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="kNE-sV-dcP">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="lfo-Q5-Z1C" kind="relationship" relationship="rootViewController" id="AHM-dR-k8y"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="KWD-Yg-dX6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="192.75362318840581" y="1522.7678571428571"/>
         </scene>
     </scenes>
     <resources>

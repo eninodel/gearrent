@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSMutableArray *reservations;
 @property (nonatomic, strong) NSMutableArray *availabilities;
 @property (nonatomic) Boolean isAlwaysAvailable;
+@property (nonatomic, strong) NSString *geohash;
 
 @end
 
