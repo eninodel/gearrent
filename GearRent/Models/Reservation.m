@@ -15,6 +15,7 @@
 @dynamic leaseeId;
 @dynamic dates;
 @dynamic status;
+@dynamic geohash;
 
 + (nonnull NSString *)parseClassName {
     return @"Reservation";

@@ -15,6 +15,7 @@
 #import "Reservation.h"
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
+#import "GNGeoHash.h"
 
 @interface CreateListingViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate,ProfileImagePickerViewControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
 @property (strong, nonatomic) IBOutlet UIView *calendarView;
@@ -168,6 +169,9 @@
     newItem.city = self.cityTextField.text;
     newItem.availabilities =  [self getTimeIntervals:self.datesSelected];
     newItem.isAlwaysAvailable = [self.isAlwaysAvailableSwitch isOn];
+    // TODO: add utils class with constants such as geohash precision
+    GNGeoHash *geohash = [GNGeoHash withCharacterPrecision:newItem.geoPoint.latitude  andLongitude:newItem.geoPoint.longitude andNumberOfCharacters:7];
+    newItem.geohash = [geohash toBase32];
     [newItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(succeeded){
             NSLog(@"END: Item successfully saved");
