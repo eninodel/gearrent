@@ -66,4 +66,5 @@
 + (void) setBoundingBox:(GNGeoHash*)hash andLatitudeRange:(NSMutableArray*) latitudeRange andLongitudeRange:(NSMutableArray*) longitudeRange;
 
 - (NSUInteger)hash;
+
 @end

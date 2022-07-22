@@ -16,11 +16,11 @@ static int const kMaxGeoHashPrecision = 7;
 
 @implementation APIManager
 
-+ (void)fetchListingsWithPolygonCoordinates:(NSArray<CLLocation *> *)polygonCoordinates completion:(void(^)(NSArray<Item *> *listings, NSError *error))completion{
+void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Item *> *, NSError *error)){
     // Find all the geohashes within the polygon and return nil if no geohashes with precision 7 exist
     NSMutableSet<GNGeoHash *> *geohashesWithinPolygon = [NSMutableSet<GNGeoHash *> new];
     for(int i = 1; i <= kMaxGeoHashPrecision; i ++) {
-        geohashesWithinPolygon = [self findAllGeohashesWithinPolygon:polygonCoordinates precision:i];
+        geohashesWithinPolygon = [APIManager findAllGeohashesWithinPolygon:polygonCoordinates precision:i];
         if([geohashesWithinPolygon count] > 0) {
             break;
         }

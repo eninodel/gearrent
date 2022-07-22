@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface APIManager : NSObject
 
-void fetchListingsWithCoordinates(NSArray<CLLocation *> *coordinates, void(^)(NSArray<Item *> *, NSError *error));
+void fetchListingsWithCoordinates(NSArray<CLLocation *> *coordinates, void(^completion)(NSArray<Item *> *, NSError *error));
 
 @end
 

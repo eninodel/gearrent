@@ -43,6 +43,7 @@
     self.listingsTableView.dataSource = self;
     self.mapView.hidden = YES;
     self.removePointsButton.hidden = YES;
+    self.searchPolygonButton.hidden = YES;
     self.listingTypeButton.titleLabel.text = @"Map";
     self.mapView.delegate = self;
     self.locationManager = [CLLocationManager new];
@@ -151,15 +152,16 @@
     [navigationVC pushViewController:detailsVC animated:YES];
 }
 
-//- (IBAction)didSearchPolygon:(id)sender {
-//    [APIManager fetchListingsWithCoordinates:self.mapPoints completion:^(NSArray<Item *> * _Nonnull listings, NSError * _Nonnull error) {
-//        if(error == nil){
-//            NSLog(@"END: Success in fetching listings from polygon");
-//        } else{
-//            NSLog(@"END: Failed to fetch listings from polygon");
-//        }
-//    }];
-//}
+- (IBAction)didSearchPolygon:(id)sender {
+    void(^completion)(NSArray<Item *> *, NSError *error) = ^void(NSArray<Item *> *listings, NSError *error){
+        if(error == nil){
+            NSLog(@"%@", listings);
+        } else{
+            NSLog(@"END: Error in didSearchPolygon");
+        }
+    };
+    fetchListingsWithCoordinates(self.mapPoints, completion);
+}
 
 - (IBAction)didRemovePoints:(id)sender {
     [self.mapPoints removeAllObjects];
@@ -172,10 +174,12 @@
     if([self.mapView isHidden]){
         [self.mapView setHidden:NO];
         [self.removePointsButton setHidden:NO];
+        [self.searchPolygonButton setHidden:NO];
         [self.listingTypeButton.titleLabel setText:@"List"];
     } else{
         [self.mapView setHidden:YES];
-        [self.mapView setHidden:YES];
+        [self.removePointsButton setHidden:YES];
+        [self.searchPolygonButton setHidden:YES];
         [self.listingTypeButton.titleLabel setText:@"Map"];
     }
 }
