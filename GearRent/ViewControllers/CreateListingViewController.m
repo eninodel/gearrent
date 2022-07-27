@@ -11,13 +11,15 @@
 #import "ProfileImagePickerViewController.h"
 #import "UIImageView+AFNetworking.h"
 #import "TimeInterval.h"
-#import "Item.h"
+#import "Listing.h"
 #import "Reservation.h"
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
 #import "GNGeoHash.h"
+#import "APIManager.h"
+#import "Category.h"
 
-@interface CreateListingViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate,ProfileImagePickerViewControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
+@interface CreateListingViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate,ProfileImagePickerViewControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 @property (strong, nonatomic) IBOutlet UIView *calendarView;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UICollectionView *imageCarouselCollectionView;
@@ -28,7 +30,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *addImagesLabel;
 @property (strong, nonatomic) IBOutlet UITextField *titleTextField;
 @property (strong, nonatomic) IBOutlet UITextField *priceTextField;
-@property (strong, nonatomic) IBOutlet UITextField *cityTextField;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
 @property (strong, nonatomic) IBOutlet UITextField *descriptionTextField;
 @property (strong, nonatomic) IBOutlet UILabel *nameLabel;
 @property (strong, nonatomic) IBOutlet MKMapView *mapView;
@@ -37,6 +39,8 @@
 @property (strong, nonatomic) IBOutlet UIButton *addImagesButton;
 @property (strong, nonatomic) IBOutlet UIButton *deleteListingButton;
 @property (strong, nonatomic) IBOutlet UINavigationItem *navigationTitle;
+@property (strong, nonatomic) IBOutlet UIPickerView *categoriesPicker;
+@property(strong, nonatomic) NSArray<Category *> *categories;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -81,13 +85,26 @@
     fingerTap.numberOfTapsRequired = 1;
     fingerTap.numberOfTouchesRequired = 1;
     [self.mapView addGestureRecognizer:fingerTap];
+    self.categoriesPicker.delegate = self;
+    self.categoriesPicker.dataSource = self;
+    __weak typeof(self) weakSelf = self;
+    void(^completion)(NSArray<Category *> *categories, NSError *error) = ^void(NSArray<Category*> *categories, NSError *error){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil){
+            strongSelf.categories = categories;
+            [strongSelf.categoriesPicker reloadAllComponents];
+        } else{
+            NSLog(@"%@", error);
+        }
+    };
+    fetchAllCategories(completion);
     if(self.listing != nil){
         self.navigationItem.title = @"Edit Listing";
         self.deleteListingButton.hidden = NO;
         self.addImagesButton.hidden = YES;
         self.titleTextField.text = self.listing.title;
         self.priceTextField.text = [[NSNumber numberWithFloat: self.listing.price] stringValue];
-        self.cityTextField.text = self.listing.city;
+        self.locationLabel.text = self.listing.location;
         self.descriptionTextField.text = self.listing.itemDescription;
         [self.isAlwaysAvailableSwitch setOn: self.listing.isAlwaysAvailable];
         CLLocationCoordinate2D itemCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
@@ -102,7 +119,7 @@
         [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
             typeof(self) strongSelf = weakSelf;
             if(error == nil && strongSelf){
-                Item *item = (Item *) objects[0];
+                Listing *item = (Listing *) objects[0];
                 for(int i = 0; i < item.availabilities.count; i++){
                     TimeInterval *interval = (TimeInterval *) item.availabilities[i];
                     NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
@@ -146,35 +163,36 @@
 }
 
 - (IBAction)didList:(id)sender {
-    Item *newItem = [Item new];
-    newItem.reservations = [[NSMutableArray alloc] init];
-    newItem.images = [self imagesToPFFiles:self.carouselImages];
+    Listing *newListing = [Listing new];
+    newListing.reservations = [[NSMutableArray alloc] init];
+    newListing.images = [self imagesToPFFiles:self.carouselImages];
     if(self.listing != nil){
-        newItem = self.listing;
+        newListing = self.listing;
     }
-    newItem.title = self.titleTextField.text;
-    newItem.itemDescription = self.descriptionTextField.text;
-    newItem.price = [self.priceTextField.text floatValue];
-    newItem.videoURL = @"";
-    newItem.ownerId = [[PFUser currentUser] objectId];
-    newItem.tags = [[NSMutableArray alloc] init];
+    newListing.title = self.titleTextField.text;
+    newListing.itemDescription = self.descriptionTextField.text;
+    newListing.price = [self.priceTextField.text floatValue];
+    newListing.videoURL = @"";
+    newListing.ownerId = [[PFUser currentUser] objectId];
+    newListing.tags = [[NSMutableArray alloc] init];
+    newListing.categoryId = [(Category *)self.categories[[self.categoriesPicker selectedRowInComponent:0]] objectId];
     NSLog(@"%@", self.mapView.annotations);
     for(int i = 0; i < self.mapView.annotations.count; i++){
         NSObject *annotation = self.mapView.annotations[i];
         if([annotation isKindOfClass: [MKPointAnnotation class]]){
             CLLocationCoordinate2D itemCoordinates = self.mapView.annotations[i].coordinate;
-            newItem.geoPoint = [PFGeoPoint geoPointWithLatitude: itemCoordinates.latitude longitude:itemCoordinates.longitude];
+            newListing.geoPoint = [PFGeoPoint geoPointWithLatitude: itemCoordinates.latitude longitude:itemCoordinates.longitude];
         }
     }
-    newItem.city = self.cityTextField.text;
-    newItem.availabilities =  [self getTimeIntervals:self.datesSelected];
-    newItem.isAlwaysAvailable = [self.isAlwaysAvailableSwitch isOn];
+    newListing.location = self.locationLabel.text;
+    newListing.availabilities =  [self getTimeIntervals:self.datesSelected];
+    newListing.isAlwaysAvailable = self.isAlwaysAvailableSwitch.on;
     // TODO: add utils class with constants such as geohash precision
-    GNGeoHash *geohash = [GNGeoHash withCharacterPrecision:newItem.geoPoint.latitude  andLongitude:newItem.geoPoint.longitude andNumberOfCharacters:7];
-    newItem.geohash = [geohash toBase32];
-    [newItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+    GNGeoHash *geohash = [GNGeoHash withCharacterPrecision:newListing.geoPoint.latitude  andLongitude:newListing.geoPoint.longitude andNumberOfCharacters:7];
+    newListing.geohash = [geohash toBase32];
+    [newListing saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(succeeded){
-            NSLog(@"END: Item successfully saved");
+            NSLog(@"END: Listing successfully saved");
             [self dismissViewControllerAnimated:YES completion:nil];
         } else{
             NSLog(@"%@", error.description);
@@ -193,11 +211,22 @@
     CGPoint touchPoint = [gestureRecognizer locationInView:self.mapView];
     CLLocationCoordinate2D touchMapCoordinate =
     [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
-    
     MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
     pa.coordinate = touchMapCoordinate;
-    pa.title = @"Item Location";
+    pa.title = @"Listing Location";
     [self.mapView addAnnotation:pa];
+    __weak typeof(self) weakSelf = self;
+    void(^completion)(NSString *, NSError *error) = ^void(NSString *response, NSError *error){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [strongSelf.locationLabel setText:response];
+            });
+        } else{
+            NSLog(@"%@", error);
+        }
+    };
+    fetchNearestCity(touchMapCoordinate.latitude, touchMapCoordinate.longitude ,completion);
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -385,6 +414,19 @@
         return nil;
     }
     return [PFFileObject fileObjectWithName:@"image.png" data:imageData];
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(nonnull UIPickerView *)pickerView {
+    return 1;
+}
+
+- (NSInteger)pickerView:(nonnull UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return self.categories.count;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    Category *category = self.categories[row];
+    return category[@"title"];
 }
 
 @end

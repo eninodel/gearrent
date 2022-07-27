@@ -10,14 +10,15 @@
 #import "GNGeoHash.h"
 #import "CoreLocation/CoreLocation.h"
 #import "Edge.h"
-#import "Item.h"
+#import "Listing.h"
 #import "Foundation/Foundation.h"
+#import "Category.h"
 
 static int const kMaxGeoHashPrecision = 7;
 
 @implementation APIManager
 
-void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Item *> *, NSError *error)){
+void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *error)){
     // Find all the geohashes within the polygon and return nil if no geohashes with precision 7 exist
     NSMutableSet<GNGeoHash *> *geohashesWithinPolygon = [NSMutableSet<GNGeoHash *> new];
     for(int i = 1; i <= kMaxGeoHashPrecision; i ++) {
@@ -40,8 +41,8 @@ void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, voi
                        withParameters:@{@"geohashes": geohashesStringArray}
                                 block:^(NSArray *listings, NSError *error) {
       if (!error) {
-          NSMutableArray<Item *> *allListings = [NSMutableArray<Item *> new];
-          NSArray<NSArray<Item *> *> *results = listings;
+          NSMutableArray<Listing *> *allListings = [NSMutableArray<Listing *> new];
+          NSArray<NSArray<Listing *> *> *results = listings;
           for(int i = 0; i < results.count; i ++){
               for(int j = 0; j < results[i].count; j ++){
                   [allListings addObject:results[i][j]];
@@ -224,6 +225,18 @@ void fetchNearestCity(double lat, double longitude, void(^completion)(NSString *
     [result addObject:[[CLLocation alloc] initWithLatitude:lowerRightPoint.latitude longitude:upperLeftPoint.longitude]];
     [result addObject:[[CLLocation alloc] initWithLatitude:upperLeftPoint.latitude longitude:lowerRightPoint.longitude]];
     return result;
+}
+
+void fetchAllCategories(void(^completion)(NSArray<Category *> *categories, NSError *error)){
+    PFQuery *query = [PFQuery queryWithClassName:@"Category"];
+    [query whereKey:@"title" notEqualTo:@""];
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        if (error) {
+            completion(nil, error);
+        } else{
+            completion((NSArray<Category *> *)objects, nil);
+        }
+    }];
 }
 
 @end

@@ -5,11 +5,11 @@
 //  Created by Edwin Delgado on 7/8/22.
 //
 
-#import "Item.h"
+#import "Listing.h"
 #import "Parse/Parse.h"
 #import <Foundation/Foundation.h>
 
-@implementation Item
+@implementation Listing
 
 @dynamic title;
 @dynamic itemDescription;
@@ -19,11 +19,14 @@
 @dynamic ownerId;
 @dynamic tags;
 @dynamic geoPoint;
-@dynamic city;
+@dynamic location;
 @dynamic reservations;
 @dynamic availabilities;
 @dynamic isAlwaysAvailable;
 @dynamic geohash;
+@dynamic dynamicPrice;
+@dynamic minPrice;
+@dynamic categoryId;
 
 + (nonnull NSString *)parseClassName {
     return @"Listing";

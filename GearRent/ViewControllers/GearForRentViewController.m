@@ -14,7 +14,7 @@
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
 #import "APIManager.h"
-#import "Item.h"
+#import "Listing.h"
 
 @interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate>
 
@@ -149,16 +149,16 @@
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewNavigationController"];
     [self presentViewController:navigationVC animated:YES completion:nil];
     DetailsViewController *detailsVC = (DetailsViewController *) [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewController"];
-    detailsVC.listing = (Item *) self.tableData[indexPath.row];
+    detailsVC.listing = (Listing *) self.tableData[indexPath.row];
     [navigationVC pushViewController:detailsVC animated:YES];
 }
 
 - (IBAction)didSearchPolygon:(id)sender {
-    void(^completion)(NSArray<Item *> *, NSError *error) = ^void(NSArray<Item *> *listings, NSError *error){
+    void(^completion)(NSArray<Listing *> *, NSError *error) = ^void(NSArray<Listing *> *listings, NSError *error){
         if(error == nil){
             NSLog(@"END: Successfully searched for listings in polygon");
             for(int i = 0; i < listings.count; i ++){
-                Item *listing = listings[i];
+                Listing *listing = listings[i];
                 MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
                 pa.coordinate = CLLocationCoordinate2DMake(listing.geoPoint.latitude, listing.geoPoint.longitude);
                 pa.title = listing.title;

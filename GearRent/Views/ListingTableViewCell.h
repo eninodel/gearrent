@@ -6,15 +6,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Item.h"
+#import "Listing.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol ListingTableViewCellDelegate <NSObject>
 
-- (void) didEditListing: (Item *) listing;
+- (void) didEditListing: (Listing *) listing;
 
-- (void) didViewReservations: (Item *) listing;
+- (void) didViewReservations: (Listing *) listing;
 
 @end
 
@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<ListingTableViewCellDelegate> delegate;
 
-@property (strong, nonatomic) Item *listing;
+@property (strong, nonatomic) Listing *listing;
 
 @property (assign, nonatomic) Boolean findStatus;
 

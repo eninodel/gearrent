@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface Item : PFObject<PFSubclassing>
+@interface Listing : PFObject<PFSubclassing>
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *itemDescription;
@@ -20,11 +20,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *ownerId;
 @property (nonatomic, strong) NSMutableArray *tags;
 @property (nonatomic, strong) PFGeoPoint *geoPoint;
-@property (nonatomic, strong) NSString *city;
+@property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSMutableArray *reservations;
 @property (nonatomic, strong) NSMutableArray *availabilities;
 @property (nonatomic) Boolean isAlwaysAvailable;
 @property (nonatomic, strong) NSString *geohash;
+@property (nonatomic) BOOL dynamicPrice;
+@property (nonatomic) Boolean minPrice;
+@property (nonatomic, strong) NSString *categoryId;
 
 @end
 

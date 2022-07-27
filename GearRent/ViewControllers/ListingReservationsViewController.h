@@ -6,13 +6,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Item.h"
+#import "Listing.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ListingReservationsViewController : UIViewController
 
-@property(strong, nonatomic) Item *listing;
+@property(strong, nonatomic) Listing *listing;
 
 @end
 

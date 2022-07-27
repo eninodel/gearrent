@@ -13,7 +13,7 @@
 #import <JTCalendar/JTCalendar.h>
 #import "UIImageView+AFNetworking.h"
 #import "TimeInterval.h"
-#import "Item.h"
+#import "Listing.h"
 #import "Reservation.h"
 
 @interface DetailsViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
@@ -44,7 +44,7 @@
     self.carouselCollectionView.delegate = self;
     self.carouselCollectionView.dataSource = self;
     self.titleLabel.text = self.listing.title;
-    self.locationLabel.text = self.listing.city;
+    self.locationLabel.text = self.listing.location;
     self.descriptionLabel.text = self.listing.itemDescription;
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo: self.listing.ownerId];
@@ -83,7 +83,7 @@
     [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
-            Item *item = (Item *) objects[0];
+            Listing *item = (Listing *) objects[0];
             for(int i = 0; i < item.availabilities.count; i++){
                 TimeInterval *interval = (TimeInterval *) item.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
@@ -113,7 +113,7 @@
     CLLocationCoordinate2D itemCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
     MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
     pa.coordinate = itemCoordinate;
-    pa.title = @"Item Location";
+    pa.title = @"Listing Location";
     [self.mapView addAnnotation:pa];
 }
 

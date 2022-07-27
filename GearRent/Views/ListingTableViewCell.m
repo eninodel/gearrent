@@ -9,7 +9,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "TimeInterval.h"
 #import "Reservation.h"
-#import "Item.h"
+#import "Listing.h"
 #import "CreateListingViewController.h"
 
 @interface ListingTableViewCell ()
@@ -43,7 +43,7 @@
 - (void)initializeCell {
     self.cellOptionsView.hidden = YES;
     self.titleLabel.text = self.listing.title;
-    self.locationLabel.text = self.listing.city;
+    self.locationLabel.text = self.listing.location;
     NSString *priceString = @"$";
     priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
     priceString = [priceString stringByAppendingString:@" / day"];

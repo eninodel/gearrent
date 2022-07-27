@@ -10,7 +10,7 @@
 #import "ListingTableViewCell.h"
 #import "CreateListingViewController.h"
 #import "ListingReservationsViewController.h"
-#import "Item.h"
+#import "Listing.h"
 #import "Reservation.h"
 #import "TimeInterval.h"
 
@@ -79,7 +79,7 @@
     [cell displayOptions];
 }
 
-- (void)didEditListing:(Item *)listing {
+- (void)didEditListing:(Listing *)listing {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"CreateListingNavigationController"];
     CreateListingViewController *createVC = (CreateListingViewController *) navigationVC.topViewController;
@@ -87,7 +87,7 @@
     [self presentViewController:navigationVC animated:YES completion:nil];
 }
 
-- (void)didViewReservations:(Item *)listing {
+- (void)didViewReservations:(Listing *)listing {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"ViewReservationsNavigationController"];
     ListingReservationsViewController *reservationsVC = (ListingReservationsViewController *) navigationVC.topViewController;
