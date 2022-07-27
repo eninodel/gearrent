@@ -23,11 +23,10 @@
 @dynamic reservations;
 @dynamic availabilities;
 @dynamic isAlwaysAvailable;
+@dynamic geohash;
 
 + (nonnull NSString *)parseClassName {
     return @"Listing";
 }
-
-
 
 @end

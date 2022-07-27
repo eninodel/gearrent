@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *leaseeId;
 @property (nonatomic, strong) TimeInterval *dates;
 @property (nonatomic, strong) NSString *status;
+@property (nonatomic, strong) NSString *geohash;
 
 @end
 
