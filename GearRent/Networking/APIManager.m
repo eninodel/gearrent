@@ -11,6 +11,7 @@
 #import "CoreLocation/CoreLocation.h"
 #import "Edge.h"
 #import "Item.h"
+#import "Foundation/Foundation.h"
 
 static int const kMaxGeoHashPrecision = 7;
 
@@ -53,6 +54,58 @@ void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, voi
           completion(nil, error);
       }
     }];
+}
+
+void fetchNearestCity(double lat, double longitude, void(^completion)(NSString *, NSError *error)){
+    @autoreleasepool{
+        NSDictionary *headers = @{ @"X-RapidAPI-Key": @"4ee4de8731msh81f644e471716bbp14ba33jsnae748db48874",
+                               @"X-RapidAPI-Host": @"forward-reverse-geocoding.p.rapidapi.com" };
+        NSString *requestURL = [NSString stringWithFormat:@"https://forward-reverse-geocoding.p.rapidapi.com/v1/reverse?lat=%f&lon=%f&accept-language=en&polygon_threshold=0.0&zoom=10", lat ,longitude];
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString: requestURL]
+                                                           cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                       timeoutInterval:10.0];
+        [request setHTTPMethod:@"GET"];
+        [request setAllHTTPHeaderFields:headers];
+
+        NSURLSession *session = [NSURLSession sharedSession];
+        __block BOOL done = NO;
+        NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
+                                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                                    done = YES;
+                                                    if (error) {
+                                                        completion(nil, error);
+                                                    } else {
+                                                        NSString *strISOLatin = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
+                                                        NSData *dataUTF8 = [strISOLatin dataUsingEncoding:NSUTF8StringEncoding];
+                                                        id dict = [NSJSONSerialization JSONObjectWithData:dataUTF8 options:0 error:&error];
+                                                        if (dict != nil) {
+                                                            completion([APIManager getSmallestEntity:dict], nil);
+                                                        } else {
+                                                            NSLog(@"Error: %@", error);
+                                                            completion(nil, error);
+                                                        }
+                                                    }
+                                                }];
+        [dataTask resume];
+        while (!done) {
+            NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1];
+            [[NSRunLoop currentRunLoop] runUntilDate:date];
+        }
+    }
+}
+
++ (NSString *)getSmallestEntity:(NSDictionary *)dict{
+    NSMutableArray<NSString *> *possibleKeys = [NSMutableArray<NSString *> new];
+    [possibleKeys addObject:@"town"];
+    [possibleKeys addObject:@"city"];
+    [possibleKeys addObject:@"county"];
+    for(NSString * key in possibleKeys){
+        NSString *val = (NSString *) [[dict valueForKey:@"address"] valueForKey:key];
+        if(val != nil){
+            return val;
+        }
+    }
+    return nil;
 }
 
 + (NSMutableSet<GNGeoHash *> *)findAllGeohashesWithinPolygon:(NSArray<CLLocation *> *)polygonCoordinates precision:(int)precision {
