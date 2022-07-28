@@ -88,11 +88,13 @@
     self.categoriesPicker.delegate = self;
     self.categoriesPicker.dataSource = self;
     __weak typeof(self) weakSelf = self;
-    void(^completion)(NSArray<Category *> *categories, NSError *error) = ^void(NSArray<Category*> *categories, NSError *error){
+    void(^completion)(NSArray<Category *> *, NSError *) = ^void(NSArray<Category*> *categories, NSError *error){
         typeof(self) strongSelf = weakSelf;
         if(error == nil){
-            strongSelf.categories = categories;
-            [strongSelf.categoriesPicker reloadAllComponents];
+            if(strongSelf){
+                strongSelf.categories = categories;
+                [strongSelf.categoriesPicker reloadAllComponents];
+            }
         } else{
             NSLog(@"%@", error);
         }
@@ -103,7 +105,10 @@
         self.deleteListingButton.hidden = NO;
         self.addImagesButton.hidden = YES;
         self.titleTextField.text = self.listing.title;
-        self.priceTextField.text = [[NSNumber numberWithFloat: self.listing.price] stringValue];
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+        NSString *currency = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat: self.listing.price]];
+        self.priceTextField.text = currency;
         self.locationLabel.text = self.listing.location;
         self.descriptionTextField.text = self.listing.itemDescription;
         [self.isAlwaysAvailableSwitch setOn: self.listing.isAlwaysAvailable];
@@ -119,9 +124,9 @@
         [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
             typeof(self) strongSelf = weakSelf;
             if(error == nil && strongSelf){
-                Listing *item = (Listing *) objects[0];
-                for(int i = 0; i < item.availabilities.count; i++){
-                    TimeInterval *interval = (TimeInterval *) item.availabilities[i];
+                Listing *listing = (Listing *) objects[0];
+                for(int i = 0; i < listing.availabilities.count; i++){
+                    TimeInterval *interval = (TimeInterval *) listing.availabilities[i];
                     NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
                     [strongSelf.datesAvailable addObject:dateInterval];
                 }
@@ -216,17 +221,20 @@
     pa.title = @"Listing Location";
     [self.mapView addAnnotation:pa];
     __weak typeof(self) weakSelf = self;
-    void(^completion)(NSString *, NSError *error) = ^void(NSString *response, NSError *error){
+    void(^completion)(NSString *, NSError *) = ^void(NSString *response, NSError *error){
         typeof(self) strongSelf = weakSelf;
         if(error == nil){
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [strongSelf.locationLabel setText:response];
-            });
+            if(strongSelf){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [strongSelf.locationLabel setText:response];
+                });
+            }
         } else{
             NSLog(@"%@", error);
         }
     };
-    fetchNearestCity(touchMapCoordinate.latitude, touchMapCoordinate.longitude ,completion);
+    CLLocation *location = [[CLLocation alloc] initWithLatitude:touchMapCoordinate.latitude longitude:touchMapCoordinate.longitude];
+    [[APIManager alloc] fetchNearestCity:location completion:completion];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {

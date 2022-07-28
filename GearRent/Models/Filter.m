@@ -6,7 +6,17 @@
 //
 
 #import "Filter.h"
+#import "Parse/Parse.h"
+#import <Foundation/Foundation.h>
 
 @implementation Filter
+
+@dynamic categoryId;
+@dynamic userId;
+@dynamic location;
+
++ (nonnull NSString *)parseClassName {
+    return @"Filter";
+}
 
 @end

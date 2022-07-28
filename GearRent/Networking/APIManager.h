@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface APIManager : NSObject
 
 void fetchListingsWithCoordinates(NSArray<CLLocation *> *coordinates, void(^completion)(NSArray<Listing *> *, NSError *error));
-void fetchNearestCity(double lat, double longitude,void(^completion)(NSString *, NSError *error));
-void fetchAllCategories(void(^completion)(NSArray<Category *> *categories, NSError *error));
+- (void)fetchNearestCity:(CLLocation *)location completion: (void(^_Nonnull)(NSString *, NSError *)) completion;
+void fetchAllCategories(void(^completion)(NSArray<Category *> *, NSError *));
 
 @end
 

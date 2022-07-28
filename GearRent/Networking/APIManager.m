@@ -13,12 +13,15 @@
 #import "Listing.h"
 #import "Foundation/Foundation.h"
 #import "Category.h"
+#import "Address.h"
 
 static int const kMaxGeoHashPrecision = 7;
 
-@implementation APIManager
+@implementation APIManager{
+    NSURLSessionDataTask *_Nullable fetchNearestCityTask;
+}
 
-void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *error)){
+void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *)){
     // Find all the geohashes within the polygon and return nil if no geohashes with precision 7 exist
     NSMutableSet<GNGeoHash *> *geohashesWithinPolygon = [NSMutableSet<GNGeoHash *> new];
     for(int i = 1; i <= kMaxGeoHashPrecision; i ++) {
@@ -57,11 +60,10 @@ void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, voi
     }];
 }
 
-void fetchNearestCity(double lat, double longitude, void(^completion)(NSString *, NSError *error)){
-    @autoreleasepool{
+- (void)fetchNearestCity:(CLLocation *)location completion: (void(^_Nonnull)(NSString *, NSError *)) completion {
         NSDictionary *headers = @{ @"X-RapidAPI-Key": @"4ee4de8731msh81f644e471716bbp14ba33jsnae748db48874",
                                @"X-RapidAPI-Host": @"forward-reverse-geocoding.p.rapidapi.com" };
-        NSString *requestURL = [NSString stringWithFormat:@"https://forward-reverse-geocoding.p.rapidapi.com/v1/reverse?lat=%f&lon=%f&accept-language=en&polygon_threshold=0.0&zoom=10", lat ,longitude];
+        NSString *requestURL = [NSString stringWithFormat:@"https://forward-reverse-geocoding.p.rapidapi.com/v1/reverse?lat=%f&lon=%f&accept-language=en&polygon_threshold=0.0&zoom=10", location.coordinate.latitude, location.coordinate.longitude];
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString: requestURL]
                                                            cachePolicy:NSURLRequestUseProtocolCachePolicy
                                                        timeoutInterval:10.0];
@@ -70,7 +72,7 @@ void fetchNearestCity(double lat, double longitude, void(^completion)(NSString *
 
         NSURLSession *session = [NSURLSession sharedSession];
         __block BOOL done = NO;
-        NSURLSessionDataTask *dataTask = [session dataTaskWithRequest:request
+         fetchNearestCityTask = [session dataTaskWithRequest:request
                                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
                                                     done = YES;
                                                     if (error) {
@@ -80,33 +82,16 @@ void fetchNearestCity(double lat, double longitude, void(^completion)(NSString *
                                                         NSData *dataUTF8 = [strISOLatin dataUsingEncoding:NSUTF8StringEncoding];
                                                         id dict = [NSJSONSerialization JSONObjectWithData:dataUTF8 options:0 error:&error];
                                                         if (dict != nil) {
-                                                            completion([APIManager getSmallestEntity:dict], nil);
+                                                            Address *address = [[Address alloc] initWithDictionary:dict[@"address"]];
+                                                            completion([address getSmallestEntity], nil);
                                                         } else {
                                                             NSLog(@"Error: %@", error);
                                                             completion(nil, error);
                                                         }
                                                     }
-                                                }];
-        [dataTask resume];
-        while (!done) {
-            NSDate *date = [[NSDate alloc] initWithTimeIntervalSinceNow:0.1];
-            [[NSRunLoop currentRunLoop] runUntilDate:date];
-        }
-    }
-}
-
-+ (NSString *)getSmallestEntity:(NSDictionary *)dict{
-    NSMutableArray<NSString *> *possibleKeys = [NSMutableArray<NSString *> new];
-    [possibleKeys addObject:@"town"];
-    [possibleKeys addObject:@"city"];
-    [possibleKeys addObject:@"county"];
-    for(NSString * key in possibleKeys){
-        NSString *val = (NSString *) [[dict valueForKey:@"address"] valueForKey:key];
-        if(val != nil){
-            return val;
-        }
-    }
-    return nil;
+             self->fetchNearestCityTask = nil;
+         }];
+        [self->fetchNearestCityTask resume];
 }
 
 + (NSMutableSet<GNGeoHash *> *)findAllGeohashesWithinPolygon:(NSArray<CLLocation *> *)polygonCoordinates precision:(int)precision {
@@ -227,7 +212,7 @@ void fetchNearestCity(double lat, double longitude, void(^completion)(NSString *
     return result;
 }
 
-void fetchAllCategories(void(^completion)(NSArray<Category *> *categories, NSError *error)){
+void fetchAllCategories(void(^completion)(NSArray<Category *> *, NSError *)){
     PFQuery *query = [PFQuery queryWithClassName:@"Category"];
     [query whereKey:@"title" notEqualTo:@""];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {

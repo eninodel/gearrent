@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *itemDescription;
-@property (nonatomic) float price;
+@property (nonatomic) CGFloat price;
 @property (nonatomic, strong) NSMutableArray *images;
 @property (nonatomic, strong) NSString *videoURL;
 @property (nonatomic, strong) NSString *ownerId;
@@ -23,10 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSMutableArray *reservations;
 @property (nonatomic, strong) NSMutableArray *availabilities;
-@property (nonatomic) Boolean isAlwaysAvailable;
+@property (nonatomic) BOOL isAlwaysAvailable;
 @property (nonatomic, strong) NSString *geohash;
 @property (nonatomic) BOOL dynamicPrice;
-@property (nonatomic) Boolean minPrice;
+@property (nonatomic) CGFloat minPrice;
 @property (nonatomic, strong) NSString *categoryId;
 
 @end

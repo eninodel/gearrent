@@ -23,16 +23,17 @@
     // Put teardown code here. This method is called after the invocation of each test method in the class.
 }
 
-- (void)testFetchNearestCity{
-    void(^completion)(NSString *, NSError *error) = ^void(NSString *response, NSError *error){
-        if(error == nil){
-            NSLog(@"API response: %@",response);
-        } else{
-            NSLog(@"%@", error);
-        }
-    };
-    fetchNearestCity(47.730399537076686, -122.34805748173761, completion);
-}
+//- (void)testFetchNearestCity{
+//    void(^completion)(NSString *, NSError *) = ^void(NSString *response, NSError *error){
+//        if(error == nil){
+//            NSLog(@"API response: %@",response);
+//        } else{
+//            NSLog(@"%@", error);
+//        }
+//    };
+//    CLLocation *location = [[CLLocation alloc] initWithLatitude:47.730399537076686 longitude:-122.34805748173761];
+//    fetchNearestCity(location, completion);
+//}
 
 - (void)testPerformanceExample {
     // This is an example of a performance test case.

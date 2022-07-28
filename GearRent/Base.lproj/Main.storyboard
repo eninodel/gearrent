@@ -335,6 +335,55 @@
                                     <action selector="didSearchPolygon:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="neM-g5-kTS"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="l2F-vq-xui">
+                                <rect key="frame" x="175" y="722" width="64" height="31"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Filters"/>
+                                <connections>
+                                    <action selector="didTapFilters:" destination="lfo-Q5-Z1C" eventType="touchUpInside" id="rzF-TU-nlx"/>
+                                </connections>
+                            </button>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="hO8-AN-EIT">
+                                <rect key="frame" x="0.0" y="345" width="414" height="300"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="300" id="THv-qq-tBq"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="FiltersTableViewCell" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="FiltersTableViewCell" rowHeight="113" id="l43-ij-HKs" customClass="FiltersTableViewCell">
+                                        <rect key="frame" x="0.0" y="44.5" width="414" height="113"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="l43-ij-HKs" id="XGj-Ow-mwQ">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="113"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0se-VH-qHR">
+                                                    <rect key="frame" x="40" y="36" width="71" height="41"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="vDp-yn-gCd">
+                                                    <rect key="frame" x="288" y="31" width="49" height="31"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <connections>
+                                                        <action selector="didSelect:" destination="l43-ij-HKs" eventType="valueChanged" id="qli-ZF-knt"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="0se-VH-qHR" firstAttribute="top" secondItem="XGj-Ow-mwQ" secondAttribute="topMargin" constant="25" id="A4s-Ok-TAV"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="0se-VH-qHR" secondAttribute="bottom" constant="25" id="Wxc-QS-yF2"/>
+                                                <constraint firstItem="0se-VH-qHR" firstAttribute="leading" secondItem="XGj-Ow-mwQ" secondAttribute="leadingMargin" constant="20" id="j2C-Vb-wjR"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="categoryLabel" destination="0se-VH-qHR" id="lP7-cQ-NDM"/>
+                                            <outlet property="selectedSwitch" destination="vDp-yn-gCd" id="58d-dZ-OBs"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="ECP-49-BTE"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -344,13 +393,18 @@
                             <constraint firstItem="EyR-LR-Eqx" firstAttribute="trailing" secondItem="i0z-mB-Msk" secondAttribute="trailing" constant="-30" id="9em-hp-4I4"/>
                             <constraint firstItem="i0z-mB-Msk" firstAttribute="leading" secondItem="Q2s-2x-eAY" secondAttribute="leading" constant="-30" id="DwV-Il-3GY"/>
                             <constraint firstItem="i0z-mB-Msk" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" constant="39" id="F1c-9X-J3m"/>
+                            <constraint firstItem="ECP-49-BTE" firstAttribute="trailing" secondItem="hO8-AN-EIT" secondAttribute="trailing" id="FhV-m4-zOe"/>
                             <constraint firstItem="my2-Dr-Gg9" firstAttribute="top" secondItem="ECP-49-BTE" secondAttribute="top" constant="60" id="K6d-PW-813"/>
+                            <constraint firstItem="l2F-vq-xui" firstAttribute="centerX" secondItem="i0z-mB-Msk" secondAttribute="centerX" id="KHF-eX-Bqo"/>
+                            <constraint firstItem="ECP-49-BTE" firstAttribute="bottom" secondItem="l2F-vq-xui" secondAttribute="bottom" constant="60" id="PZr-g6-Tgg"/>
                             <constraint firstItem="i0z-mB-Msk" firstAttribute="trailing" secondItem="ECP-49-BTE" secondAttribute="trailing" id="QbW-QO-17k"/>
                             <constraint firstItem="i0z-mB-Msk" firstAttribute="bottom" secondItem="ECP-49-BTE" secondAttribute="bottom" id="Tql-Mg-9bJ"/>
                             <constraint firstItem="ECP-49-BTE" firstAttribute="bottom" secondItem="duf-Qh-adg" secondAttribute="bottom" id="WIy-2a-dPt"/>
+                            <constraint firstItem="EyR-LR-Eqx" firstAttribute="top" secondItem="hO8-AN-EIT" secondAttribute="bottom" constant="107" id="Y9N-wJ-est"/>
                             <constraint firstItem="EyR-LR-Eqx" firstAttribute="bottom" secondItem="i0z-mB-Msk" secondAttribute="bottom" constant="-30" id="az0-hL-kG3"/>
                             <constraint firstItem="duf-Qh-adg" firstAttribute="top" secondItem="my2-Dr-Gg9" secondAttribute="bottom" constant="8" id="bl8-Zv-rEF"/>
                             <constraint firstItem="duf-Qh-adg" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" id="d8I-kW-0rV"/>
+                            <constraint firstItem="hO8-AN-EIT" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" id="gjT-xa-b36"/>
                             <constraint firstItem="ECP-49-BTE" firstAttribute="trailing" secondItem="duf-Qh-adg" secondAttribute="trailing" id="htF-Sd-WnZ"/>
                             <constraint firstItem="my2-Dr-Gg9" firstAttribute="leading" secondItem="ECP-49-BTE" secondAttribute="leading" constant="30" id="xfp-AG-lKc"/>
                         </constraints>
@@ -380,6 +434,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="FiltersButton" destination="l2F-vq-xui" id="xOu-Vu-TEb"/>
+                        <outlet property="FiltersTableView" destination="hO8-AN-EIT" id="ryZ-EH-qDv"/>
                         <outlet property="listingTypeButton" destination="Dui-rG-vLK" id="KaA-hv-bSN"/>
                         <outlet property="listingsTableView" destination="duf-Qh-adg" id="wQj-SV-Aih"/>
                         <outlet property="mapView" destination="i0z-mB-Msk" id="fzd-iw-Crn"/>
