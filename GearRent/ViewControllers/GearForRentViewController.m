@@ -106,7 +106,7 @@
     [self renderMapPoints];
 }
 
-- (void)renderMapPoints{
+- (void)renderMapPoints {
     // TODO: create a function to validate that no polygon segments overlap
     NSUInteger count = self.mapPoints.count;
     if(self.mapView.overlays.count > 0){

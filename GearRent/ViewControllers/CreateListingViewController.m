@@ -41,6 +41,8 @@
 @property (strong, nonatomic) IBOutlet UINavigationItem *navigationTitle;
 @property (strong, nonatomic) IBOutlet UIPickerView *categoriesPicker;
 @property(strong, nonatomic) NSArray<Category *> *categories;
+@property (strong, nonatomic) IBOutlet UISwitch *dynamicPricingSwitch;
+@property (strong, nonatomic) IBOutlet UITextField *minimumPriceTextField;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -48,6 +50,7 @@
 - (IBAction)didSwitchAvailability:(id)sender;
 - (IBAction)didTapBack:(id)sender;
 - (IBAction)didDeleteListing:(id)sender;
+- (IBAction)didSwitchDynamicPrice:(id)sender;
 
 @end
 
@@ -56,6 +59,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self.minimumPriceTextField setHidden:YES];
     self.deleteListingButton.hidden = YES;
     self.navigationItem.title = @"Create a Listing";
     self.nameLabel.text =  [PFUser currentUser][@"name"];
@@ -94,6 +98,9 @@
             if(strongSelf){
                 strongSelf.categories = categories;
                 [strongSelf.categoriesPicker reloadAllComponents];
+                if(strongSelf.listing){
+                    [strongSelf.categoriesPicker selectRow:[strongSelf indexOfListingCategory] inComponent:0 animated:YES];
+                }
             }
         } else{
             NSLog(@"%@", error);
@@ -101,14 +108,18 @@
     };
     fetchAllCategories(completion);
     if(self.listing != nil){
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+        [self.minimumPriceTextField setHidden: !self.listing.dynamicPrice];
+        self.minimumPriceTextField.text = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat:self.listing.minPrice]];
+        [self.priceTextField setHidden: self.listing.dynamicPrice];
+        [self.dynamicPricingSwitch setOn:self.listing.dynamicPrice];
         self.navigationItem.title = @"Edit Listing";
         self.deleteListingButton.hidden = NO;
         self.addImagesButton.hidden = YES;
         self.titleTextField.text = self.listing.title;
-        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-        formatter.numberStyle = NSNumberFormatterCurrencyStyle;
-        NSString *currency = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat: self.listing.price]];
-        self.priceTextField.text = currency;
+        NSString *price = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat: self.listing.price]];
+        self.priceTextField.text = price;
         self.locationLabel.text = self.listing.location;
         self.descriptionTextField.text = self.listing.itemDescription;
         [self.isAlwaysAvailableSwitch setOn: self.listing.isAlwaysAvailable];
@@ -156,6 +167,15 @@
     }
 }
 
+- (NSInteger)indexOfListingCategory {
+    for(int i = 0; i < self.categories.count; i ++){
+        if([[self.categories[i] objectId] isEqualToString: self.listing.categoryId]){
+            return i;
+        }
+    }
+    return 0;
+}
+
 - (void)populateDatesSelected {
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = (NSDateInterval *) self.datesAvailable[i];
@@ -174,9 +194,11 @@
     if(self.listing != nil){
         newListing = self.listing;
     }
+    newListing.dynamicPrice = [self.dynamicPricingSwitch isOn];
     newListing.title = self.titleTextField.text;
     newListing.itemDescription = self.descriptionTextField.text;
     newListing.price = [self.priceTextField.text floatValue];
+    newListing.minPrice = [self.minimumPriceTextField.text floatValue];
     newListing.videoURL = @"";
     newListing.ownerId = [[PFUser currentUser] objectId];
     newListing.tags = [[NSMutableArray alloc] init];
@@ -375,6 +397,16 @@
         [result addObject:[self getPFFileFromImage: (UIImage *) images[i]]];
     }
     return result;
+}
+
+- (IBAction)didSwitchDynamicPrice:(id)sender {
+    if([self.dynamicPricingSwitch isOn]) {
+        [self.minimumPriceTextField setHidden:NO];
+        [self.priceTextField setHidden: YES];
+    } else {
+        [self.minimumPriceTextField setHidden:YES];
+        [self.priceTextField setHidden: NO];
+    }
 }
 
 - (IBAction)didDeleteListing:(id)sender {

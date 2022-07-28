@@ -16,7 +16,6 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 @property (strong, nonatomic) IBOutlet UILabel *locationLabel;
-@property (strong, nonatomic) IBOutlet UILabel *priceLabel;
 @property (strong, nonatomic) IBOutlet UIImageView *listingImageView;
 @property (strong, nonatomic) IBOutlet UILabel *statusLabel;
 @property (strong, nonatomic) IBOutlet UIView *cellOptionsView;
@@ -44,10 +43,6 @@
     self.cellOptionsView.hidden = YES;
     self.titleLabel.text = self.listing.title;
     self.locationLabel.text = self.listing.location;
-    NSString *priceString = @"$";
-    priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
-    priceString = [priceString stringByAppendingString:@" / day"];
-    self.priceLabel.text = priceString;
     if(self.listing.images.count > 0){
         PFFileObject *image = (PFFileObject *) self.listing.images[0];
         NSURL *imageURL = [NSURL URLWithString: image.url];
