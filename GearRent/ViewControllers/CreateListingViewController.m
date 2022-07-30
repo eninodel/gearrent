@@ -123,9 +123,9 @@
         self.locationLabel.text = self.listing.location;
         self.descriptionTextField.text = self.listing.itemDescription;
         [self.isAlwaysAvailableSwitch setOn: self.listing.isAlwaysAvailable];
-        CLLocationCoordinate2D itemCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
+        CLLocationCoordinate2D listingCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
         MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
-        pa.coordinate = itemCoordinate;
+        pa.coordinate = listingCoordinate;
         pa.title = @"Item Location";
         [self.mapView addAnnotation:pa];
         PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
@@ -207,8 +207,8 @@
     for(int i = 0; i < self.mapView.annotations.count; i++){
         NSObject *annotation = self.mapView.annotations[i];
         if([annotation isKindOfClass: [MKPointAnnotation class]]){
-            CLLocationCoordinate2D itemCoordinates = self.mapView.annotations[i].coordinate;
-            newListing.geoPoint = [PFGeoPoint geoPointWithLatitude: itemCoordinates.latitude longitude:itemCoordinates.longitude];
+            CLLocationCoordinate2D listingCoordinates = self.mapView.annotations[i].coordinate;
+            newListing.geoPoint = [PFGeoPoint geoPointWithLatitude: listingCoordinates.latitude longitude:listingCoordinates.longitude];
         }
     }
     newListing.location = self.locationLabel.text;

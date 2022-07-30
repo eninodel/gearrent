@@ -52,7 +52,7 @@
             NSLog(@"END: Error in fetching photos");
         }
     }];
-    if([self.reservation.status isEqualToString:@"ACCEPTED"] != YES){
+    if([self.reservation.status isEqualToString:@"CONFIMED"] != YES){
         self.cancelReservationButton.hidden = YES;
     }
 }

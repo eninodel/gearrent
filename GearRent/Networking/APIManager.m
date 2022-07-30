@@ -11,6 +11,9 @@
 #import "CoreLocation/CoreLocation.h"
 #import "Edge.h"
 #import "Listing.h"
+#import "Filter.h"
+#import "Reservation.h"
+#import "TimeInterval.h"
 #import "Foundation/Foundation.h"
 #import "Category.h"
 #import "Address.h"
@@ -19,6 +22,7 @@ static int const kMaxGeoHashPrecision = 7;
 
 @implementation APIManager{
     NSURLSessionDataTask *_Nullable fetchNearestCityTask;
+    NSURLSessionDataTask *_Nullable isTodayAHolidayTask;
 }
 
 void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *)){
@@ -92,6 +96,225 @@ void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, voi
              self->fetchNearestCityTask = nil;
          }];
         [self->fetchNearestCityTask resume];
+}
+
+- (void)isTodayAHoliday:(void(^_Nonnull)(BOOL, NSError *)) completion{
+    NSDictionary *headers = @{ @"X-RapidAPI-Key": @"4ee4de8731msh81f644e471716bbp14ba33jsnae748db48874",
+                           @"X-RapidAPI-Host": @"public-holiday.p.rapidapi.com" };
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString: @"https://public-holiday.p.rapidapi.com/2022/US"]
+                                                       cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                                   timeoutInterval:10.0];
+    [request setHTTPMethod:@"GET"];
+    [request setAllHTTPHeaderFields:headers];
+
+    NSURLSession *session = [NSURLSession sharedSession];
+    __block BOOL done = NO;
+    isTodayAHolidayTask = [session dataTaskWithRequest:request
+                                           completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                               done = YES;
+                                               if (error) {
+                                                   completion(nil, error);
+                                               } else {
+                                                   NSDate *today = [APIManager dateWithHour:0 minute:0 second:0];
+                                                   NSString *strISOLatin = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
+                                                   NSData *dataUTF8 = [strISOLatin dataUsingEncoding:NSUTF8StringEncoding];
+                                                   NSArray *holidays = [NSJSONSerialization JSONObjectWithData:dataUTF8 options:0 error:&error];
+                                                   if (holidays != nil) {
+                                                       for(int i = 0; i < holidays.count; i ++){
+                                                           NSDictionary *holiday = holidays[i];
+                                                           NSString *dateString = [holiday valueForKey:@"date"];
+                                                           NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                                                           [dateFormatter setDateFormat:@"yyyy-MM-dd"];
+                                                           NSDate *date = [dateFormatter dateFromString:dateString];
+                                                           if([date isEqualToDate:today]){
+                                                               completion(YES, nil);
+                                                           }
+                                                       }
+                                                       completion(NO, nil);
+                                                   } else {
+                                                       NSLog(@"Error: %@", error);
+                                                       completion(nil, error);
+                                                   }
+                                               }
+        self->isTodayAHolidayTask = nil;
+    }];
+   [self->isTodayAHolidayTask resume];
+}
+
+void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
+    NSInteger lookback = 24;
+    __block NSInteger numberOfSearchesForCategoryInPast24Hours = 0;
+    __block NSInteger numberOfReservationsSentInPast24Hours = 0;
+    __block float supplyFactor = 0.0;
+    __block BOOL holiday = NO;
+    dispatch_group_t serviceGroup = dispatch_group_create();
+    dispatch_group_enter(serviceGroup);
+    [APIManager searchesInPastHours:lookback categoryId:listing.categoryId location:listing.location completion:^(NSInteger result, NSError *error) {
+        if(error){
+            NSLog(@"%@", error);
+        } else{
+            numberOfSearchesForCategoryInPast24Hours = result;
+        }
+        dispatch_group_leave(serviceGroup);
+    }];
+    dispatch_group_enter(serviceGroup);
+    [APIManager reservationsInPastHours:[listing objectId] hours:lookback completion:^(NSInteger result, NSError *error) {
+        if(error){
+            NSLog(@"%@", error);
+        } else{
+            numberOfReservationsSentInPast24Hours = result;
+        }
+        dispatch_group_leave(serviceGroup);
+    }];
+    dispatch_group_enter(serviceGroup);
+    [APIManager supplyAvailableForListing:listing completion:^(float result, NSError *error) {
+        supplyFactor = result;
+        dispatch_group_leave(serviceGroup);
+    }];
+    dispatch_group_enter(serviceGroup);
+    [[APIManager alloc] isTodayAHoliday:^(BOOL isTodayAHoliday, NSError *error) {
+        if(error == nil){
+            holiday = isTodayAHoliday;
+        }
+        dispatch_group_leave(serviceGroup);
+    }];
+    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
+        NSDate *today = [APIManager dateWithHour:0 minute:0 second:0];
+        NSCalendar *calendar = [NSCalendar currentCalendar];
+        CGFloat minPrice = listing.minPrice;
+        CGFloat weekendSurcharge = [calendar isDateInWeekend:today] ? 0.05 : 0.0;
+        CGFloat holidaySurcharge = holiday ? 0.05 : 0.0;
+        CGFloat searchesSurcharge = 0.15 * ((float)numberOfSearchesForCategoryInPast24Hours / (1 + numberOfSearchesForCategoryInPast24Hours));
+        CGFloat numberOfReservationsSurcharge = 0.5 *((float)numberOfReservationsSentInPast24Hours / (1 + numberOfReservationsSentInPast24Hours));
+        CGFloat supplySurcharge = 0.25 * supplyFactor;
+        CGFloat dynamicPriceTotal = minPrice * (1 + weekendSurcharge + holidaySurcharge + searchesSurcharge + numberOfReservationsSurcharge + supplySurcharge);
+        completion(dynamicPriceTotal, nil);
+    });
+}
+
++ (BOOL)isListingInitiallyAvailableToday:(Listing *)listing {
+    if(listing.isAlwaysAvailable){
+        return YES;
+    }
+    NSMutableArray<TimeInterval *> *availabilities = listing.availabilities;
+    NSDate *today = [APIManager dateWithHour:0 minute:0 second:0];
+    for(int i = 0; i < availabilities.count; i++ ){
+        TimeInterval *curr = availabilities[i];
+        NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate: curr.startDate endDate: curr.endDate];
+        if([dateInterval containsDate:today]){
+            return YES;
+        }
+    }
+    return NO;
+}
+
++ (void)isListingReservedToday:(Listing *)listing completion:(void (^_Nonnull)(BOOL, NSError *))completion {
+    NSMutableArray<Reservation *> *reservations = listing.reservations;
+    NSDate *today = [APIManager dateWithHour:0 minute:0 second:0];
+    for(int i = 0; i < reservations.count; i++){
+        Reservation *curr = reservations[i];
+        PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
+        [reservationQuery whereKey:@"itemId" equalTo: [curr objectId]];
+        [reservationQuery includeKey:@"dates"];
+        [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+            if(error == nil){
+                for(int i = 0; i < objects.count; i++){
+                    Reservation *reservation = (Reservation *) objects[i];
+                    NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
+                    if([dateInterval containsDate:today]){
+                        completion(YES, nil);
+                        return;
+                    }
+                }
+            }else{
+                NSLog(@"END: Error in querying reservations");
+            }
+        }];
+    }
+    completion(NO, nil);
+}
+
++ (void)supplyAvailableForListing:(Listing *)listing completion:(void (^_Nonnull)(float, NSError *))completion{
+    __block NSInteger totalListings = 0;
+    __block NSInteger confirmedListings = 0;
+    dispatch_group_t reservationGroup = dispatch_group_create();
+    dispatch_group_notify(reservationGroup, dispatch_get_main_queue(), ^{
+        float result = confirmedListings / totalListings;
+        completion(result, nil);
+    });
+    PFQuery *query = [PFQuery queryWithClassName:@"Listing"];
+    [query whereKey:@"categoryId" equalTo:listing.categoryId];
+    [query whereKey:@"location" equalTo:listing.location];
+    [query includeKey:@"availabilities"];
+    [query includeKey:@"reservations"];
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        if(error){
+            NSLog(@"%@", error);
+        } else{
+            NSArray<Listing *> *similarListings = (NSArray<Listing *> *) objects;
+            for(Listing *listing in similarListings){
+                if([APIManager isListingInitiallyAvailableToday:listing]){ //check if listing is reserved today
+                    totalListings ++;
+                }
+                dispatch_group_enter(reservationGroup);
+                [APIManager isListingReservedToday:listing completion:^(BOOL isReserved, NSError *error) {
+                    if(error){
+                        NSLog(@"%@", error);
+                    } else if(isReserved){
+                        confirmedListings ++;
+                    }
+                    dispatch_group_leave(reservationGroup);
+                }];
+            }
+        }
+    }];
+}
+
++ (void)reservationsInPastHours:(NSString *)listingId hours:(NSInteger)hours completion:(void (^_Nonnull)(NSInteger, NSError *))completion {
+    PFQuery *query = [PFQuery queryWithClassName:@"Reservation"];
+    [query whereKey:@"itemId" equalTo:listingId];
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        if(error){
+            NSLog(@"END: Failed getting reservations");
+            completion(-1, error);
+        } else{
+            NSLog(@"END: Successfully fetched reservations");
+            NSArray<Reservation *> *reservations = (NSArray<Reservation *> *)objects;
+            float threshold = (3600.0 * hours);
+            NSInteger result = 0;
+            for(Reservation *reservation in reservations){
+                NSTimeInterval timeInterval = [[NSDate new] timeIntervalSinceDate:reservation.createdAt];
+                if(timeInterval <= threshold && timeInterval >= 0){ // within past x hours
+                    result ++;
+                }
+            }
+            completion(result, nil);
+        }
+    }];
+}
+
++ (void)searchesInPastHours:(NSInteger )hours categoryId:(NSString *)categoryId location:(NSString *)location completion:(void (^_Nonnull)(NSInteger, NSError *))completion {
+    PFQuery *query = [PFQuery queryWithClassName:@"Filter"];
+    [query whereKey:@"categoryId" equalTo:categoryId];
+    [query whereKey:@"location" equalTo:location];
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+        if(error){
+            NSLog(@"END: Failed getting filters");
+            completion(-1, error);
+        } else{
+            NSLog(@"END: Successfully fetched filters");
+            NSArray<Filter *> *filters = (NSArray<Filter *> *)objects;
+            float threshold = (3600.0 * hours);
+            NSInteger result = 0;
+            for(Filter *filter in filters){
+                NSTimeInterval timeInterval = [[NSDate new] timeIntervalSinceDate:filter.createdAt];
+                if(timeInterval <= threshold && timeInterval >= 0){ // within past x hours
+                    result ++;
+                }
+            }
+            completion(result, nil);
+        }
+    }];
 }
 
 + (NSMutableSet<GNGeoHash *> *)findAllGeohashesWithinPolygon:(NSArray<CLLocation *> *)polygonCoordinates precision:(int)precision {
@@ -222,6 +445,19 @@ void fetchAllCategories(void(^completion)(NSArray<Category *> *, NSError *)){
             completion((NSArray<Category *> *)objects, nil);
         }
     }];
+}
+
++(NSDate *)dateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second {
+   NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components: NSCalendarUnitYear|
+                                    NSCalendarUnitMonth|
+                                    NSCalendarUnitDay
+                                               fromDate:[NSDate date]];
+    [components setHour:hour];
+    [components setMinute:minute];
+    [components setSecond:second];
+    NSDate *newDate = [calendar dateFromComponents:components];
+    return newDate;
 }
 
 @end

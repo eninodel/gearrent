@@ -483,12 +483,6 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Price" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QXx-GR-r8L">
-                                                    <rect key="frame" x="39" y="93" width="39" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hhX-Rl-iVE">
                                                     <rect key="frame" x="39" y="130" width="177" height="21"/>
                                                     <constraints>
@@ -536,22 +530,19 @@
                                                 </view>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="QXx-GR-r8L" secondAttribute="bottom" constant="84" id="1Jp-PV-9gk"/>
                                                 <constraint firstAttribute="bottom" secondItem="hbc-20-THS" secondAttribute="bottom" id="3bx-Ik-Q7p"/>
-                                                <constraint firstItem="QXx-GR-r8L" firstAttribute="top" secondItem="keU-A2-5C7" secondAttribute="bottom" constant="16" id="4kY-hn-Uj1"/>
                                                 <constraint firstAttribute="trailing" secondItem="hbc-20-THS" secondAttribute="trailing" id="7xQ-Rr-Zph"/>
                                                 <constraint firstItem="14D-di-ZLF" firstAttribute="top" secondItem="ge8-DN-5QI" secondAttribute="top" constant="27" id="B0n-gq-SXU"/>
                                                 <constraint firstAttribute="bottom" secondItem="igt-6D-oaK" secondAttribute="bottom" constant="35" id="BT8-TH-wkd"/>
-                                                <constraint firstItem="hhX-Rl-iVE" firstAttribute="leading" secondItem="QXx-GR-r8L" secondAttribute="leading" id="HpA-LS-xpx"/>
                                                 <constraint firstItem="hbc-20-THS" firstAttribute="top" secondItem="ge8-DN-5QI" secondAttribute="top" id="LOm-uK-eOg"/>
                                                 <constraint firstItem="14D-di-ZLF" firstAttribute="leading" secondItem="ge8-DN-5QI" secondAttribute="leading" constant="39" id="SK2-7c-US0"/>
                                                 <constraint firstItem="igt-6D-oaK" firstAttribute="centerY" secondItem="ge8-DN-5QI" secondAttribute="centerY" id="WjN-ms-0TT"/>
                                                 <constraint firstItem="igt-6D-oaK" firstAttribute="leading" secondItem="ge8-DN-5QI" secondAttribute="leading" constant="87" id="ZJ4-ML-VY4"/>
                                                 <constraint firstItem="igt-6D-oaK" firstAttribute="centerX" secondItem="ge8-DN-5QI" secondAttribute="centerX" id="cF0-gP-c36"/>
-                                                <constraint firstItem="QXx-GR-r8L" firstAttribute="leading" secondItem="14D-di-ZLF" secondAttribute="leading" id="eYU-oA-J01"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="hhX-Rl-iVE" secondAttribute="bottom" constant="36" id="erR-SO-bOV"/>
+                                                <constraint firstItem="hhX-Rl-iVE" firstAttribute="leading" secondItem="ge8-DN-5QI" secondAttribute="leadingMargin" constant="19" id="h2f-DF-ING"/>
                                                 <constraint firstItem="keU-A2-5C7" firstAttribute="leading" secondItem="14D-di-ZLF" secondAttribute="leading" id="k6i-nh-ZWZ"/>
                                                 <constraint firstItem="igt-6D-oaK" firstAttribute="top" secondItem="ge8-DN-5QI" secondAttribute="top" constant="35" id="m6m-Ex-ulu"/>
-                                                <constraint firstItem="hhX-Rl-iVE" firstAttribute="top" secondItem="QXx-GR-r8L" secondAttribute="bottom" constant="16" id="p1P-hH-qPV"/>
                                                 <constraint firstItem="hbc-20-THS" firstAttribute="leading" secondItem="hhX-Rl-iVE" secondAttribute="trailing" id="tfm-SG-x1i"/>
                                                 <constraint firstItem="keU-A2-5C7" firstAttribute="top" secondItem="14D-di-ZLF" secondAttribute="bottom" constant="8" symbolic="YES" id="uvE-F4-pbZ"/>
                                                 <constraint firstAttribute="trailing" secondItem="igt-6D-oaK" secondAttribute="trailing" constant="87" id="xWh-IT-tnR"/>
@@ -562,7 +553,6 @@
                                             <outlet property="editListingButton" destination="fID-Ex-Epi" id="sQI-UN-CaO"/>
                                             <outlet property="listingImageView" destination="hbc-20-THS" id="fYM-qQ-JU0"/>
                                             <outlet property="locationLabel" destination="keU-A2-5C7" id="2Nh-j1-24i"/>
-                                            <outlet property="priceLabel" destination="QXx-GR-r8L" id="FQD-T7-mdq"/>
                                             <outlet property="statusLabel" destination="hhX-Rl-iVE" id="4vA-um-uHe"/>
                                             <outlet property="titleLabel" destination="14D-di-ZLF" id="l0N-6Y-xLh"/>
                                             <outlet property="viewReservationsButton" destination="Lu4-ac-GGJ" id="zHJ-jG-ztv"/>
