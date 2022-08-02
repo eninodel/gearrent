@@ -6,7 +6,7 @@
 //
 
 #import "BookingTableViewCell.h"
-#import "Item.h"
+#import "Listing.h"
 #import "UIImageView+AFNetworking.h"
 
 @interface BookingTableViewCell()
@@ -38,8 +38,8 @@
     [listingPhotoQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
-            if(objects.count > 0 && [objects[0] isKindOfClass:[Item class]]){
-                Item *listing = (Item *)objects[0];
+            if(objects.count > 0 && [objects[0] isKindOfClass:[Listing class]]){
+                Listing *listing = (Listing *)objects[0];
                 strongSelf.titleLabel.text = listing.title;
                 PFFileObject *image = (PFFileObject *) listing.images[0];
                 NSURL *imageURL = [NSURL URLWithString: image.url];
@@ -52,7 +52,7 @@
             NSLog(@"END: Error in fetching photos");
         }
     }];
-    if([self.reservation.status isEqualToString:@"ACCEPTED"] != YES){
+    if([self.reservation.status isEqualToString:@"CONFIMED"] != YES){
         self.cancelReservationButton.hidden = YES;
     }
 }

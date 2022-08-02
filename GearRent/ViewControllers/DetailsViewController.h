@@ -6,14 +6,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Item.h"
+#import "Listing.h"
 #import <JTCalendar/JTCalendar.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DetailsViewController : UIViewController
 
-@property (strong, nonatomic) Item *listing;
+@property (strong, nonatomic) Listing *listing;
 
 @property (weak, nonatomic) IBOutlet JTCalendarMenuView *calendarMenuView;
 @property (weak, nonatomic) IBOutlet JTHorizontalCalendarView *calendarContentView;

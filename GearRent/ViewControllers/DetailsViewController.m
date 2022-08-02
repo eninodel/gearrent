@@ -13,8 +13,9 @@
 #import <JTCalendar/JTCalendar.h>
 #import "UIImageView+AFNetworking.h"
 #import "TimeInterval.h"
-#import "Item.h"
+#import "Listing.h"
 #import "Reservation.h"
+#import "APIManager.h"
 
 @interface DetailsViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
 
@@ -31,6 +32,7 @@
 @property (strong, nonatomic) NSMutableArray *datesSelected;
 @property (strong, nonatomic) NSMutableArray *datesReserved;
 @property (strong, nonatomic) NSMutableArray *datesAvailable;
+@property (strong, nonatomic) NSMutableDictionary<NSDate *, NSNumber *> *datesToPrices;
 
 - (IBAction)didReserveNow:(id)sender;
 - (IBAction)didTapBack:(id)sender;
@@ -41,10 +43,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.datesToPrices = [NSMutableDictionary<NSDate *, NSNumber *> new];
     self.carouselCollectionView.delegate = self;
     self.carouselCollectionView.dataSource = self;
     self.titleLabel.text = self.listing.title;
-    self.locationLabel.text = self.listing.city;
+    self.locationLabel.text = self.listing.location;
     self.descriptionLabel.text = self.listing.itemDescription;
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo: self.listing.ownerId];
@@ -58,10 +61,25 @@
             NSLog(@"END: Error in getting user in DetailsViewController");
         }
     }];
-    NSString *priceString = @"$";
-    priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
-    priceString = [priceString stringByAppendingString:@" / day"];
-    self.priceLabel.text = priceString;
+    if(self.listing.dynamicPrice){
+        // get dynamic price
+        fetchDynamicPrice(self.listing, ^(CGFloat price, NSError * _Nonnull error) {
+            typeof(self) strongSelf = weakSelf;
+            if(error == nil && strongSelf){
+                NSString *priceString = @"$";
+                priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:price] stringValue]];
+                priceString = [priceString stringByAppendingString:@" / day"];
+                strongSelf.priceLabel.text = priceString;
+            } else{
+                NSLog(@"%@", error);
+            }
+        });
+    } else{
+        NSString *priceString = @"$";
+        priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
+        priceString = [priceString stringByAppendingString:@" / day"];
+        self.priceLabel.text = priceString;
+    }
     self.calendarManager = [JTCalendarManager new];
     self.calendarManager.delegate = self;
     [self.calendarManager setMenuView:self.calendarMenuView];
@@ -83,9 +101,9 @@
     [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
-            Item *item = (Item *) objects[0];
-            for(int i = 0; i < item.availabilities.count; i++){
-                TimeInterval *interval = (TimeInterval *) item.availabilities[i];
+            Listing *listing = (Listing *) objects[0];
+            for(int i = 0; i < listing.availabilities.count; i++){
+                TimeInterval *interval = (TimeInterval *) listing.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
                 [strongSelf.datesAvailable addObject:dateInterval];
             }
@@ -110,10 +128,10 @@
         }
     }];
     [self setReserveButtonText];
-    CLLocationCoordinate2D itemCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
+    CLLocationCoordinate2D listingCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
     MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
-    pa.coordinate = itemCoordinate;
-    pa.title = @"Item Location";
+    pa.coordinate = listingCoordinate;
+    pa.title = @"Listing Location";
     [self.mapView addAnnotation:pa];
 }
 
@@ -175,7 +193,7 @@
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
         Reservation *reservation = (Reservation *) self.reservations[i];
-        if([interval containsDate:date] == YES && [reservation.status isEqualToString:@"ACCEPTED"]){
+        if([interval containsDate:date] == YES && [reservation.status isEqualToString:@"CONFIMED"]){
             return YES;
         }
     }
@@ -222,7 +240,9 @@
     if(self.datesSelected.count == 0){
         [self.reserveNowButton setTitle:@"Please select day(s) to reserve item" forState:UIControlStateNormal];
     }else{
-        float total = self.listing.price * self.datesSelected.count;
+        NSRange range = NSMakeRange(1, self.priceLabel.text.length - 6);
+        NSString *substring = [self.priceLabel.text substringWithRange:range];
+        CGFloat total = [substring floatValue] * self.datesSelected.count;
         NSString *buttonText = @"Reserve now for $";
         buttonText = [buttonText stringByAppendingString:[[NSNumber numberWithFloat:total] stringValue]];
         [self.reserveNowButton setTitle:buttonText forState:UIControlStateNormal];

@@ -6,7 +6,7 @@
 //
 
 #import "ListingReservationsViewController.h"
-#import "Item.h"
+#import "Listing.h"
 #import "Reservation.h"
 #import "TimeInterval.h"
 #import "Parse/Parse.h"

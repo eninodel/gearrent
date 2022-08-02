@@ -11,13 +11,15 @@
 #import "ProfileImagePickerViewController.h"
 #import "UIImageView+AFNetworking.h"
 #import "TimeInterval.h"
-#import "Item.h"
+#import "Listing.h"
 #import "Reservation.h"
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
 #import "GNGeoHash.h"
+#import "APIManager.h"
+#import "Category.h"
 
-@interface CreateListingViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate,ProfileImagePickerViewControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
+@interface CreateListingViewController ()<UICollectionViewDataSource, UICollectionViewDelegate, JTCalendarDelegate,ProfileImagePickerViewControllerDelegate, MKMapViewDelegate, CLLocationManagerDelegate, UIPickerViewDelegate, UIPickerViewDataSource>
 @property (strong, nonatomic) IBOutlet UIView *calendarView;
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (strong, nonatomic) IBOutlet UICollectionView *imageCarouselCollectionView;
@@ -28,7 +30,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *addImagesLabel;
 @property (strong, nonatomic) IBOutlet UITextField *titleTextField;
 @property (strong, nonatomic) IBOutlet UITextField *priceTextField;
-@property (strong, nonatomic) IBOutlet UITextField *cityTextField;
+@property (strong, nonatomic) IBOutlet UILabel *locationLabel;
 @property (strong, nonatomic) IBOutlet UITextField *descriptionTextField;
 @property (strong, nonatomic) IBOutlet UILabel *nameLabel;
 @property (strong, nonatomic) IBOutlet MKMapView *mapView;
@@ -37,6 +39,10 @@
 @property (strong, nonatomic) IBOutlet UIButton *addImagesButton;
 @property (strong, nonatomic) IBOutlet UIButton *deleteListingButton;
 @property (strong, nonatomic) IBOutlet UINavigationItem *navigationTitle;
+@property (strong, nonatomic) IBOutlet UIPickerView *categoriesPicker;
+@property(strong, nonatomic) NSArray<Category *> *categories;
+@property (strong, nonatomic) IBOutlet UISwitch *dynamicPricingSwitch;
+@property (strong, nonatomic) IBOutlet UITextField *minimumPriceTextField;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -44,6 +50,7 @@
 - (IBAction)didSwitchAvailability:(id)sender;
 - (IBAction)didTapBack:(id)sender;
 - (IBAction)didDeleteListing:(id)sender;
+- (IBAction)didSwitchDynamicPrice:(id)sender;
 
 @end
 
@@ -52,6 +59,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    [self.minimumPriceTextField setHidden:YES];
     self.deleteListingButton.hidden = YES;
     self.navigationItem.title = @"Create a Listing";
     self.nameLabel.text =  [PFUser currentUser][@"name"];
@@ -81,18 +89,43 @@
     fingerTap.numberOfTapsRequired = 1;
     fingerTap.numberOfTouchesRequired = 1;
     [self.mapView addGestureRecognizer:fingerTap];
+    self.categoriesPicker.delegate = self;
+    self.categoriesPicker.dataSource = self;
+    __weak typeof(self) weakSelf = self;
+    void(^completion)(NSArray<Category *> *, NSError *) = ^void(NSArray<Category*> *categories, NSError *error){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil){
+            if(strongSelf){
+                strongSelf.categories = categories;
+                [strongSelf.categoriesPicker reloadAllComponents];
+                if(strongSelf.listing){
+                    [strongSelf.categoriesPicker selectRow:[strongSelf indexOfListingCategory] inComponent:0 animated:YES];
+                }
+            }
+        } else{
+            NSLog(@"%@", error);
+        }
+    };
+    fetchAllCategories(completion);
     if(self.listing != nil){
+        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+        formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+        [self.minimumPriceTextField setHidden: !self.listing.dynamicPrice];
+        self.minimumPriceTextField.text = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat:self.listing.minPrice]];
+        [self.priceTextField setHidden: self.listing.dynamicPrice];
+        [self.dynamicPricingSwitch setOn:self.listing.dynamicPrice];
         self.navigationItem.title = @"Edit Listing";
         self.deleteListingButton.hidden = NO;
         self.addImagesButton.hidden = YES;
         self.titleTextField.text = self.listing.title;
-        self.priceTextField.text = [[NSNumber numberWithFloat: self.listing.price] stringValue];
-        self.cityTextField.text = self.listing.city;
+        NSString *price = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat: self.listing.price]];
+        self.priceTextField.text = price;
+        self.locationLabel.text = self.listing.location;
         self.descriptionTextField.text = self.listing.itemDescription;
         [self.isAlwaysAvailableSwitch setOn: self.listing.isAlwaysAvailable];
-        CLLocationCoordinate2D itemCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
+        CLLocationCoordinate2D listingCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
         MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
-        pa.coordinate = itemCoordinate;
+        pa.coordinate = listingCoordinate;
         pa.title = @"Item Location";
         [self.mapView addAnnotation:pa];
         PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
@@ -102,9 +135,9 @@
         [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
             typeof(self) strongSelf = weakSelf;
             if(error == nil && strongSelf){
-                Item *item = (Item *) objects[0];
-                for(int i = 0; i < item.availabilities.count; i++){
-                    TimeInterval *interval = (TimeInterval *) item.availabilities[i];
+                Listing *listing = (Listing *) objects[0];
+                for(int i = 0; i < listing.availabilities.count; i++){
+                    TimeInterval *interval = (TimeInterval *) listing.availabilities[i];
                     NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
                     [strongSelf.datesAvailable addObject:dateInterval];
                 }
@@ -134,6 +167,15 @@
     }
 }
 
+- (NSInteger)indexOfListingCategory {
+    for(int i = 0; i < self.categories.count; i ++){
+        if([[self.categories[i] objectId] isEqualToString:self.listing.categoryId]){
+            return i;
+        }
+    }
+    return 0;
+}
+
 - (void)populateDatesSelected {
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = (NSDateInterval *) self.datesAvailable[i];
@@ -146,35 +188,38 @@
 }
 
 - (IBAction)didList:(id)sender {
-    Item *newItem = [Item new];
-    newItem.reservations = [[NSMutableArray alloc] init];
-    newItem.images = [self imagesToPFFiles:self.carouselImages];
+    Listing *newListing = [Listing new];
+    newListing.reservations = [[NSMutableArray alloc] init];
+    newListing.images = [self imagesToPFFiles:self.carouselImages];
     if(self.listing != nil){
-        newItem = self.listing;
+        newListing = self.listing;
     }
-    newItem.title = self.titleTextField.text;
-    newItem.itemDescription = self.descriptionTextField.text;
-    newItem.price = [self.priceTextField.text floatValue];
-    newItem.videoURL = @"";
-    newItem.ownerId = [[PFUser currentUser] objectId];
-    newItem.tags = [[NSMutableArray alloc] init];
+    newListing.dynamicPrice = [self.dynamicPricingSwitch isOn];
+    newListing.title = self.titleTextField.text;
+    newListing.itemDescription = self.descriptionTextField.text;
+    newListing.price = [self.priceTextField.text floatValue];
+    newListing.minPrice = [self.minimumPriceTextField.text floatValue];
+    newListing.videoURL = @"";
+    newListing.ownerId = [[PFUser currentUser] objectId];
+    newListing.tags = [[NSMutableArray alloc] init];
+    newListing.categoryId = [(Category *)self.categories[[self.categoriesPicker selectedRowInComponent:0]] objectId];
     NSLog(@"%@", self.mapView.annotations);
     for(int i = 0; i < self.mapView.annotations.count; i++){
         NSObject *annotation = self.mapView.annotations[i];
         if([annotation isKindOfClass: [MKPointAnnotation class]]){
-            CLLocationCoordinate2D itemCoordinates = self.mapView.annotations[i].coordinate;
-            newItem.geoPoint = [PFGeoPoint geoPointWithLatitude: itemCoordinates.latitude longitude:itemCoordinates.longitude];
+            CLLocationCoordinate2D listingCoordinates = self.mapView.annotations[i].coordinate;
+            newListing.geoPoint = [PFGeoPoint geoPointWithLatitude: listingCoordinates.latitude longitude:listingCoordinates.longitude];
         }
     }
-    newItem.city = self.cityTextField.text;
-    newItem.availabilities =  [self getTimeIntervals:self.datesSelected];
-    newItem.isAlwaysAvailable = [self.isAlwaysAvailableSwitch isOn];
+    newListing.location = self.locationLabel.text;
+    newListing.availabilities =  [self getTimeIntervals:self.datesSelected];
+    newListing.isAlwaysAvailable = self.isAlwaysAvailableSwitch.on;
     // TODO: add utils class with constants such as geohash precision
-    GNGeoHash *geohash = [GNGeoHash withCharacterPrecision:newItem.geoPoint.latitude  andLongitude:newItem.geoPoint.longitude andNumberOfCharacters:7];
-    newItem.geohash = [geohash toBase32];
-    [newItem saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+    GNGeoHash *geohash = [GNGeoHash withCharacterPrecision:newListing.geoPoint.latitude  andLongitude:newListing.geoPoint.longitude andNumberOfCharacters:7];
+    newListing.geohash = [geohash toBase32];
+    [newListing saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(succeeded){
-            NSLog(@"END: Item successfully saved");
+            NSLog(@"END: Listing successfully saved");
             [self dismissViewControllerAnimated:YES completion:nil];
         } else{
             NSLog(@"%@", error.description);
@@ -193,11 +238,25 @@
     CGPoint touchPoint = [gestureRecognizer locationInView:self.mapView];
     CLLocationCoordinate2D touchMapCoordinate =
     [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
-    
     MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
     pa.coordinate = touchMapCoordinate;
-    pa.title = @"Item Location";
+    pa.title = @"Listing Location";
     [self.mapView addAnnotation:pa];
+    __weak typeof(self) weakSelf = self;
+    void(^completion)(NSString *, NSError *) = ^void(NSString *response, NSError *error){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil){
+            if(strongSelf){
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [strongSelf.locationLabel setText:response];
+                });
+            }
+        } else{
+            NSLog(@"%@", error);
+        }
+    };
+    CLLocation *location = [[CLLocation alloc] initWithLatitude:touchMapCoordinate.latitude longitude:touchMapCoordinate.longitude];
+    [[APIManager alloc] fetchNearestCity:location completion:completion];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -340,6 +399,16 @@
     return result;
 }
 
+- (IBAction)didSwitchDynamicPrice:(id)sender {
+    if([self.dynamicPricingSwitch isOn]) {
+        [self.minimumPriceTextField setHidden:NO];
+        [self.priceTextField setHidden: YES];
+    } else {
+        [self.minimumPriceTextField setHidden:YES];
+        [self.priceTextField setHidden: NO];
+    }
+}
+
 - (IBAction)didDeleteListing:(id)sender {
     [self.listing deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(error == nil){
@@ -385,6 +454,19 @@
         return nil;
     }
     return [PFFileObject fileObjectWithName:@"image.png" data:imageData];
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(nonnull UIPickerView *)pickerView {
+    return 1;
+}
+
+- (NSInteger)pickerView:(nonnull UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component {
+    return self.categories.count;
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    Category *category = self.categories[row];
+    return category[@"title"];
 }
 
 @end

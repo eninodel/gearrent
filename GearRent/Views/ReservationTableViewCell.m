@@ -64,7 +64,7 @@
 }
 
 - (IBAction)didAccept:(id)sender {
-    self.reservation.status = @"ACCEPTED";
+    self.reservation.status = @"CONFIMED";
     self.currentStatusLabel.text = self.reservation.status;
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(error == nil){

@@ -14,9 +14,12 @@
 #import "MapKit/MapKit.h"
 #import "CoreLocation/CoreLocation.h"
 #import "APIManager.h"
-#import "Item.h"
+#import "Listing.h"
+#import "Category.h"
+#import "FiltersTableViewCell.h"
+#import "Filter.h"
 
-@interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate>
+@interface GearForRentViewController ()<UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, CLLocationManagerDelegate, FiltersTableViewCellDelegate>
 
 @property (strong, nonatomic) NSArray *tableData;
 @property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
@@ -26,11 +29,18 @@
 @property (strong, nonatomic) NSMutableArray<CLLocation *> *mapPoints;
 @property (strong, nonatomic) IBOutlet UIButton *removePointsButton;
 @property (strong, nonatomic) IBOutlet UIButton *searchPolygonButton;
+@property (strong, nonatomic) IBOutlet UITableView *FiltersTableView;
+@property (strong, nonatomic) IBOutlet UIButton *FiltersButton;
+@property (strong, nonatomic) NSArray<Category *> *categories;
+@property (strong, nonatomic) NSMutableSet<NSString *> *selectedCategories;
+@property (strong, nonatomic) NSArray<Listing *> *filteredListings;
+@property (strong, nonatomic) CLLocation *userLocation;
 
 - (IBAction)didLogOut:(id)sender;
 - (IBAction)didChangeListing:(id)sender;
 - (IBAction)didRemovePoints:(id)sender;
 - (IBAction)didSearchPolygon:(id)sender;
+- (IBAction)didTapFilters:(id)sender;
 
 @end
 
@@ -39,9 +49,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.selectedCategories = [NSMutableSet<NSString *> new];
+    self.FiltersTableView.delegate = self;
+    self.FiltersTableView.dataSource = self;
+    self.categories = [NSArray<Category *> new];
     self.mapPoints = [NSMutableArray<CLLocation *> new];
     self.listingsTableView.delegate = self;
     self.listingsTableView.dataSource = self;
+    self.filteredListings = [NSArray<Listing *> new];
     self.mapView.hidden = YES;
     self.removePointsButton.hidden = YES;
     self.searchPolygonButton.hidden = YES;
@@ -56,6 +71,7 @@
     fingerTap.numberOfTapsRequired = 1;
     fingerTap.numberOfTouchesRequired = 1;
     [self.mapView addGestureRecognizer:fingerTap];
+    [self.FiltersTableView setHidden:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -90,7 +106,7 @@
     [self renderMapPoints];
 }
 
-- (void)renderMapPoints{
+- (void)renderMapPoints {
     // TODO: create a function to validate that no polygon segments overlap
     NSUInteger count = self.mapPoints.count;
     if(self.mapView.overlays.count > 0){
@@ -125,18 +141,32 @@
     MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
     MKCoordinateRegion region = MKCoordinateRegionMake(locations[0].coordinate, span);
     [self.mapView setRegion:region];
+    self.userLocation = [locations lastObject];
 }
 
 -(void)fetchData {
+    __weak typeof(self) weakSelf = self;
+    void(^completion)(NSArray<Category *> *, NSError *) = ^void(NSArray<Category*> *categories, NSError *error){
+        typeof(self) strongSelf = weakSelf;
+        if(error == nil){
+            if(strongSelf){
+                strongSelf.categories = categories;
+                [strongSelf.FiltersTableView reloadData];
+            }
+        } else{
+            NSLog(@"%@", error);
+        }
+    };
+    fetchAllCategories(completion);
     PFQuery *query = [PFQuery queryWithClassName: @"Listing"];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"availabilities"];
     [query includeKey:@"reservations"];
-    __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
             strongSelf.tableData = objects;
+            strongSelf.filteredListings = (NSArray<Listing *> *)objects;
             [strongSelf.listingsTableView reloadData];
         } else{
             NSLog(@"END: Error in querying listings");
@@ -145,20 +175,26 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewNavigationController"];
-    [self presentViewController:navigationVC animated:YES completion:nil];
-    DetailsViewController *detailsVC = (DetailsViewController *) [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewController"];
-    detailsVC.listing = (Item *) self.tableData[indexPath.row];
-    [navigationVC pushViewController:detailsVC animated:YES];
+    if(tableView == self.listingsTableView){
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewNavigationController"];
+        [self presentViewController:navigationVC animated:YES completion:nil];
+        DetailsViewController *detailsVC = (DetailsViewController *) [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewController"];
+        detailsVC.listing = (Listing *) self.filteredListings[indexPath.row];
+        [navigationVC pushViewController:detailsVC animated:YES];
+    }
+}
+
+- (IBAction)didTapFilters:(id)sender {
+    [self.FiltersTableView setHidden:![self.FiltersTableView isHidden]];
 }
 
 - (IBAction)didSearchPolygon:(id)sender {
-    void(^completion)(NSArray<Item *> *, NSError *error) = ^void(NSArray<Item *> *listings, NSError *error){
+    void(^completion)(NSArray<Listing *> *, NSError *error) = ^void(NSArray<Listing *> *listings, NSError *error){
         if(error == nil){
             NSLog(@"END: Successfully searched for listings in polygon");
             for(int i = 0; i < listings.count; i ++){
-                Item *listing = listings[i];
+                Listing *listing = listings[i];
                 MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
                 pa.coordinate = CLLocationCoordinate2DMake(listing.geoPoint.latitude, listing.geoPoint.longitude);
                 pa.title = listing.title;
@@ -184,11 +220,14 @@
         [self.removePointsButton setHidden:NO];
         [self.searchPolygonButton setHidden:NO];
         [self.listingTypeButton.titleLabel setText:@"List"];
+        [self.FiltersButton setHidden:YES];
+        [self.FiltersTableView setHidden:YES];
     } else{
         [self.mapView setHidden:YES];
         [self.removePointsButton setHidden:YES];
         [self.searchPolygonButton setHidden:YES];
         [self.listingTypeButton.titleLabel setText:@"Map"];
+        [self.FiltersButton setHidden: NO];
     }
 }
 
@@ -205,18 +244,74 @@
 }
 
 - (nonnull UITableViewCell *)tableView:(nonnull UITableView *)tableView cellForRowAtIndexPath:(nonnull NSIndexPath *)indexPath {
-    ListingTableViewCell *cell = [self.listingsTableView dequeueReusableCellWithIdentifier:@"ListingTableViewCell"];
-    cell.listing = self.tableData[indexPath.row];
-    [cell initializeCell];
-    return cell;
+    if(tableView == self.listingsTableView){
+        ListingTableViewCell *cell = [self.listingsTableView dequeueReusableCellWithIdentifier:@"ListingTableViewCell"];
+        cell.listing = self.filteredListings[indexPath.row];
+        [cell initializeCell];
+        return cell;
+    } else{ // filters table view
+        FiltersTableViewCell *cell = [self.FiltersTableView dequeueReusableCellWithIdentifier:@"FiltersTableViewCell"];
+        cell.category = self.categories[indexPath.row];
+        cell.delegate = self;
+        [cell initializeCell];
+        return cell;
+    }
 }
 
 - (NSInteger)tableView:(nonnull UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.tableData.count;
+    if(tableView == self.listingsTableView){
+        return self.filteredListings.count;
+    } else{ // filters table view
+        return self.categories.count;
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
+}
+
+- (void)didSelectCategory:(nonnull NSString *)categoryId {
+    Filter *newFilter = [Filter new];
+    newFilter.userId = [[PFUser currentUser] objectId];
+    newFilter.categoryId = categoryId;
+    [[APIManager alloc] fetchNearestCity:self.userLocation completion:^(NSString * _Nonnull city, NSError * _Nonnull error) {
+        if(error){
+            NSLog(@"END: Error in fetching nearest city for current user");
+        } else{
+            newFilter.location = city;
+            [newFilter saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                if(error){
+                    NSLog(@"END: Error in saving Filter");
+                } else{
+                    NSLog(@"END: Successfully saved Filter");
+                }
+            }];
+        }
+    }];
+    NSMutableArray<Listing *> *result = [NSMutableArray<Listing *> new];
+    [self.selectedCategories addObject:categoryId];
+    for(Listing * listing in self.tableData){
+        if([self.selectedCategories containsObject:listing.categoryId]){
+            [result addObject:listing];
+        }
+    }
+    self.filteredListings = [result copy];
+    [self.listingsTableView reloadData];
+}
+
+- (void)didUnselectCategory:(nonnull NSString *)categoryId {
+    NSMutableArray<Listing *> *result = [NSMutableArray<Listing *> new];
+    [self.selectedCategories removeObject:categoryId];
+    for(Listing * listing in self.tableData){
+        if([self.selectedCategories containsObject:listing.categoryId]){
+            [result addObject:listing];
+        }
+    }
+    self.filteredListings = [result copy];
+    if(self.selectedCategories.count == 0){
+        self.filteredListings = self.tableData;
+    }
+    [self.listingsTableView reloadData];
 }
 
 @end

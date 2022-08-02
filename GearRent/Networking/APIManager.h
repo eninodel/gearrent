@@ -6,14 +6,19 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Item.h"
+#import "Listing.h"
 #import "GNGeoHash.h"
+#import "Category.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+extern void fetchAllCategories(void(^completion)(NSArray<Category *> *, NSError *));
+extern void fetchDynamicPrice(Listing *listing, void(^completion)(CGFloat, NSError *));
+extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *coordinates, void(^completion)(NSArray<Listing *> *, NSError *error));
+
 @interface APIManager : NSObject
 
-void fetchListingsWithCoordinates(NSArray<CLLocation *> *coordinates, void(^completion)(NSArray<Item *> *, NSError *error));
+- (void)fetchNearestCity:(CLLocation *)location completion: (void(^_Nonnull)(NSString *, NSError *)) completion;
 
 @end
 
