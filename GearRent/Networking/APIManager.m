@@ -25,7 +25,7 @@ static int const kMaxGeoHashPrecision = 7;
     NSURLSessionDataTask *_Nullable isTodayAHolidayTask;
 }
 
-void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *)){
+extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *)){
     // Find all the geohashes within the polygon and return nil if no geohashes with precision 7 exist
     NSMutableSet<GNGeoHash *> *geohashesWithinPolygon = [NSMutableSet<GNGeoHash *> new];
     for(int i = 1; i <= kMaxGeoHashPrecision; i ++) {
@@ -141,11 +141,11 @@ void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, voi
    [self->isTodayAHolidayTask resume];
 }
 
-void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
+extern void fetchDynamicPrice(Listing *listing, void(^completion)(CGFloat, NSError *)) {
     NSInteger lookback = 24;
     __block NSInteger numberOfSearchesForCategoryInPast24Hours = 0;
     __block NSInteger numberOfReservationsSentInPast24Hours = 0;
-    __block float supplyFactor = 0.0;
+    __block CGFloat supplyFactor = 0.0;
     __block BOOL holiday = NO;
     dispatch_group_t serviceGroup = dispatch_group_create();
     dispatch_group_enter(serviceGroup);
@@ -167,7 +167,7 @@ void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
         dispatch_group_leave(serviceGroup);
     }];
     dispatch_group_enter(serviceGroup);
-    [APIManager supplyAvailableForListing:listing completion:^(float result, NSError *error) {
+    [APIManager supplyAvailableForListing:listing completion:^(CGFloat result, NSError *error) {
         supplyFactor = result;
         dispatch_group_leave(serviceGroup);
     }];
@@ -184,8 +184,8 @@ void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
         CGFloat minPrice = listing.minPrice;
         CGFloat weekendSurcharge = [calendar isDateInWeekend:today] ? 0.05 : 0.0;
         CGFloat holidaySurcharge = holiday ? 0.05 : 0.0;
-        CGFloat searchesSurcharge = 0.15 * ((float)numberOfSearchesForCategoryInPast24Hours / (1 + numberOfSearchesForCategoryInPast24Hours));
-        CGFloat numberOfReservationsSurcharge = 0.5 *((float)numberOfReservationsSentInPast24Hours / (1 + numberOfReservationsSentInPast24Hours));
+        CGFloat searchesSurcharge = 0.15 * ((CGFloat)numberOfSearchesForCategoryInPast24Hours / (1 + numberOfSearchesForCategoryInPast24Hours));
+        CGFloat numberOfReservationsSurcharge = 0.5 *((CGFloat)numberOfReservationsSentInPast24Hours / (1 + numberOfReservationsSentInPast24Hours));
         CGFloat supplySurcharge = 0.25 * supplyFactor;
         CGFloat dynamicPriceTotal = minPrice * (1 + weekendSurcharge + holidaySurcharge + searchesSurcharge + numberOfReservationsSurcharge + supplySurcharge);
         completion(dynamicPriceTotal, nil);
@@ -234,12 +234,12 @@ void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
     completion(NO, nil);
 }
 
-+ (void)supplyAvailableForListing:(Listing *)listing completion:(void (^_Nonnull)(float, NSError *))completion{
++ (void)supplyAvailableForListing:(Listing *)listing completion:(void (^_Nonnull)(CGFloat, NSError *))completion{
     __block NSInteger totalListings = 0;
     __block NSInteger confirmedListings = 0;
     dispatch_group_t reservationGroup = dispatch_group_create();
     dispatch_group_notify(reservationGroup, dispatch_get_main_queue(), ^{
-        float result = confirmedListings / totalListings;
+        CGFloat result = confirmedListings / totalListings;
         completion(result, nil);
     });
     PFQuery *query = [PFQuery queryWithClassName:@"Listing"];
@@ -280,7 +280,7 @@ void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
         } else{
             NSLog(@"END: Successfully fetched reservations");
             NSArray<Reservation *> *reservations = (NSArray<Reservation *> *)objects;
-            float threshold = (3600.0 * hours);
+            CGFloat threshold = (3600.0 * hours);
             NSInteger result = 0;
             for(Reservation *reservation in reservations){
                 NSTimeInterval timeInterval = [[NSDate new] timeIntervalSinceDate:reservation.createdAt];
@@ -304,7 +304,7 @@ void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
         } else{
             NSLog(@"END: Successfully fetched filters");
             NSArray<Filter *> *filters = (NSArray<Filter *> *)objects;
-            float threshold = (3600.0 * hours);
+            CGFloat threshold = (3600.0 * hours);
             NSInteger result = 0;
             for(Filter *filter in filters){
                 NSTimeInterval timeInterval = [[NSDate new] timeIntervalSinceDate:filter.createdAt];
@@ -435,7 +435,7 @@ void fetchDynamicPrice(Listing *listing, void(^completion)(float, NSError *)) {
     return result;
 }
 
-void fetchAllCategories(void(^completion)(NSArray<Category *> *, NSError *)){
+extern void fetchAllCategories(void(^completion)(NSArray<Category *> *, NSError *)){
     PFQuery *query = [PFQuery queryWithClassName:@"Category"];
     [query whereKey:@"title" notEqualTo:@""];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {

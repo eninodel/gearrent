@@ -63,7 +63,7 @@
     }];
     if(self.listing.dynamicPrice){
         // get dynamic price
-        fetchDynamicPrice(self.listing, ^(float price, NSError * _Nonnull error) {
+        fetchDynamicPrice(self.listing, ^(CGFloat price, NSError * _Nonnull error) {
             typeof(self) strongSelf = weakSelf;
             if(error == nil && strongSelf){
                 NSString *priceString = @"$";
@@ -242,7 +242,7 @@
     }else{
         NSRange range = NSMakeRange(1, self.priceLabel.text.length - 6);
         NSString *substring = [self.priceLabel.text substringWithRange:range];
-        float total = [substring floatValue] * self.datesSelected.count;
+        CGFloat total = [substring floatValue] * self.datesSelected.count;
         NSString *buttonText = @"Reserve now for $";
         buttonText = [buttonText stringByAppendingString:[[NSNumber numberWithFloat:total] stringValue]];
         [self.reserveNowButton setTitle:buttonText forState:UIControlStateNormal];

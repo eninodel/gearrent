@@ -30,10 +30,10 @@
             filePath = "GearRent/ViewControllers/DetailsViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "245"
-            endingLineNumber = "245"
-            landmarkName = "-setReserveButtonText"
-            landmarkType = "7">
+            startingLineNumber = "257"
+            endingLineNumber = "257"
+            landmarkName = "DetailsViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -46,9 +46,9 @@
             filePath = "GearRent/ViewControllers/DetailsViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "246"
-            endingLineNumber = "246"
-            landmarkName = "-setReserveButtonText"
+            startingLineNumber = "258"
+            endingLineNumber = "258"
+            landmarkName = "-locationManagerDidChangeAuthorization:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -62,9 +62,9 @@
             filePath = "GearRent/ViewControllers/DetailsViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "247"
-            endingLineNumber = "247"
-            landmarkName = "-setReserveButtonText"
+            startingLineNumber = "259"
+            endingLineNumber = "259"
+            landmarkName = "-locationManagerDidChangeAuthorization:"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

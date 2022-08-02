@@ -9,12 +9,7 @@
 
 @implementation Address
 
-- (NSString *_Nullable)getSmallestEntity
-{
-    return self.town ?: self.city ?: self.county;
-}
-
--(instancetype) initWithDictionary:(NSDictionary *_Nullable)dictionary
+- (instancetype)initWithDictionary:(NSDictionary *_Nullable)dictionary
 {
     if(self = [super init]) {
         self.town = dictionary[@"town"];
@@ -23,6 +18,11 @@
     }
 
     return self;
+}
+
+- (NSString *_Nullable)getSmallestEntity
+{
+    return self.town ?: self.city ?: self.county;
 }
 
 @end

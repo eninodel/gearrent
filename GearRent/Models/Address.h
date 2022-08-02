@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, strong) NSString *city;
 @property (nonatomic, nullable, strong) NSString *county;
 
+- (instancetype)initWithDictionary:(NSDictionary *_Nullable)dictionary;
 - (NSString *_Nullable)getSmallestEntity;
--(instancetype) initWithDictionary:(NSDictionary *_Nullable)dictionary;
 
 @end
 

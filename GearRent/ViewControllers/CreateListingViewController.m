@@ -169,7 +169,7 @@
 
 - (NSInteger)indexOfListingCategory {
     for(int i = 0; i < self.categories.count; i ++){
-        if([[self.categories[i] objectId] isEqualToString: self.listing.categoryId]){
+        if([[self.categories[i] objectId] isEqualToString:self.listing.categoryId]){
             return i;
         }
     }
