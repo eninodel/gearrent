@@ -20,10 +20,7 @@
 
 static int const kMaxGeoHashPrecision = 7;
 
-@implementation APIManager{
-    NSURLSessionDataTask *_Nullable fetchNearestCityTask;
-    NSURLSessionDataTask *_Nullable isTodayAHolidayTask;
-}
+@implementation APIManager
 
 extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *)){
     // Find all the geohashes within the polygon and return nil if no geohashes with precision 7 exist
@@ -64,7 +61,8 @@ extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinat
     }];
 }
 
-- (void)fetchNearestCity:(CLLocation *)location completion: (void(^_Nonnull)(NSString *, NSError *)) completion {
++ (void)fetchNearestCity:(CLLocation *)location completion: (void(^_Nonnull)(NSString *, NSError *)) completion {
+        __block NSURLSessionDataTask *_Nullable fetchNearestCityTask;
         NSDictionary *headers = @{ @"X-RapidAPI-Key": @"4ee4de8731msh81f644e471716bbp14ba33jsnae748db48874",
                                @"X-RapidAPI-Host": @"forward-reverse-geocoding.p.rapidapi.com" };
         NSString *requestURL = [NSString stringWithFormat:@"https://forward-reverse-geocoding.p.rapidapi.com/v1/reverse?lat=%f&lon=%f&accept-language=en&polygon_threshold=0.0&zoom=10", location.coordinate.latitude, location.coordinate.longitude];
@@ -93,12 +91,13 @@ extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinat
                                                             completion(nil, error);
                                                         }
                                                     }
-             self->fetchNearestCityTask = nil;
+             fetchNearestCityTask = nil;
          }];
-        [self->fetchNearestCityTask resume];
+        [fetchNearestCityTask resume];
 }
 
-- (void)isTodayAHoliday:(void(^_Nonnull)(BOOL, NSError *)) completion{
++ (void)isTodayAHoliday:(void(^_Nonnull)(BOOL, NSError *)) completion{
+    __block NSURLSessionDataTask *_Nullable isTodayAHolidayTask;
     NSDictionary *headers = @{ @"X-RapidAPI-Key": @"4ee4de8731msh81f644e471716bbp14ba33jsnae748db48874",
                            @"X-RapidAPI-Host": @"public-holiday.p.rapidapi.com" };
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString: @"https://public-holiday.p.rapidapi.com/2022/US"]
@@ -136,9 +135,9 @@ extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinat
                                                        completion(nil, error);
                                                    }
                                                }
-        self->isTodayAHolidayTask = nil;
+        isTodayAHolidayTask = nil;
     }];
-   [self->isTodayAHolidayTask resume];
+   [isTodayAHolidayTask resume];
 }
 
 extern void fetchDynamicPrice(Listing *listing, void(^completion)(CGFloat, NSError *)) {
@@ -172,7 +171,7 @@ extern void fetchDynamicPrice(Listing *listing, void(^completion)(CGFloat, NSErr
         dispatch_group_leave(serviceGroup);
     }];
     dispatch_group_enter(serviceGroup);
-    [[APIManager alloc] isTodayAHoliday:^(BOOL isTodayAHoliday, NSError *error) {
+    [APIManager isTodayAHoliday:^(BOOL isTodayAHoliday, NSError *error) {
         if(error == nil){
             holiday = isTodayAHoliday;
         }

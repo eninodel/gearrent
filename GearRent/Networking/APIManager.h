@@ -18,7 +18,7 @@ extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *coordinates, voi
 
 @interface APIManager : NSObject
 
-- (void)fetchNearestCity:(CLLocation *)location completion: (void(^_Nonnull)(NSString *, NSError *)) completion;
++ (void)fetchNearestCity:(CLLocation *)location completion: (void(^_Nonnull)(NSString *, NSError *)) completion;
 
 @end
 

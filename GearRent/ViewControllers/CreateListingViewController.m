@@ -256,7 +256,7 @@
         }
     };
     CLLocation *location = [[CLLocation alloc] initWithLatitude:touchMapCoordinate.latitude longitude:touchMapCoordinate.longitude];
-    [[APIManager alloc] fetchNearestCity:location completion:completion];
+    [APIManager fetchNearestCity:location completion:completion];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
@@ -365,10 +365,10 @@
     if(dates.count == 0){
         return result;
     }
-    NSDate *startDate = self.datesSelected[0];
-    NSDate *endDate = startDate;
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:TRUE];
     [self.datesSelected sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+    NSDate *startDate = self.datesSelected[0];
+    NSDate *endDate = startDate;
     for (int i = 1; i < self.datesSelected.count; i++) {
         NSDate *currDate = (NSDate *) self.datesSelected[i];
         NSTimeInterval timeInterval = [currDate timeIntervalSinceDate:endDate];

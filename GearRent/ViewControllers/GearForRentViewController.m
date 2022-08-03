@@ -274,7 +274,7 @@
     Filter *newFilter = [Filter new];
     newFilter.userId = [[PFUser currentUser] objectId];
     newFilter.categoryId = categoryId;
-    [[APIManager alloc] fetchNearestCity:self.userLocation completion:^(NSString * _Nonnull city, NSError * _Nonnull error) {
+    [APIManager fetchNearestCity:self.userLocation completion:^(NSString * _Nonnull city, NSError * _Nonnull error) {
         if(error){
             NSLog(@"END: Error in fetching nearest city for current user");
         } else{
