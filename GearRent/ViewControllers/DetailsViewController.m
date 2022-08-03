@@ -146,12 +146,18 @@
     reservation.leaserId = self.listing.ownerId;
     reservation.dates = [self reservationTimeInterval];
     reservation.status = @"UNCONFIRMED";
-    [self.listing addObject:reservation forKey:@"reservations"];
-    [self.listing saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if(succeeded == YES){
-            NSLog(@"END: Successfully saved reservation");
+    [reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if(error == nil){
+            [self.listing addObject:reservation forKey:@"reservations"];
+            [self.listing saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                if(succeeded == YES){
+                    NSLog(@"END: Successfully saved reservation");
+                } else{
+                    NSLog(@"END: Error in saving reservation");
+                }
+            }];
         } else{
-            NSLog(@"END: Error in saving reservation");
+            NSLog(@"%@", error);
         }
     }];
     [self dismissViewControllerAnimated:YES completion:nil];

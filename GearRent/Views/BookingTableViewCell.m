@@ -52,13 +52,13 @@
             NSLog(@"END: Error in fetching photos");
         }
     }];
-    if([self.reservation.status isEqualToString:@"CONFIMED"] != YES){
+    if([self.reservation.status isEqualToString:@"CONFIRMED"] != YES){
         self.cancelReservationButton.hidden = YES;
     }
 }
 
 - (IBAction)didCancelReservation:(id)sender {
-    self.reservation.status = @"CANCELLED";
+    self.reservation.status = @"DECLINED";
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(error == nil){
             NSLog(@"END: Successfully cancelled reservation");
