@@ -7,32 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "DABA1B6D-D962-4999-9B4C-2365B65A20CB"
+            uuid = "472A8A2D-9DCF-4FDE-B521-2E35D360ECFF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "GearRent/ViewControllers/CreateListingViewController.m"
+            filePath = "GearRent/ViewControllers/DetailsViewController.m"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "390"
-            endingLineNumber = "390"
-            landmarkName = "-getTimeIntervals:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "7146A7BA-0E65-448A-B73F-0AB782AD277B"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "GearRent/ViewControllers/CreateListingViewController.m"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "418"
-            endingLineNumber = "418"
-            landmarkName = "-didDeleteListing:"
+            startingLineNumber = "250"
+            endingLineNumber = "250"
+            landmarkName = "-fetchDynamicPrices"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

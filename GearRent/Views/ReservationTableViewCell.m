@@ -64,6 +64,7 @@
 }
 
 - (IBAction)didAccept:(id)sender {
+    // TODO: After reservation is accepted, don't allow other reservations on same dates to be accepted as well
     self.reservation.status = @"CONFIRMED";
     self.currentStatusLabel.text = self.reservation.status;
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {

@@ -140,55 +140,15 @@ extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinat
    [isTodayAHolidayTask resume];
 }
 
-extern void fetchDynamicPrice(Listing *listing, void(^completion)(CGFloat, NSError *)) {
-    NSInteger lookback = 24;
-    __block NSInteger numberOfSearchesForCategoryInPast24Hours = 0;
-    __block NSInteger numberOfReservationsSentInPast24Hours = 0;
-    __block CGFloat supplyFactor = 0.0;
-    __block BOOL holiday = NO;
-    dispatch_group_t serviceGroup = dispatch_group_create();
-    dispatch_group_enter(serviceGroup);
-    [APIManager searchesInPastHours:lookback categoryId:listing.categoryId location:listing.location completion:^(NSInteger result, NSError *error) {
-        if(error){
-            NSLog(@"%@", error);
+extern void fetchDynamicPrice(Listing *listing, NSMutableArray<NSMutableArray<NSNumber *>*> *dateRanges, void(^completion)(NSDictionary<NSNumber *, NSNumber *> *, NSError *)) {
+    
+    [PFCloud callFunctionInBackground:@"getDynamicPricesForRangeOfDates" withParameters:@{@"location" : listing.location, @"listingId": [listing objectId], @"categoryId" : listing.categoryId , @"dates" : dateRanges, @"minPrice": [NSNumber numberWithDouble:listing.minPrice]} block:^(id  _Nullable object, NSError * _Nullable error) {
+        if(error == nil) {
+            completion((NSDictionary<NSNumber *, NSNumber *> *)object, nil);
         } else{
-            numberOfSearchesForCategoryInPast24Hours = result;
+            completion(nil, error);
         }
-        dispatch_group_leave(serviceGroup);
     }];
-    dispatch_group_enter(serviceGroup);
-    [APIManager reservationsInPastHours:[listing objectId] hours:lookback completion:^(NSInteger result, NSError *error) {
-        if(error){
-            NSLog(@"%@", error);
-        } else{
-            numberOfReservationsSentInPast24Hours = result;
-        }
-        dispatch_group_leave(serviceGroup);
-    }];
-    dispatch_group_enter(serviceGroup);
-    [APIManager supplyAvailableForListing:listing completion:^(CGFloat result, NSError *error) {
-        supplyFactor = result;
-        dispatch_group_leave(serviceGroup);
-    }];
-    dispatch_group_enter(serviceGroup);
-    [APIManager isTodayAHoliday:^(BOOL isTodayAHoliday, NSError *error) {
-        if(error == nil){
-            holiday = isTodayAHoliday;
-        }
-        dispatch_group_leave(serviceGroup);
-    }];
-    dispatch_group_notify(serviceGroup, dispatch_get_main_queue(), ^{
-        NSDate *today = [APIManager dateWithHour:0 minute:0 second:0];
-        NSCalendar *calendar = [NSCalendar currentCalendar];
-        CGFloat minPrice = listing.minPrice;
-        CGFloat weekendSurcharge = [calendar isDateInWeekend:today] ? 0.05 : 0.0;
-        CGFloat holidaySurcharge = holiday ? 0.05 : 0.0;
-        CGFloat searchesSurcharge = 0.15 * ((CGFloat)numberOfSearchesForCategoryInPast24Hours / (1 + numberOfSearchesForCategoryInPast24Hours));
-        CGFloat numberOfReservationsSurcharge = 0.5 *((CGFloat)numberOfReservationsSentInPast24Hours / (1 + numberOfReservationsSentInPast24Hours));
-        CGFloat supplySurcharge = 0.25 * supplyFactor;
-        CGFloat dynamicPriceTotal = minPrice * (1 + weekendSurcharge + holidaySurcharge + searchesSurcharge + numberOfReservationsSurcharge + supplySurcharge);
-        completion(dynamicPriceTotal, nil);
-    });
 }
 
 + (BOOL)isListingInitiallyAvailableToday:(Listing *)listing {
