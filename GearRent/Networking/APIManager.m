@@ -22,11 +22,11 @@ static int const kMaxGeoHashPrecision = 7;
 
 @implementation APIManager
 
-extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *polygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *)){
+extern void fetchListingsWithPolygons(NSArray<CLLocation *> *outerPolygonCoordinates, NSArray<NSArray<CLLocation *>*> *innerPolygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *)){
     // Find all the geohashes within the polygon and return nil if no geohashes with precision 7 exist
     NSMutableSet<GNGeoHash *> *geohashesWithinPolygon = [NSMutableSet<GNGeoHash *> new];
     for(int i = 1; i <= kMaxGeoHashPrecision; i ++) {
-        geohashesWithinPolygon = [APIManager findAllGeohashesWithinPolygon:polygonCoordinates precision:i];
+        geohashesWithinPolygon = [APIManager findAllGeohashesWithinPolygons:outerPolygonCoordinates innerPolygonCoordinates:innerPolygonCoordinates precision:i];
         if([geohashesWithinPolygon count] > 0) {
             break;
         }
@@ -276,18 +276,18 @@ extern void fetchDynamicPrice(Listing *listing, NSMutableArray<NSMutableArray<NS
     }];
 }
 
-+ (NSMutableSet<GNGeoHash *> *)findAllGeohashesWithinPolygon:(NSArray<CLLocation *> *)polygonCoordinates precision:(int)precision {
++ (NSMutableSet<GNGeoHash *> *)findAllGeohashesWithinPolygons:(NSArray<CLLocation *> *)outerPolygonCoordinates innerPolygonCoordinates:(NSArray<NSArray<CLLocation *>*> *)innerPolygonCoordinates precision:(int)precision {
     // Finds all the geohashes within a polygon.
     // Objective-c adaptation of https://gis.stackexchange.com/a/281017
     NSMutableSet<GNGeoHash *> *uncheckedGeohashes = [NSMutableSet<GNGeoHash *> new];
     NSMutableSet<GNGeoHash *> *insideGeohashes = [NSMutableSet<GNGeoHash *> new];
     NSMutableSet<GNGeoHash *> *outsideGeohashes = [NSMutableSet<GNGeoHash *> new];
-    for(int i = 0; i < polygonCoordinates.count; i++) {
-        CLLocation *location = polygonCoordinates[i];
+    for(int i = 0; i < outerPolygonCoordinates.count; i++) {
+        CLLocation *location = outerPolygonCoordinates[i];
         GNGeoHash *gh = [GNGeoHash withCharacterPrecision:location.coordinate.latitude andLongitude:location.coordinate.longitude andNumberOfCharacters:precision];
         NSArray<GNGeoHash *> *adjacentGeohashes = [gh getAdjacent];
         for(GNGeoHash * geohash in adjacentGeohashes) {
-            if([self polygonContainsGeohash:polygonCoordinates geohash:geohash]) {
+            if([self polygonContainsGeohashExcludingInner:outerPolygonCoordinates innerPolygonCoordinates:innerPolygonCoordinates geohash:geohash]) {
                 [uncheckedGeohashes addObject:geohash];
             }
         }
@@ -295,11 +295,11 @@ extern void fetchDynamicPrice(Listing *listing, NSMutableArray<NSMutableArray<NS
     while (uncheckedGeohashes.count > 0) {
         GNGeoHash *currGH = [uncheckedGeohashes anyObject];
         [uncheckedGeohashes removeObject:currGH];
-        if([self polygonContainsGeohash:polygonCoordinates geohash:currGH]) {
+        if([self polygonContainsGeohashExcludingInner:outerPolygonCoordinates innerPolygonCoordinates:innerPolygonCoordinates geohash:currGH]) {
             [insideGeohashes addObject:currGH];
             NSArray *neighbors = [currGH getAdjacent];
             for(GNGeoHash *neighbor in neighbors) {
-                if(![insideGeohashes containsObject:neighbor] && ![outsideGeohashes containsObject:neighbor] && ![uncheckedGeohashes containsObject:neighbor] && [self polygonContainsGeohash:polygonCoordinates geohash:neighbor]) {
+                if(![insideGeohashes containsObject:neighbor] && ![outsideGeohashes containsObject:neighbor] && ![uncheckedGeohashes containsObject:neighbor] && [self polygonContainsGeohashExcludingInner:outerPolygonCoordinates innerPolygonCoordinates:innerPolygonCoordinates geohash:neighbor]) {
                     [uncheckedGeohashes addObject:neighbor];
                 }
             }
@@ -310,12 +310,17 @@ extern void fetchDynamicPrice(Listing *listing, NSMutableArray<NSMutableArray<NS
     return insideGeohashes;
 }
 
-+ (BOOL)polygonContainsGeohash:(NSArray<CLLocation *> *)polygonCoordinates geohash:(GNGeoHash *)geohash {
++ (BOOL)polygonContainsGeohashExcludingInner:(NSArray<CLLocation *> *)outerPolygonCoordinates innerPolygonCoordinates:(NSArray<NSArray<CLLocation *>*> *)innerPolygonCoordinates geohash:(GNGeoHash *)geohash {
     NSMutableArray<CLLocation *> *currGHCorners = [self getFourCornersOfGeohash:geohash];
     for(int i = 0; i < currGHCorners.count; i ++) {
         CLLocation *currCorner = currGHCorners[i];
-        if(![self polygonContainsPoint:polygonCoordinates point:currCorner]) {
+        if(![self polygonContainsPoint:outerPolygonCoordinates point:currCorner]) {
             return NO;
+        }
+        for(int j = 0; j < innerPolygonCoordinates.count; j ++){
+            if([self polygonContainsPoint:innerPolygonCoordinates[j] point:currCorner]){ // if any of the inner polygons contains the point exclude geohash
+                return NO;
+            }
         }
     }
     return YES;

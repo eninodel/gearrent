@@ -35,12 +35,17 @@
 @property (strong, nonatomic) NSMutableSet<NSString *> *selectedCategories;
 @property (strong, nonatomic) NSArray<Listing *> *filteredListings;
 @property (strong, nonatomic) CLLocation *userLocation;
+@property (strong, nonatomic) IBOutlet UIButton *addExcludingPolygonButton;
+@property (strong, nonatomic) NSMutableArray<CLLocation *> *outerPolygonPoints;
+@property (strong, nonatomic) NSMutableArray<NSMutableArray<CLLocation *> *> *innerPolygonPoints;
+@property (assign, nonatomic) BOOL isAddingInnerPolygons;
 
 - (IBAction)didLogOut:(id)sender;
 - (IBAction)didChangeListing:(id)sender;
 - (IBAction)didRemovePoints:(id)sender;
 - (IBAction)didSearchPolygon:(id)sender;
 - (IBAction)didTapFilters:(id)sender;
+- (IBAction)didAddExcludingPolygon:(id)sender;
 
 @end
 
@@ -49,6 +54,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.isAddingInnerPolygons = NO;
+    self.innerPolygonPoints = [NSMutableArray<NSMutableArray<CLLocation *> *> new];
+    self.outerPolygonPoints = [NSMutableArray<CLLocation *> new];
     self.selectedCategories = [NSMutableSet<NSString *> new];
     self.FiltersTableView.delegate = self;
     self.FiltersTableView.dataSource = self;
@@ -57,6 +65,7 @@
     self.listingsTableView.delegate = self;
     self.listingsTableView.dataSource = self;
     self.filteredListings = [NSArray<Listing *> new];
+    self.addExcludingPolygonButton.hidden = YES;
     self.mapView.hidden = YES;
     self.removePointsButton.hidden = YES;
     self.searchPolygonButton.hidden = YES;
@@ -99,27 +108,44 @@
     [self.mapView convertPoint:touchPoint toCoordinateFromView:self.mapView];
     MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
     pa.coordinate = touchMapCoordinate;
-    pa.title = @"Polygon vertice";
+    if(self.isAddingInnerPolygons){
+        pa.title = [NSString stringWithFormat:@"exclude polygon %lu", (unsigned long)self.innerPolygonPoints.count];
+    } else{
+        pa.title = @"Polygon vertice";
+    }
     [self.mapView addAnnotation:pa];
     CLLocation *location = [[CLLocation alloc] initWithLatitude:touchMapCoordinate.latitude longitude:touchMapCoordinate.longitude];
-    [self.mapPoints addObject: location];
+    if(self.isAddingInnerPolygons){
+        [self.innerPolygonPoints.lastObject addObject:location];
+    } else{
+        [self.outerPolygonPoints addObject:location];
+    }
     [self renderMapPoints];
 }
 
 - (void)renderMapPoints {
     // TODO: create a function to validate that no polygon segments overlap
-    NSUInteger count = self.mapPoints.count;
-    if(self.mapView.overlays.count > 0){
-        [self.mapView removeOverlays:self.mapView.overlays];
+    [self.mapView removeOverlays:self.mapView.overlays];
+    NSUInteger outerPolygonPoints = self.outerPolygonPoints.count;
+    if(outerPolygonPoints > 2){
+        [self addPolygonToMap:self.outerPolygonPoints];
     }
-    if(count > 2){
-        CLLocationCoordinate2D coordinates[count];
-        for(int i = 0; i < count; i++){
-            coordinates[i] = self.mapPoints[i].coordinate;
+    for(int i = 0; i < self.innerPolygonPoints.count; i++){
+        NSMutableArray<CLLocation *> *polygonPoints = self.innerPolygonPoints[i];
+        if(polygonPoints.count > 2){
+            [self addPolygonToMap:polygonPoints];
         }
-        MKPolygon *polygon = [MKPolygon polygonWithCoordinates: coordinates count: count];
-        [self.mapView addOverlay:polygon];
     }
+}
+
+- (void)addPolygonToMap:(NSMutableArray<CLLocation *> *)points{
+    NSUInteger count = points.count;
+    CLLocationCoordinate2D coordinates[count];
+    for(int i = 0; i < count; i++){
+        coordinates[i] = points[i].coordinate;
+    }
+    MKPolygon *polygon = [MKPolygon polygonWithCoordinates: coordinates count: count];
+    [self.mapView addOverlay:polygon];
 }
 
 - (double)getDistance:(CLLocation *)pointA pointB:(CLLocation *)pointB{
@@ -185,6 +211,12 @@
     }
 }
 
+- (IBAction)didAddExcludingPolygon:(id)sender {
+    NSMutableArray<CLLocation *> *newInnerPolygon = [NSMutableArray<CLLocation *> new];
+    [self.innerPolygonPoints addObject:newInnerPolygon];
+    self.isAddingInnerPolygons = YES;
+}
+
 - (IBAction)didTapFilters:(id)sender {
     [self.FiltersTableView setHidden:![self.FiltersTableView isHidden]];
 }
@@ -204,7 +236,7 @@
             NSLog(@"END: Error in didSearchPolygon");
         }
     };
-    fetchListingsWithCoordinates(self.mapPoints, completion);
+    fetchListingsWithPolygons(self.outerPolygonPoints, self.innerPolygonPoints, completion);
 }
 
 - (IBAction)didRemovePoints:(id)sender {
@@ -212,6 +244,9 @@
     NSArray *annotations = self.mapView.annotations;
     [self.mapView removeAnnotations:annotations];
     [self.mapView removeOverlays:self.mapView.overlays];
+    [self.outerPolygonPoints removeAllObjects];
+    [self.innerPolygonPoints removeAllObjects];
+    self.isAddingInnerPolygons = NO;
 }
 
 - (IBAction)didChangeListing:(id)sender {
@@ -222,12 +257,14 @@
         [self.listingTypeButton.titleLabel setText:@"List"];
         [self.FiltersButton setHidden:YES];
         [self.FiltersTableView setHidden:YES];
+        [self.addExcludingPolygonButton setHidden:NO];
     } else{
         [self.mapView setHidden:YES];
         [self.removePointsButton setHidden:YES];
         [self.searchPolygonButton setHidden:YES];
         [self.listingTypeButton.titleLabel setText:@"Map"];
         [self.FiltersButton setHidden: NO];
+        [self.addExcludingPolygonButton setHidden:YES];
     }
 }
 
