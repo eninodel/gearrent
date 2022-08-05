@@ -1,35 +1,3 @@
-
-// The example below shows you how a cloud code function looks like.
-
-/* Parse Server 3.x
-* Parse.Cloud.define("hello", (request) => {
-* 	return("Hello world!");
-* });
-*/
-
-/* Parse Server 2.x
-* Parse.Cloud.define("hello", function(request, response){
-* 	response.success("Hello world!");
-* });
-*/
-
-// To see it working, you only need to call it through SDK or REST API.
-// Here is how you have to call it via REST API:co
-
-/** curl -X POST \
-* -H "X-Parse-Application-Id: vmgU8MNHBekVm2Ta8nF5pNNV04vABaIqMSdBzPFR" \
-* -H "X-Parse-REST-API-Key: Husz7E8zLgczMqNGMlSAszMGS1n37gpPGnsXxaMz" \
-* -H "Content-Type: application/json" \
-* -d "{}" \
-* https://parseapi.back4app.com/functions/hello
-*/
-
-// If you have set a function in another cloud code file, called "test.js" (for example)
-// you need to refer it in your main.js, as you can see below:
-
-/* require("./test.js"); */
-
-
 Parse.Cloud.define("getListingsWithGeohashes", async (request) => {
   const promises = [];
   const n = request.params.geohashes.length;
@@ -45,14 +13,98 @@ Parse.Cloud.define("getListingsWithGeohashes", async (request) => {
   } catch(error){
     throw error;
   }
+})
 
+Parse.Cloud.define("getDynamicPricesForRangeOfDates", async(request) => {
+  const location = request.params.location;
+  const categoryId = request.params.categoryId;
+  const listingId = request.params.listingId;
+  const minPrice = request.params.minPrice;
+  const dateRanges = request.params.dates;
+  console.log(`[DYNAMIC PRICING]params: location: ${location} categoryId: ${categoryId} listingId: 
+  ${listingId} dateRanges: ${JSON.stringify(dateRanges)}`);
+  let dates = [];
+  const cachePromises = [];
+  for (let i = 0; i < dateRanges.length; i++){
+    const dateRange = dateRanges[i];
+    const startDate = new Date (dateRange[0] * 1000);
+    const endDate = new Date(dateRange[1] * 1000);
+    dates = dates.concat(getDatesBetween(startDate, endDate));
+    const cacheQuery = new Parse.Query("SupplyCache");
+    cacheQuery.equalTo("location", location);
+    cacheQuery.equalTo("categoryId", categoryId);
+    // cacheQuery.greaterThanOrEqualTo("date", startDate);
+    // cacheQuery.lessThanOrEqualTo("date", endDate);
+    cachePromises.push(cacheQuery.find());
+  }
+  try{
+    let cacheResults = await Promise.all(cachePromises);
+    console.log("[DYNAMIC PRICING] cacheResults: " + JSON.stringify(cacheResults));
+    console.log("[DYNAMIC PRICING]dates: " + JSON.stringify(dates));
+    const dateToSupplyFactor = {};
+    for (let i = 0; i < cacheResults.length; i ++){
+      const cacheRange = cacheResults[i];
+      for(let j = 0; j < cacheRange.length; j++){
+        const cache = cacheRange[j];
+        dateToSupplyFactor[cache.get("date").getTime()] = cache.get("available") <= 0? 0 : cache.get("reserved") / cache.get("available");
+      }
+    }
+    console.log("[DYNAMIC PRICING] dateToSupplyFactor: " + JSON.stringify(dateToSupplyFactor));
+    const oneDayAgo = addDays(new Date(), -1 );
+    const searchesQuery = new Parse.Query("Filter");
+    searchesQuery.equalTo("location", location);
+    searchesQuery.equalTo("categoryId", categoryId);
+    searchesQuery.greaterThanOrEqualTo("createdAt", oneDayAgo);
+    const searchesQueryResults = await searchesQuery.find();
+    console.log("[DYNAMIC PRICING]searchesQueryResults: " + JSON.stringify(searchesQueryResults));
+    
+    const reservationQuery = new Parse.Query("Reservation");
+    reservationQuery.equalTo("itemId", listingId);
+    reservationQuery.greaterThanOrEqualTo("createdAt", oneDayAgo);
+    const reservationQueryResults = await reservationQuery.find();
+    console.log("[DYNAMIC PRICING]reservationQueryResults: " + JSON.stringify(reservationQueryResults));
+    
+    const dateToDynamicPrice = {};
+    for(let i = 0; i < dates.length; i++){
+      const date = dates[i];
+      const weekendSurcharge = ([0,6].indexOf(date.getDay()) != -1) ? 0.05 : 0.0;
+      const holidaySurcharge = isBankHoliday(date) ? 0.05 : 0.0;
+      const numSearches = searchesQueryResults.length;
+      const numReservations = reservationQueryResults.length;
+      const searchesSurcharge = 0.15 * (numSearches / (1 + numSearches));
+      const reservationSurcharge = 0.5 * (numReservations / (1 + numReservations));
+      const supplySurcharge = 0.25 * dateToSupplyFactor[date.getTime()];
+      const dynamicPrice = minPrice * (1 + weekendSurcharge + holidaySurcharge + searchesSurcharge + reservationSurcharge + supplySurcharge);
+      console.log(`[DYNAMIC PRICING]dynamic price variables for: date: ${date} 
+      minPrice: ${minPrice} 
+      weekendSurcharge: ${weekendSurcharge}
+      holidaySurcharge: ${holidaySurcharge}
+      numSearches: ${numSearches}
+      numReservations: ${numReservations}
+      searchesSurcharge: ${searchesSurcharge}
+      reservationSurcharge: ${reservationSurcharge}
+      supplySurcharge: ${supplySurcharge}
+      dynamicPrice: ${dynamicPrice}`);
+      dateToDynamicPrice[date.getTime()] = dynamicPrice;
+    }
+    console.log("[DYNAMIC PRICE]dateToDynamicPrice: " + JSON.stringify(dateToDynamicPrice));
+    return dateToDynamicPrice;
+  } catch(error){
+    throw error;
+  }
 })
 
 Parse.Cloud.beforeDelete("Listing", async(request) => {
+  // if 'alwaysAvailable' decrement all caches in the future with similar properties
   const listing = request.object;
   const datesAvailable = await getDatesAvailable(listing);
   console.log("[Delete] Dates available to decrement: " + datesAvailable);
-  const caches = await getCaches(datesAvailable, listing.get("location"), listing.get("categoryId"));
+  let caches = [];
+  if(listing.get("isAlwaysAvailable")){
+    caches = await getIsAlwaysAvailableCaches(listing.get("location"), listing.get("categoryId"));
+  } else{
+    caches = await getCaches(datesAvailable, listing.get("location"), listing.get("categoryId"));
+  }
   console.log("[Delete] Caches affected: " + JSON.stringify(caches));
   const confirmedReservations = await fetchConfirmedReservations(listing);
   const reservedDateSet = new Set();
@@ -94,7 +146,7 @@ Parse.Cloud.beforeSave("Reservation", async (request) => {
       cache.increment("reserved");
       cache.save();
     } else if(reservation.get("status") === "DECLINED"){
-      cache.decrement("available");
+      cache.decrement("reserved");
       cache.save();
     }
   }
@@ -104,52 +156,99 @@ Parse.Cloud.beforeSave("Listing", async (request) => {
   const availabilitiesPromises = [];
   const newListing = request.object;
   const newDates = await getDatesAvailable(newListing);
-  console.log("new dates: " + newDates);
+  // console.log("new dates: " + newDates);
   if(!newListing.isNew()){ // listing was updated
     // get all caches from old data and available caches with new data
-    console.log("updated listing");
     const oldListing = request.original;
     const oldDates = await getDatesAvailable(oldListing);
-    console.log("old dates: " + oldDates);
+    let newDatesSet = datesToSet(newDates);
+    let oldDatesSet = datesToSet(oldDates);
+    let dateObject = datesToObject(oldDates.concat(newDates));
+    // if old and new are 'alwaysAvailable' do nothing (with same category and location).
+    // if old and new are 'always available' with different category or location
+    // query all the future caches for both and procceed as normal.
+    let oldSupplyCachesResults = [];
+    let newSupplyCachesResults = [];
     
-    const oldSupplyCachesResults = await getCaches(oldDates, oldListing.get("location"), oldListing.get("categoryId"));
-    const newSupplyCachesResults = await getCaches(newDates, newListing.get("location"), newListing.get("categoryId"));
-    
-    const newDatesSet = datesToSet(newDates);
-    const oldDatesSet = datesToSet(oldDates);
-    const dateObject = datesToObject(oldDates.concat(newDates));
-    
+    if(newListing.get("isAlwaysAvailable") &&oldListing.get("isAlwaysAvailable")){
+      if(newListing.get("location") == oldListing.get("location")
+      && newListing.get("categoryId") == oldListing.get("categoryId")){
+        console.log("[LISTING UNCHANGED]");
+        return;
+      }
+      console.log("[BOTH ALWAYS AVAILABLE]");
+      oldSupplyCachesResults = await getIsAlwaysAvailableCaches(oldListing.get("location"), oldListing.get("categoryId"));
+      newSupplyCachesResults = await getIsAlwaysAvailableCaches(newListing.get("location"), newListing.get("categoryId"));
+    } else if (newListing.get("isAlwaysAvailable")){ 
+      // if only new is 'alwaysAvailable' create caches for next 30 days if needed
+      // and update any cache in the future ignoring oldCaches
+        console.log("[NEW LISTING ALWAYS AVAILABLE]");
+        const dates = isAlwaysAvailableDates();
+        newDatesSet = datesToSet(dates);
+        dateObject = datesToObject(oldDates.concat(dates));
+        newSupplyCachesResults = await getIsAlwaysAvailableCaches(newListing.get("location"), newListing.get("categoryId"));
+        // for(let i = 0; i < caches.length; i++){
+        //   const cache = caches[i];
+        //   dateSet.delete(cache.get("date").getTime());
+        // }
+        // dateSet.forEach((time) => {
+        //   createNewCache(newListing, dateObject[time]);
+        // })
+        // console.log("[NEW LISTING ALWAYS AVAILABLE] newSupplyCachesResults: " + JSON.stringify(newSupplyCachesResults));
+        oldSupplyCachesResults = await getCaches(oldDates, oldListing.get("location"), oldListing.get("categoryId"));
+        console.log("[NEW LISTING ALWAYS AVAILABLE] oldSupplyCachesResults: " + JSON.stringify(oldSupplyCachesResults));
+    } else if (oldListing.get("isAlwaysAvailable")){
+      console.log("[OLD LISTING ALWAYS AVAILABLE]");
+      // if only old is 'alwaysAvailable' decrement any cache in the future except
+      // those in the newDates
+      oldSupplyCachesResults = await getIsAlwaysAvailableCaches(oldListing.get("location"), oldListing.get("categoryId"));
+      newSupplyCachesResults = await getCaches(newDates, newListing.get("location"), newListing.get("categoryId"));
+    } else{
+      console.log("[NO LISTING ALWAYS AVAILABLE]");
+      oldSupplyCachesResults = await getCaches(oldDates, oldListing.get("location"), oldListing.get("categoryId"));
+      newSupplyCachesResults = await getCaches(newDates, newListing.get("location"), newListing.get("categoryId"));
+    }
+
+    // console.log("newSupplyCachesResults: " + JSON.stringify(newSupplyCachesResults));
+    // console.log("old dates: " + oldDates);
     const oldSupplyCachesSet = cachesToObjectIdSet(oldSupplyCachesResults);
     const newSupplyCachesSet = cachesToObjectIdSet(newSupplyCachesResults);
+    console.log("newSupplyCachesSet: " + JSON.stringify(Array.from(newSupplyCachesSet)));
     
     const oldCachesToDecrementSet = setDifference(oldSupplyCachesSet, newSupplyCachesSet);
     // const newCachesToIncrementSet = setDifference(newSupplyCachesSet, oldSupplyCachesSet);
     
-    console.log("oldCachesToDecrementSet: " + JSON.stringify(oldCachesToDecrementSet));
+    // console.log("oldCachesToDecrementSet: " + JSON.stringify(oldCachesToDecrementSet));
     // console.log("newCachesToIncrementSet: " + JSON.stringify(newCachesToIncrementSet));
     
     const objectIdToCache = cachesToObjectIdObject(oldSupplyCachesResults.concat(newSupplyCachesResults));
-    console.log("objectIdToCache: " + JSON.stringify(objectIdToCache));
+    // console.log("objectIdToCache: " + JSON.stringify(objectIdToCache));
     
     oldCachesToDecrementSet.forEach((objectId) =>{
-      console.log("decrementing old cache: " + objectId);
+      // console.log("decrementing old cache: " + objectId);
       const cache = objectIdToCache[objectId];
       cache.decrement("available"); // decrement defaults to 1
       cache.save();
     });
+    
+    console.log("newSupplyCachesSet: " + JSON.stringify(Array.from(newSupplyCachesSet)));
+    console.log("oldDatesSet " + JSON.stringify(Array.from(oldDatesSet)));
+    
     newSupplyCachesSet.forEach((objectId) => {
       const cache = objectIdToCache[objectId];
-      if(!cache.get("date").getTime() in oldDatesSet){ // not in old dates so need to increment
+      const currentCacheTime = cache.get("date").getTime();
+      console.log("Current cache time: " + currentCacheTime);
+      if(!oldDatesSet.has(currentCacheTime) || oldListing.get("isAlwaysAvailable")){ // not in old dates so need to increment
         console.log("incrementing new cache: " + objectId);
         cache.increment("available");
         cache.save();
       }
-      console.log("deleting " + cache.get("date") + " from newDatesSet");
+      // console.log("deleting " + cache.get("date") + " from newDatesSet");
       newDatesSet.delete(cache.get("date").getTime());
-      console.log("newDatesSet :" + Array.from(newDatesSet).join(" "));
+      // console.log("newDatesSet :" + Array.from(newDatesSet).join(" "));
     });
     // any dates left in newDatesSet are caches to create
-    console.log("new dates set: " + Array.from(newDatesSet).join(" "));
+    // console.log("new dates set: " + Array.from(newDatesSet).join(" "));
     newDatesSet.forEach((time) => {
       const date = dateObject[time];
       createNewCache(newListing, date);
@@ -157,6 +256,23 @@ Parse.Cloud.beforeSave("Listing", async (request) => {
   } else{ //newly created listing
     // increment supply available for location and dates
     console.log("created new listing");
+    if(newListing.get("isAlwaysAvailable")){
+      // create/increment caches for next thrity days
+      // get date today and date 30 days from now
+      const dates = isAlwaysAvailableDates();
+      const dateSet = datesToSet(dates);
+      const dateObject = datesToObject(dates);
+      const caches = await getIsAlwaysAvailableCaches(newListing.get("location"), newListing.get("categoryId"));
+      for(let i = 0; i < caches.length; i++){
+        const cache = caches[i];
+        cache.increment("available");
+        dateSet.delete(cache.get("date").getTime());
+        cache.save();
+      }
+      dateSet.forEach((time) => {
+        createNewCache(newListing, dateObject[time]);
+      })
+    }
     for(let i = 0; i < newDates.length; i ++){
       const supplyCacheQuery = new Parse.Query("SupplyCache");
       supplyCacheQuery.equalTo("date", newDates[i]);
@@ -175,6 +291,17 @@ Parse.Cloud.beforeSave("Listing", async (request) => {
 
   }
 })
+
+
+function isAlwaysAvailableDates(){
+  const today = new Date();
+  today.setMinutes(0);
+  today.setHours(7);
+  today.setMilliseconds(0);
+  today.setSeconds(0);
+  const thirtyDaysInFuture = addDays(today, 90);
+  return getDatesBetween(today, thirtyDaysInFuture);
+}
 
 async function fetchConfirmedReservations(listing){
   const query = new Parse.Query("Reservation");
@@ -210,10 +337,26 @@ function cachesToObjectIdObject(caches){
 
 function cachesToObjectIdSet(caches){
   const resultSet = new Set();
+  // console.log("[CACHESTOOBJECTIDSET]");
   for(let i = 0; i < caches.length; i++){
     resultSet.add(caches[i].id);
+    // console.log("[CACHESTOOBJECTIDSET] CACHE ADDED: " + caches[i].id);
   }
+  // console.log("[CACHESTOOBJECTIDSET] result: " + JSON.stringify(resultSet));
   return resultSet;
+}
+
+async function getIsAlwaysAvailableCaches(location, categoryId){
+  const query = new Parse.Query("SupplyCache");
+  query.equalTo("location", location);
+  query.equalTo("categoryId", categoryId);
+  const today = new Date();
+  today.setMinutes(0);
+  today.setHours(7);
+  today.setMilliseconds(0);
+  today.setSeconds(0);
+  query.greaterThanOrEqualTo("date", today);
+  return query.find();
 }
 
 async function getCaches(dates, location, categoryId){
@@ -233,7 +376,7 @@ async function createNewCache(listing, date){
     newCache.set("categoryId",listing.get("categoryId"));
     newCache.set("available", 1);
     newCache.set("reserved", 0);
-    console.log("creating new cache: " + date);
+    // console.log("creating new cache: " + date);
     await newCache.save();
   }catch(error){
     throw error;
@@ -268,6 +411,12 @@ async function getDatesAvailable(listing){
   return newDates;
 }
 
+function addDays(date, days) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
 function setDifference(setA, setB) {
   const difference = new Set(setA);
   for (const elem of setB) {
@@ -283,4 +432,41 @@ function getDatesBetween(start, end) {
     return arr;
 };
 
+function isBankHoliday(date) {
+    // static holidays
+    const isDate = (d, month, date) => {
+        return d.getMonth() == (month - 1) && d.getDate() == date;
+    };
+    if (isDate(date, 1, 1)) { return "New Year"; }
+    else if (isDate(date, 7, 4)) { return "Independence Day"; }
+    else if (isDate(date, 11, 11)) { return "Veterans Day"; }
+    else if (isDate(date, 12, 25)) { return "Christmas Day"; }
 
+    // dynamic holidays
+    const isDay = (d, month, day, occurance) => {
+        if (d.getMonth() == (month - 1) && d.getDay() == day) {
+            if (occurance > 0) {
+                return occurance == Math.ceil(d.getDate() / 7);
+            } else {
+                // check last occurance
+                let _d = new Date(d);
+                _d.setDate(d.getDate() + 7);
+                return _d.getMonth() > d.getMonth();
+            }
+        }
+        return false;
+    };
+    if (isDay(date, 1, 1, 3)) { return "MLK Day"; }
+    else if (isDay(date, 2, 1, 3)) { return "Presidents Day"; }
+    else if (isDay(date, 5, 1, -1)) { return "Memorial Day"; }
+    else if (isDay(date, 9, 1, 1)) { return "Labor Day"; }
+    else if (isDay(date, 10, 1, 2)) { return "Columbus Day"; }
+    else if (isDay(date, 11, 4, 4)) { return "Thanksgiving Day"; }
+
+    // Non Business days
+    if (date.getDay() == 0) { return "Sunday"; }
+    else if (date.getDay() == 6) { return "Saturday" }
+
+    // not a holiday
+    return "";
+}
