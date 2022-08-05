@@ -92,10 +92,10 @@
     self.categoriesPicker.delegate = self;
     self.categoriesPicker.dataSource = self;
     __weak typeof(self) weakSelf = self;
-    void(^completion)(NSArray<Category *> *, NSError *) = ^void(NSArray<Category*> *categories, NSError *error){
+    void(^completion)(NSArray<Category *> *, NSError *) = ^void(NSArray<Category*> *categories, NSError *error) {
         typeof(self) strongSelf = weakSelf;
-        if(error == nil){
-            if(strongSelf){
+        if(error == nil) {
+            if(strongSelf) {
                 strongSelf.categories = categories;
                 [strongSelf.categoriesPicker reloadAllComponents];
                 if(strongSelf.listing){
@@ -107,18 +107,18 @@
         }
     };
     fetchAllCategories(completion);
-    if(self.listing != nil){
+    if(self.listing != nil) {
         NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
         formatter.numberStyle = NSNumberFormatterCurrencyStyle;
         [self.minimumPriceTextField setHidden: !self.listing.dynamicPrice];
         self.minimumPriceTextField.text = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat:self.listing.minPrice]];
-        [self.priceTextField setHidden: self.listing.dynamicPrice];
+        [self.priceTextField setHidden:self.listing.dynamicPrice];
         [self.dynamicPricingSwitch setOn:self.listing.dynamicPrice];
         self.navigationItem.title = @"Edit Listing";
         self.deleteListingButton.hidden = NO;
         self.addImagesButton.hidden = YES;
         self.titleTextField.text = self.listing.title;
-        NSString *price = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat: self.listing.price]];
+        NSString *price = [formatter stringFromNumber:[[NSNumber alloc] initWithFloat:self.listing.price]];
         self.priceTextField.text = price;
         self.locationLabel.text = self.listing.location;
         self.descriptionTextField.text = self.listing.itemDescription;
@@ -134,9 +134,9 @@
         __weak typeof(self) weakSelf = self;
         [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
             typeof(self) strongSelf = weakSelf;
-            if(error == nil && strongSelf){
+            if(error == nil && strongSelf) {
                 Listing *listing = (Listing *) objects[0];
-                for(int i = 0; i < listing.availabilities.count; i++){
+                for(int i = 0; i < listing.availabilities.count; i++) {
                     TimeInterval *interval = (TimeInterval *) listing.availabilities[i];
                     NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
                     [strongSelf.datesAvailable addObject:dateInterval];
@@ -145,19 +145,19 @@
                 [reservationQuery whereKey:@"itemId" equalTo: [strongSelf.listing objectId]];
                 [reservationQuery includeKey:@"dates"];
                 [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-                    if(error == nil){
-                        for(int i = 0; i < objects.count; i++){
+                    if(error == nil) {
+                        for(int i = 0; i < objects.count; i++) {
                             Reservation *reservation = (Reservation *) objects[i];
                             NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
                             [strongSelf.datesReserved addObject:dateInterval];
                         }
                         [strongSelf populateDatesSelected];
                         [strongSelf.calendarManager reload];
-                    }else{
+                    }else {
                         NSLog(@"END: Error in querying reservations");
                     }
                 }];
-            }else{
+            }else {
                 NSLog(@"END: Error in querying listing in details view");
             }
         }];
@@ -168,7 +168,7 @@
 }
 
 - (NSInteger)indexOfListingCategory {
-    for(int i = 0; i < self.categories.count; i ++){
+    for(int i = 0; i < self.categories.count; i ++) {
         if([[self.categories[i] objectId] isEqualToString:self.listing.categoryId]){
             return i;
         }
@@ -177,10 +177,10 @@
 }
 
 - (void)populateDatesSelected {
-    for(int i = 0; i < self.datesAvailable.count; i++){
+    for(int i = 0; i < self.datesAvailable.count; i++) {
         NSDateInterval *interval = (NSDateInterval *) self.datesAvailable[i];
         NSDate *curr = interval.startDate;
-        while([interval containsDate:curr]){
+        while([interval containsDate:curr]) {
             [self.datesSelected addObject:curr];
             curr = [NSDate dateWithTimeInterval:(24*60*60) sinceDate:curr];
         }
@@ -191,7 +191,7 @@
     Listing *newListing = [Listing new];
     newListing.reservations = [[NSMutableArray alloc] init];
     newListing.images = [self imagesToPFFiles:self.carouselImages];
-    if(self.listing != nil){
+    if(self.listing != nil) {
         newListing = self.listing;
     }
     newListing.dynamicPrice = [self.dynamicPricingSwitch isOn];
@@ -204,11 +204,11 @@
     newListing.tags = [[NSMutableArray alloc] init];
     newListing.categoryId = [(Category *)self.categories[[self.categoriesPicker selectedRowInComponent:0]] objectId];
     NSLog(@"%@", self.mapView.annotations);
-    for(int i = 0; i < self.mapView.annotations.count; i++){
+    for(int i = 0; i < self.mapView.annotations.count; i++) {
         NSObject *annotation = self.mapView.annotations[i];
-        if([annotation isKindOfClass: [MKPointAnnotation class]]){
+        if([annotation isKindOfClass:[MKPointAnnotation class]]) {
             CLLocationCoordinate2D listingCoordinates = self.mapView.annotations[i].coordinate;
-            newListing.geoPoint = [PFGeoPoint geoPointWithLatitude: listingCoordinates.latitude longitude:listingCoordinates.longitude];
+            newListing.geoPoint = [PFGeoPoint geoPointWithLatitude:listingCoordinates.latitude longitude:listingCoordinates.longitude];
         }
     }
     newListing.location = self.locationLabel.text;
@@ -218,7 +218,7 @@
     GNGeoHash *geohash = [GNGeoHash withCharacterPrecision:newListing.geoPoint.latitude  andLongitude:newListing.geoPoint.longitude andNumberOfCharacters:7];
     newListing.geohash = [geohash toBase32];
     [newListing saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if(succeeded){
+        if(succeeded) {
             NSLog(@"END: Listing successfully saved");
             [self dismissViewControllerAnimated:YES completion:nil];
         } else{
@@ -243,10 +243,10 @@
     pa.title = @"Listing Location";
     [self.mapView addAnnotation:pa];
     __weak typeof(self) weakSelf = self;
-    void(^completion)(NSString *, NSError *) = ^void(NSString *response, NSError *error){
+    void(^completion)(NSString *, NSError *) = ^void(NSString *response, NSError *error) {
         typeof(self) strongSelf = weakSelf;
-        if(error == nil){
-            if(strongSelf){
+        if(error == nil) {
+            if(strongSelf) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [strongSelf.locationLabel setText:response];
                 });
@@ -260,7 +260,7 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    if(status == kCLAuthorizationStatusAuthorizedWhenInUse){
+    if(status == kCLAuthorizationStatusAuthorizedWhenInUse) {
         [self.locationManager startUpdatingLocation];
     }
 }
@@ -277,11 +277,11 @@
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
-    if([self isDateReserved:dayView.date]){ // date is reserved already
+    if([self isDateReserved:dayView.date]) { // date is reserved already
         dayView.circleView.backgroundColor = UIColor.blackColor;
-    } else if([self isInDatesSelected: dayView.date]){ // date is available
+    } else if([self isInDatesSelected:dayView.date]){ // date is available
         dayView.circleView.backgroundColor = UIColor.blueColor;
-    } else if ([self.isAlwaysAvailableSwitch isOn] == NO){ // date not avaiable
+    } else if ([self.isAlwaysAvailableSwitch isOn] == NO) { // date not avaiable
         dayView.circleView.hidden = YES;
     }
 }
@@ -289,12 +289,12 @@
 - (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     // deselect date
     if([self isDateReserved:dayView.date]) return;
-    if([self.isAlwaysAvailableSwitch isOn]){
+    if([self.isAlwaysAvailableSwitch isOn]) {
         [self.datesSelected removeAllObjects];
         [self.isAlwaysAvailableSwitch setOn:NO];
-    } else if([self isInDatesSelected:dayView.date]){
+    } else if([self isInDatesSelected:dayView.date]) {
         [self.datesSelected removeObject:dayView.date];
-    } else{ // select date
+    } else { // select date
         [self.datesSelected addObject:dayView.date];
     }
     [self.calendarManager reload];
@@ -302,8 +302,8 @@
 
 - (BOOL)isInDatesSelected:(NSDate *)date {
     if([self.isAlwaysAvailableSwitch isOn]) return YES;
-    for(NSDate *dateSelected in self.datesSelected){
-        if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]){
+    for(NSDate *dateSelected in self.datesSelected) {
+        if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]) {
             return YES;
         }
     }
@@ -311,9 +311,9 @@
 }
 
 - (BOOL)isDateReserved:(NSDate *)date {
-    for(int i = 0; i < self.datesReserved.count; i++){
+    for(int i = 0; i < self.datesReserved.count; i++) {
         NSDateInterval *interval = self.datesReserved[i];
-        if([interval containsDate:date]){
+        if([interval containsDate:date]) {
             return YES;
         }
     }
@@ -322,7 +322,7 @@
 
 - (BOOL)isDateAvailable:(NSDate *)date {
     if(self.listing.isAlwaysAvailable) return YES;
-    for(int i = 0; i < self.datesAvailable.count; i++){
+    for(int i = 0; i < self.datesAvailable.count; i++) {
         NSDateInterval *interval = self.datesAvailable[i];
         if([interval containsDate:date]){
             return YES;
@@ -333,11 +333,11 @@
 
 - (nonnull __kindof UICollectionViewCell *)collectionView:(nonnull UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
     ImageCarouselCollectionViewCell *cell = [self.imageCarouselCollectionView dequeueReusableCellWithReuseIdentifier:@"ImageCarouselCollectionViewCell" forIndexPath:indexPath];
-    if(self.listing != nil){
+    if(self.listing != nil) {
         PFFileObject *image = (PFFileObject *) self.listing.images[indexPath.row];
         NSURL *imageURL = [NSURL URLWithString: image.url];
         [cell.cellImage setImageWithURL: imageURL];
-    } else{
+    } else {
         cell.cellImage.image = self.carouselImages[indexPath.row];
     }
     cell.cellImage.contentMode = UIViewContentModeScaleAspectFit;
@@ -345,7 +345,7 @@
 }
 
 - (NSInteger)collectionView:(nonnull UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if(self.listing != nil){
+    if(self.listing != nil) {
         return self.listing.images.count;
     }
     return self.carouselImages.count;
@@ -393,8 +393,8 @@
 
 - (NSMutableArray *)imagesToPFFiles:(NSMutableArray *)images {
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    for(int i = 0 ; i < images.count; i ++){
-        [result addObject:[self getPFFileFromImage: (UIImage *) images[i]]];
+    for(int i = 0; i < images.count; i ++) {
+        [result addObject:[self getPFFileFromImage:(UIImage *)images[i]]];
     }
     return result;
 }
@@ -411,10 +411,10 @@
 
 - (IBAction)didDeleteListing:(id)sender {
     [self.listing deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if(error == nil){
+        if(error == nil) {
             NSLog(@"END: Successfully deleted listing");
             [self dismissViewControllerAnimated:YES completion:nil];
-        }else{
+        }else {
             NSLog(@"END: Failed to delete listing");
         }
     }];
@@ -464,7 +464,7 @@
     return self.categories.count;
 }
 
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     Category *category = self.categories[row];
     return category[@"title"];
 }

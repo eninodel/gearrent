@@ -44,12 +44,12 @@
     [query includeKey:@"reservations"];
     [query includeKey:@"geoPoint"];
     __weak typeof(self) weakSelf = self;
-    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error){
+    [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
-        if(error == nil && strongSelf){
+        if(error == nil && strongSelf) {
             strongSelf.tableData = objects;
             [strongSelf.listingsTableView reloadData];
-        } else{
+        } else {
             NSLog(@"END: Error in querying listings");
         }
     }];
@@ -92,7 +92,7 @@
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"ViewReservationsNavigationController"];
     ListingReservationsViewController *reservationsVC = (ListingReservationsViewController *) navigationVC.topViewController;
     reservationsVC.listing = listing;
-    [self presentViewController: navigationVC animated: YES completion:nil];
+    [self presentViewController:navigationVC animated:YES completion:nil];
 }
 
 @end

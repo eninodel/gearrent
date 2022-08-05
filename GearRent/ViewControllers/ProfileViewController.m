@@ -68,19 +68,19 @@
     __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
-        if(error == nil && strongSelf){
+        if(error == nil && strongSelf) {
             PFUser *user = (PFUser*) objects[0];
             UIImage *defaultProfileImage = [UIImage imageNamed:@"DefaultProfileImage"];
-            if(user[@"profileImage"] == nil){
+            if(user[@"profileImage"] == nil) {
                 UIImage *defaultProfileImage = [UIImage imageNamed:@"DefaultProfileImage"];
                 strongSelf.prevProfileImage = defaultProfileImage;
                 [strongSelf.profileImageView setImage:defaultProfileImage];
-            }else{
+            }else {
                 PFFileObject *image = (PFFileObject *) user[@"profileImage"];
                 NSURL *profileImageURL = [NSURL URLWithString: image.url];
                 [strongSelf.profileImageView setImageWithURLRequest:[NSURLRequest requestWithURL:profileImageURL] placeholderImage:defaultProfileImage success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
                     typeof (self) strongSelf = weakSelf;
-                    if(strongSelf){
+                    if(strongSelf) {
                         strongSelf.prevProfileImage = image;
                         [strongSelf.profileImageView setImage:image];
                     }
@@ -88,7 +88,7 @@
                     NSLog(@"END: Error in setting profileImageView");
                 }];
             }
-        }else{
+        }else {
             NSLog(@"END: Error in fetching user in ProfileViewController");
         }
     }];
@@ -121,7 +121,7 @@
                     NSLog(@"END: Error in saving user");
                 }
             }];
-        }else{
+        }else {
             NSLog(@"END: Error in saving user in didSaveProfile");
             NSLog(@"%@", error.description);
         }

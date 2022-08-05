@@ -55,9 +55,9 @@
     self.reservation.status = @"DECLINED";
     self.currentStatusLabel.text = self.reservation.status;
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if(error == nil){
+        if(error == nil) {
             NSLog(@"END: successfullly declined reservation");
-        } else{
+        } else {
             NSLog(@"END: error in declining reservation");
         }
     }];
@@ -68,9 +68,9 @@
     self.reservation.status = @"CONFIRMED";
     self.currentStatusLabel.text = self.reservation.status;
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if(error == nil){
+        if(error == nil) {
             NSLog(@"END: successfullly accepted reservation");
-        } else{
+        } else {
             NSLog(@"END: error in accepting reservation");
         }
     }];

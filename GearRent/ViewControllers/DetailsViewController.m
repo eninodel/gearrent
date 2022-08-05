@@ -146,7 +146,7 @@
                     NSLog(@"END: Error in saving reservation");
                 }
             }];
-        } else{
+        } else {
             NSLog(@"%@", error);
         }
     }];
@@ -156,12 +156,11 @@
 -(TimeInterval *)reservationTimeInterval {
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:TRUE];
     [self.datesSelected sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
-    
     NSDate *prevDate = self.datesSelected[0];
-    for(int i = 1; i < self.datesSelected.count; i++){
+    for(int i = 1; i < self.datesSelected.count; i++) {
         NSDate *currDate = self.datesSelected[i];
         NSTimeInterval timeInterval = [currDate timeIntervalSinceDate:prevDate];
-        if(timeInterval > 86400.0 || timeInterval < 0){ // days are not contiguous
+        if(timeInterval > 86400.0 || timeInterval < 0) { // days are not contiguous
             NSLog(@"END: Dates are not contiguous");
         }
         prevDate = currDate;
@@ -174,7 +173,7 @@
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
-    if([self.datesToPrices objectForKey:dayView.date]){
+    if([self.datesToPrices objectForKey:dayView.date]) {
         dayView.textLabel.text = [[self.datesToPrices objectForKey:dayView.date] stringValue];
     }
     if([self isInDatesSelected:dayView.date]){ // date is selected
@@ -193,7 +192,7 @@
 }
 
 - (BOOL)isDateReserved:(NSDate *)date {
-    for(int i = 0; i < self.datesReserved.count; i++){
+    for(int i = 0; i < self.datesReserved.count; i++) {
         NSDateInterval *interval = self.datesReserved[i];
         Reservation *reservation = (Reservation *) self.reservations[i];
         if([interval containsDate:date] == YES && [reservation.status isEqualToString:@"CONFIRMED"]){
@@ -227,17 +226,21 @@
     [self.calendarManager reload];
 }
 
-- (void)fetchDynamicPrices{
+- (void)fetchDynamicPrices {
     NSMutableArray<NSDate *> *dates = [[self.datesForDynamicPricingSet allObjects] mutableCopy];
     self.dateRanges = [self getDynamicPriceDateRanges:dates];
+    __weak typeof(self) weakSelf = self;
     fetchDynamicPrice(self.listing, self.dateRanges, ^(NSDictionary<NSNumber *, NSNumber *> * result, NSError * _Nonnull error) {
+        typeof(self) strongSelf = weakSelf;
         if(error == nil) {
-            NSArray *keys = result.allKeys;
-            for(NSNumber *key in keys) {
-                NSDate *date = [NSDate dateWithTimeIntervalSince1970:[key doubleValue] / 1000];
-                self.datesToPrices[date] = result[key];
+            if(strongSelf) {
+                NSArray *keys = result.allKeys;
+                for(NSNumber *key in keys) {
+                    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[key doubleValue] / 1000];
+                    strongSelf.datesToPrices[date] = result[key];
+                }
+                [strongSelf.calendarManager reload];
             }
-            [self.calendarManager reload];
         } else{
             NSLog(@"%@", error);
         }
@@ -247,7 +250,7 @@
 - (NSMutableArray *)getDynamicPriceDateRanges:(NSMutableArray<NSDate *> *)dates {
     double k24HoursInSeconds = 86400.0;
     NSMutableArray *result = [[NSMutableArray alloc] init];
-    if(dates.count == 0){
+    if(dates.count == 0) {
         return result;
     }
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:YES];
@@ -260,7 +263,7 @@
         NSLog(@"%f", timeInterval);
         if(timeInterval <= k24HoursInSeconds && timeInterval >= 0){ // days are contiguous
             endDate = currDate;
-        } else{ // dates are not contiguous
+        } else { // dates are not contiguous
             NSMutableArray<NSNumber *> *dateRange = [NSMutableArray<NSNumber *> new];
             [dateRange addObject:@(startDate.timeIntervalSince1970)];
             [dateRange addObject:@(endDate.timeIntervalSince1970)];
@@ -278,7 +281,7 @@
 
 - (BOOL)isInDatesSelected:(NSDate *)date {
     for(NSDate *dateSelected in self.datesSelected){
-        if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]){
+        if([self.calendarManager.dateHelper date:dateSelected isTheSameDayThan:date]) {
             return YES;
         }
     }
@@ -286,15 +289,15 @@
 }
 
 - (void)setReserveButtonText {
-    if(self.datesSelected.count == 0){
+    if(self.datesSelected.count == 0) {
         [self.reserveNowButton setTitle:@"Please select day(s) to reserve item" forState:UIControlStateNormal];
-    }else{
+    }else {
         CGFloat total = 0.0;
-        if(self.listing.dynamicPrice){
+        if(self.listing.dynamicPrice) {
             for(NSDate *date in self.datesSelected){
                 total += [[self.datesToPrices objectForKey:date]doubleValue];
             }
-        } else{
+        } else {
             NSRange range = NSMakeRange(1, self.priceLabel.text.length - 6);
             NSString *substring = [self.priceLabel.text substringWithRange:range];
             total = [substring floatValue] * self.datesSelected.count;
@@ -306,7 +309,7 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
-    if(status == kCLAuthorizationStatusAuthorizedWhenInUse){
+    if(status == kCLAuthorizationStatusAuthorizedWhenInUse) {
         [self.locationManager startUpdatingLocation];
     }
 }
@@ -324,7 +327,7 @@
 - (nonnull __kindof UICollectionViewCell *)collectionView:(nonnull UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
     ImageCarouselCollectionViewCell *cell = [self.carouselCollectionView dequeueReusableCellWithReuseIdentifier:@"ImageCarouselCollectionViewCell" forIndexPath:indexPath];
     PFFileObject *image = (PFFileObject *) self.listing.images[indexPath.row];
-    NSURL *imageURL = [NSURL URLWithString: image.url];
+    NSURL *imageURL = [NSURL URLWithString:image.url];
     [cell.cellImage setImageWithURL: imageURL];
     cell.cellImage.contentMode = UIViewContentModeScaleAspectFit;
     return cell;

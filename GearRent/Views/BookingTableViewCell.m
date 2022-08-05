@@ -37,18 +37,18 @@
     __weak typeof(self) weakSelf = self;
     [listingPhotoQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
-        if(error == nil && strongSelf){
+        if(error == nil && strongSelf) {
             if(objects.count > 0 && [objects[0] isKindOfClass:[Listing class]]){
                 Listing *listing = (Listing *)objects[0];
                 strongSelf.titleLabel.text = listing.title;
                 PFFileObject *image = (PFFileObject *) listing.images[0];
                 NSURL *imageURL = [NSURL URLWithString: image.url];
                 [strongSelf.imageView setImageWithURL:imageURL];
-            } else{
+            } else {
                 UIImage *image = [UIImage imageNamed:@"DefaultListingImage"];
                 [strongSelf.imageView setImage:image];
             }
-        } else{
+        } else {
             NSLog(@"END: Error in fetching photos");
         }
     }];
@@ -60,9 +60,9 @@
 - (IBAction)didCancelReservation:(id)sender {
     self.reservation.status = @"DECLINED";
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if(error == nil){
+        if(error == nil) {
             NSLog(@"END: Successfully cancelled reservation");
-        }else{
+        }else {
             NSLog(@"END: Error in canceling reservation");
         }
     }];

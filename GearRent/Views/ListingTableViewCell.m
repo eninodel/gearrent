@@ -63,20 +63,20 @@
     __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
-        if(error == nil && strongSelf){
+        if(error == nil && strongSelf) {
             // check if available
-            if(strongSelf.listing.isAlwaysAvailable == YES){
+            if(strongSelf.listing.isAlwaysAvailable == YES) {
                 status = @"Available to Rent today";
             }
-            for(int i = 0; i < strongSelf.listing.availabilities.count; i++){
+            for(int i = 0; i < strongSelf.listing.availabilities.count; i++) {
                 TimeInterval *interval = (TimeInterval *) strongSelf.listing.availabilities[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate: interval.startDate endDate: interval.endDate];
-                if([dateInterval containsDate:today]){
+                if([dateInterval containsDate:today]) {
                     status =  @"Available to Rent today";
                 }
             }
             // check if reserved
-            for(int i = 0; i < objects.count; i++){
+            for(int i = 0; i < objects.count; i++) {
                 Reservation *reservation = (Reservation *) objects[i];
                 NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
                 if([dateInterval containsDate:today]){
@@ -88,7 +88,7 @@
             strongSelf.statusLabel.hidden = NO;
             strongSelf.statusLabel.text = status;
             [strongSelf.statusLabel sizeToFit];
-        }else{
+        }else {
             NSLog(@"END: Error fetching reservation dates");
         }
     }];

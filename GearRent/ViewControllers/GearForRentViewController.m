@@ -138,17 +138,17 @@
     }
 }
 
-- (void)addPolygonToMap:(NSMutableArray<CLLocation *> *)points{
+- (void)addPolygonToMap:(NSMutableArray<CLLocation *> *)points {
     NSUInteger count = points.count;
     CLLocationCoordinate2D coordinates[count];
     for(int i = 0; i < count; i++){
         coordinates[i] = points[i].coordinate;
     }
-    MKPolygon *polygon = [MKPolygon polygonWithCoordinates: coordinates count: count];
+    MKPolygon *polygon = [MKPolygon polygonWithCoordinates:coordinates count:count];
     [self.mapView addOverlay:polygon];
 }
 
-- (double)getDistance:(CLLocation *)pointA pointB:(CLLocation *)pointB{
+- (double)getDistance:(CLLocation *)pointA pointB:(CLLocation *)pointB {
     return sqrt(pow(pointA.coordinate.latitude - pointB.coordinate.latitude, 2.0) +
                 pow(pointA.coordinate.longitude - pointB.coordinate.longitude, 2.0));
 }
@@ -190,18 +190,18 @@
     [query includeKey:@"reservations"];
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
-        if(error == nil && strongSelf){
+        if(error == nil && strongSelf) {
             strongSelf.tableData = objects;
             strongSelf.filteredListings = (NSArray<Listing *> *)objects;
             [strongSelf.listingsTableView reloadData];
-        } else{
+        } else {
             NSLog(@"END: Error in querying listings");
         }
     }];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if(tableView == self.listingsTableView){
+    if(tableView == self.listingsTableView) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"DetailsViewNavigationController"];
         [self presentViewController:navigationVC animated:YES completion:nil];
@@ -223,7 +223,7 @@
 
 - (IBAction)didSearchPolygon:(id)sender {
     void(^completion)(NSArray<Listing *> *, NSError *error) = ^void(NSArray<Listing *> *listings, NSError *error){
-        if(error == nil){
+        if(error == nil) {
             NSLog(@"END: Successfully searched for listings in polygon");
             for(int i = 0; i < listings.count; i ++){
                 Listing *listing = listings[i];
@@ -232,7 +232,7 @@
                 pa.title = listing.title;
                 [self.mapView addAnnotation:pa];
             }
-        } else{
+        } else {
             NSLog(@"END: Error in didSearchPolygon");
         }
     };
@@ -250,7 +250,7 @@
 }
 
 - (IBAction)didChangeListing:(id)sender {
-    if([self.mapView isHidden]){
+    if([self.mapView isHidden]) {
         [self.mapView setHidden:NO];
         [self.removePointsButton setHidden:NO];
         [self.searchPolygonButton setHidden:NO];

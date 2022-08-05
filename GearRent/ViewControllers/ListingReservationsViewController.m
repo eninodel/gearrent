@@ -30,7 +30,7 @@
     self.reservations = [[NSArray alloc] init];
     PFQuery *query = [PFQuery queryWithClassName:@"Reservation"];
     [query includeKey:@"dates"];
-    [query whereKey:@"itemId" equalTo:[self.listing objectId] ];
+    [query whereKey:@"itemId" equalTo:[self.listing objectId]];
     __weak typeof(self) weakSelf = self;
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;

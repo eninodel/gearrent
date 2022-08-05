@@ -9,7 +9,8 @@
 #import "Parse/Parse.h"
 
 @interface VerifyEmailViewController ()
-@property (weak, nonatomic) IBOutlet UILabel *verifiedLabel;
+
+@property (strong, nonatomic) IBOutlet UILabel *verifiedLabel;
 @property (strong, nonatomic) NSTimer *timer;
 
 @end
@@ -27,7 +28,6 @@
 
 - (void)checkEmailVerified {
     PFUser *currentUser = [PFUser currentUser];
-    
     [currentUser fetchInBackgroundWithBlock:^(PFObject * _Nullable object, NSError * _Nullable error) {
         if(error == nil){
             if([object[@"emailVerified"] boolValue] != NO){
