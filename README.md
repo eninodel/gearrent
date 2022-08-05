@@ -41,12 +41,40 @@ AirBnb for outdoor gear. Users can rent outdoor gear such as kayaks, climbing ge
 * Push notifications
 * Ability to report listing for inappropriate content
 * Dark mode support
+## Demos
+* Search listings in a polygon:
 
-**Ambiguous Technical Problems**
-* Filter results based on location, search based on geofencing
-* Auto suggest listing prices based on market supply and demand on individual days (Ex: tell user to list an item for X amount because it’s trending at Y price on a certain day)
 
-### 2. Screen Archetypes
+https://user-images.githubusercontent.com/71790814/183220446-7c49cb1d-613e-4862-8a7f-beca9fb4defb.mov
+
+* Search listings in a polygon by excluding multiple inner polygons: 
+
+
+https://user-images.githubusercontent.com/71790814/183220482-8ac509bb-59bf-4b89-94d0-ac4c70fbf7c7.mov
+
+* Dynamic Pricing demo:
+
+
+https://user-images.githubusercontent.com/71790814/183220689-f670ff01-945c-4857-b630-8f8d280a76aa.mov
+
+
+
+* Image Carousel:
+
+
+
+https://user-images.githubusercontent.com/71790814/183220603-de67cf42-2db2-4277-b295-50cfd062da4f.mov
+
+
+### 2. Ambiguous Technical Problems
+
+* Query listings based on user drawn polygons allowing users to search within a polygon and exclude inner polygons.
+* Change listing prices dynamically based on market demand and supply (dynamic pricing).
+* Cache data used to calculate dynamic pricing to calculate different dynamic prices for each individual day.
+* Determining constants to use for dynamic pricing with Desmos:
+<img width="1635" alt="desmosimage" src="https://user-images.githubusercontent.com/71790814/183220247-334eef5e-a692-43b5-b745-4394b14288e5.png">
+
+### 3. Screen Archetypes
 
 * Login
 * Register - User signs up or logs into their account
@@ -68,7 +96,7 @@ AirBnb for outdoor gear. Users can rent outdoor gear such as kayaks, climbing ge
 * User Listings Screen
    * Displays the listings for the current user
 
-### 3. Navigation
+### 4. Navigation
 
 **Tab Navigation** (Tab to Screen)
 
@@ -119,10 +147,12 @@ AirBnb for outdoor gear. Users can rent outdoor gear such as kayaks, climbing ge
    | startDate      | NSDate | interval start date|
    | endDate    | NSDate  | interval end date|
    
- #### Tag
+ #### Filter
    | Property      | Type     | Description |
    | ------------- | -------- | ------------|
    | objectId    | String  | unique id for the Tag (default field)|
    | parentId      | String | parent tage objectId|
    | description   | String  | tag description |
    | title         | String  | tag title |
+
+
