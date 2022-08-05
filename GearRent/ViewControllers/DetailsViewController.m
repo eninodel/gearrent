@@ -65,25 +65,10 @@
             NSLog(@"END: Error in getting user in DetailsViewController");
         }
     }];
-    if(self.listing.dynamicPrice){
-        // get dynamic price
-//        fetchDynamicPrice(self.listing, ^(CGFloat price, NSError * _Nonnull error) {
-//            typeof(self) strongSelf = weakSelf;
-//            if(error == nil && strongSelf){
-//                NSString *priceString = @"$";
-//                priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:price] stringValue]];
-//                priceString = [priceString stringByAppendingString:@" / day"];
-//                strongSelf.priceLabel.text = priceString;
-//            } else{
-//                NSLog(@"%@", error);
-//            }
-//        });
-    } else{
-        NSString *priceString = @"$";
-        priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
-        priceString = [priceString stringByAppendingString:@" / day"];
-        self.priceLabel.text = priceString;
-    }
+    NSString *priceString = @"$";
+    priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
+    priceString = [priceString stringByAppendingString:@" / day"];
+    self.priceLabel.text = priceString;
     self.calendarManager = [JTCalendarManager new];
     self.calendarManager.delegate = self;
     [self.calendarManager setMenuView:self.calendarMenuView];
@@ -249,7 +234,8 @@
         if(error == nil) {
             NSArray *keys = result.allKeys;
             for(NSNumber *key in keys) {
-                [self.datesToPrices setObject:[result valueForKey:key] forKey:[NSDate dateWithTimeIntervalSince1970: [key doubleValue] / 1000]];
+                NSDate *date = [NSDate dateWithTimeIntervalSince1970:[key doubleValue] / 1000];
+                self.datesToPrices[date] = result[key];
             }
             [self.calendarManager reload];
         } else{
@@ -259,33 +245,33 @@
 }
 
 - (NSMutableArray *)getDynamicPriceDateRanges:(NSMutableArray<NSDate *> *)dates {
-    NSMutableArray *result =[[NSMutableArray alloc] init];
+    double k24HoursInSeconds = 86400.0;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
     if(dates.count == 0){
         return result;
     }
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:TRUE];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:YES];
     [dates sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
     NSDate *startDate = dates[0];
     NSDate *endDate = startDate;
     for (int i = 1; i < dates.count; i++) {
-        NSDate *currDate = (NSDate *) dates[i];
+        NSDate *currDate = dates[i];
         NSTimeInterval timeInterval = [currDate timeIntervalSinceDate:endDate];
         NSLog(@"%f", timeInterval);
-        if(timeInterval <= 86400.0 && timeInterval >= 0){ // days are contiguous
+        if(timeInterval <= k24HoursInSeconds && timeInterval >= 0){ // days are contiguous
             endDate = currDate;
         } else{ // dates are not contiguous
             NSMutableArray<NSNumber *> *dateRange = [NSMutableArray<NSNumber *> new];
-            [dateRange addObject:[NSNumber numberWithDouble:startDate.timeIntervalSince1970]];
-            [dateRange addObject:[NSNumber numberWithDouble:endDate.timeIntervalSince1970]];
+            [dateRange addObject:@(startDate.timeIntervalSince1970)];
+            [dateRange addObject:@(endDate.timeIntervalSince1970)];
             [result addObject:dateRange];
             startDate = currDate;
             endDate = currDate;
         }
     }
     NSMutableArray<NSNumber *> *dateRange = [NSMutableArray<NSNumber *> new];
-    NSTimeInterval startDateInterval = startDate.timeIntervalSince1970;
-    [dateRange addObject:[NSNumber numberWithDouble:startDateInterval]];
-    [dateRange addObject:[NSNumber numberWithDouble:endDate.timeIntervalSince1970]];
+    [dateRange addObject:@(startDate.timeIntervalSince1970)];
+    [dateRange addObject:@(endDate.timeIntervalSince1970)];
     [result addObject:dateRange];
     return result;
 }
@@ -308,7 +294,6 @@
             for(NSDate *date in self.datesSelected){
                 total += [[self.datesToPrices objectForKey:date]doubleValue];
             }
-            
         } else{
             NSRange range = NSMakeRange(1, self.priceLabel.text.length - 6);
             NSString *substring = [self.priceLabel.text substringWithRange:range];
