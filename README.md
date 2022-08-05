@@ -42,29 +42,12 @@ AirBnb for outdoor gear. Users can rent outdoor gear such as kayaks, climbing ge
 * Ability to report listing for inappropriate content
 * Dark mode support
 ## Demos
-* Search listings in a polygon:
-
-
-https://user-images.githubusercontent.com/71790814/183220446-7c49cb1d-613e-4862-8a7f-beca9fb4defb.mov
-
-* Search listings in a polygon by excluding multiple inner polygons: 
-
-
-https://user-images.githubusercontent.com/71790814/183220482-8ac509bb-59bf-4b89-94d0-ac4c70fbf7c7.mov
-
-* Dynamic Pricing demo:
-
-
-https://user-images.githubusercontent.com/71790814/183220689-f670ff01-945c-4857-b630-8f8d280a76aa.mov
-
-
-
-* Image Carousel:
-
-
-
-https://user-images.githubusercontent.com/71790814/183220603-de67cf42-2db2-4277-b295-50cfd062da4f.mov
-
+| Feature  | Demo |
+| ------------- | ------------- |
+|  Search listings in a polygon | <video src="https://user-images.githubusercontent.com/71790814/183220446-7c49cb1d-613e-4862-8a7f-beca9fb4defb.mov"> |
+|  Search listings in a polygon by excluding multiple inner polygons | <video src="https://user-images.githubusercontent.com/71790814/183220482-8ac509bb-59bf-4b89-94d0-ac4c70fbf7c7.mov"> |
+|  Dynamic Pricing demo | <video src="https://user-images.githubusercontent.com/71790814/183220689-f670ff01-945c-4857-b630-8f8d280a76aa.mov"> |
+|  Image Carousel | <video src="https://user-images.githubusercontent.com/71790814/183220603-de67cf42-2db2-4277-b295-50cfd062da4f.mov"> |
 
 ### 2. Ambiguous Technical Problems
 
@@ -126,9 +109,12 @@ https://user-images.githubusercontent.com/71790814/183220603-de67cf42-2db2-4277-
    | ownerId       | String   | objectId of the listing owner|
    | tags          | Tag array  | tags associated with the listing|
    | geoPoint      | PFGeoPoint  | Location of item|
-   | city          | String    | city location of item|
+   | geohash      | String  | Geohash with 7 characters of precision representing the location of the listing|
+   | location          | String    | location of item (nearest city/county)|
    | reservations  | Reservation array | reservations associated with the current listing|
    | availabilities | TimeInterval array | date ranges representing the availability of a listing|
+   | isAlwaysAvailable | Boolean | listing is always available to rent |
+   | categoryId | TimeInterval array | date ranges representing the availability of a listing|
    
 #### Reservation
    | Property      | Type     | Description |
@@ -147,12 +133,27 @@ https://user-images.githubusercontent.com/71790814/183220603-de67cf42-2db2-4277-
    | startDate      | NSDate | interval start date|
    | endDate    | NSDate  | interval end date|
    
- #### Filter
+ #### Category
    | Property      | Type     | Description |
    | ------------- | -------- | ------------|
    | objectId    | String  | unique id for the Tag (default field)|
-   | parentId      | String | parent tage objectId|
-   | description   | String  | tag description |
    | title         | String  | tag title |
-
+   
+#### Filter
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId    | String  | unique id for the Tag (default field)|
+   | location     | String  | location of user who created the Filter (nearest city/county)|
+   | categoryID | String | objectId of the category this filter references |
+   | userId | String | objectId of the user who created this Filter |
+   
+#### SupplyCache
+   | Property      | Type     | Description |
+   | ------------- | -------- | ------------|
+   | objectId    | String  | unique id for the Tag (default field)|
+   | date      | NSDate | Date the SupplyCache contains data for|
+   |  reserved        | Integer  | number of listings with confirmed reservations |
+   |  available        | Integer  | number of listings initially available |
+   |  location       | String  | Location of listings this SupplyCache affects |
+   |  categoryId       | String  | CategoryId of listings this SupplyCache affects |
 
