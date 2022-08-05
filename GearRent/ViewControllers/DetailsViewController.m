@@ -32,6 +32,8 @@
 @property (strong, nonatomic) NSMutableArray *datesSelected;
 @property (strong, nonatomic) NSMutableArray *datesReserved;
 @property (strong, nonatomic) NSMutableArray *datesAvailable;
+@property (strong, nonatomic) NSMutableSet<NSDate *> *datesForDynamicPricingSet;
+@property (strong, nonatomic) NSMutableArray<NSMutableArray<NSNumber *> *> *dateRanges;
 @property (strong, nonatomic) NSMutableDictionary<NSDate *, NSNumber *> *datesToPrices;
 
 - (IBAction)didReserveNow:(id)sender;
@@ -43,6 +45,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.datesForDynamicPricingSet = [NSMutableSet<NSDate *> new];
+    self.dateRanges = [NSMutableArray<NSMutableArray<NSNumber *> *> new];
     self.datesToPrices = [NSMutableDictionary<NSDate *, NSNumber *> new];
     self.carouselCollectionView.delegate = self;
     self.carouselCollectionView.dataSource = self;
@@ -61,25 +65,10 @@
             NSLog(@"END: Error in getting user in DetailsViewController");
         }
     }];
-    if(self.listing.dynamicPrice){
-        // get dynamic price
-        fetchDynamicPrice(self.listing, ^(CGFloat price, NSError * _Nonnull error) {
-            typeof(self) strongSelf = weakSelf;
-            if(error == nil && strongSelf){
-                NSString *priceString = @"$";
-                priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:price] stringValue]];
-                priceString = [priceString stringByAppendingString:@" / day"];
-                strongSelf.priceLabel.text = priceString;
-            } else{
-                NSLog(@"%@", error);
-            }
-        });
-    } else{
-        NSString *priceString = @"$";
-        priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
-        priceString = [priceString stringByAppendingString:@" / day"];
-        self.priceLabel.text = priceString;
-    }
+    NSString *priceString = @"$";
+    priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
+    priceString = [priceString stringByAppendingString:@" / day"];
+    self.priceLabel.text = priceString;
     self.calendarManager = [JTCalendarManager new];
     self.calendarManager.delegate = self;
     [self.calendarManager setMenuView:self.calendarMenuView];
@@ -119,6 +108,7 @@
                         [strongSelf.datesReserved addObject:dateInterval];
                     }
                     [strongSelf.calendarManager reload];
+                    [strongSelf fetchDynamicPrices];
                 }else{
                     NSLog(@"END: Error in querying reservations");
                 }
@@ -146,12 +136,18 @@
     reservation.leaserId = self.listing.ownerId;
     reservation.dates = [self reservationTimeInterval];
     reservation.status = @"UNCONFIRMED";
-    [self.listing addObject:reservation forKey:@"reservations"];
-    [self.listing saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if(succeeded == YES){
-            NSLog(@"END: Successfully saved reservation");
+    [reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+        if(error == nil){
+            [self.listing addObject:reservation forKey:@"reservations"];
+            [self.listing saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+                if(succeeded == YES){
+                    NSLog(@"END: Successfully saved reservation");
+                } else{
+                    NSLog(@"END: Error in saving reservation");
+                }
+            }];
         } else{
-            NSLog(@"END: Error in saving reservation");
+            NSLog(@"%@", error);
         }
     }];
     [self dismissViewControllerAnimated:YES completion:nil];
@@ -178,12 +174,19 @@
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
+    if([self.datesToPrices objectForKey:dayView.date]){
+        dayView.textLabel.text = [[self.datesToPrices objectForKey:dayView.date] stringValue];
+    }
     if([self isInDatesSelected:dayView.date]){ // date is selected
         dayView.circleView.backgroundColor = UIColor.orangeColor;
     } else if([self isDateReserved:dayView.date] == YES){ // date is reserved already
         dayView.circleView.backgroundColor = UIColor.blackColor;
     } else if([self isDateAvailable:dayView.date] == YES){ // date is available
         dayView.circleView.backgroundColor = UIColor.blueColor;
+        NSDate *today = [NSDate date];
+        if([today compare:dayView.date] == NSOrderedAscending){
+            [self.datesForDynamicPricingSet addObject:dayView.date];
+        }
     } else{ // date not avaiable
         dayView.circleView.hidden = YES;
     }
@@ -193,7 +196,7 @@
     for(int i = 0; i < self.datesReserved.count; i++){
         NSDateInterval *interval = self.datesReserved[i];
         Reservation *reservation = (Reservation *) self.reservations[i];
-        if([interval containsDate:date] == YES && [reservation.status isEqualToString:@"CONFIMED"]){
+        if([interval containsDate:date] == YES && [reservation.status isEqualToString:@"CONFIRMED"]){
             return YES;
         }
     }
@@ -217,14 +220,60 @@
     
     if([self isInDatesSelected:dayView.date]){
         [self.datesSelected removeObject:dayView.date];
-        [self setReserveButtonText];
-        [self.calendarManager reload];
-        
     } else{ // select date
         [self.datesSelected addObject:dayView.date];
-        [self setReserveButtonText];
-        [self.calendarManager reload];
     }
+    [self setReserveButtonText];
+    [self.calendarManager reload];
+}
+
+- (void)fetchDynamicPrices{
+    NSMutableArray<NSDate *> *dates = [[self.datesForDynamicPricingSet allObjects] mutableCopy];
+    self.dateRanges = [self getDynamicPriceDateRanges:dates];
+    fetchDynamicPrice(self.listing, self.dateRanges, ^(NSDictionary<NSNumber *, NSNumber *> * result, NSError * _Nonnull error) {
+        if(error == nil) {
+            NSArray *keys = result.allKeys;
+            for(NSNumber *key in keys) {
+                NSDate *date = [NSDate dateWithTimeIntervalSince1970:[key doubleValue] / 1000];
+                self.datesToPrices[date] = result[key];
+            }
+            [self.calendarManager reload];
+        } else{
+            NSLog(@"%@", error);
+        }
+    });
+}
+
+- (NSMutableArray *)getDynamicPriceDateRanges:(NSMutableArray<NSDate *> *)dates {
+    double k24HoursInSeconds = 86400.0;
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    if(dates.count == 0){
+        return result;
+    }
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"self" ascending:YES];
+    [dates sortUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+    NSDate *startDate = dates[0];
+    NSDate *endDate = startDate;
+    for (int i = 1; i < dates.count; i++) {
+        NSDate *currDate = dates[i];
+        NSTimeInterval timeInterval = [currDate timeIntervalSinceDate:endDate];
+        NSLog(@"%f", timeInterval);
+        if(timeInterval <= k24HoursInSeconds && timeInterval >= 0){ // days are contiguous
+            endDate = currDate;
+        } else{ // dates are not contiguous
+            NSMutableArray<NSNumber *> *dateRange = [NSMutableArray<NSNumber *> new];
+            [dateRange addObject:@(startDate.timeIntervalSince1970)];
+            [dateRange addObject:@(endDate.timeIntervalSince1970)];
+            [result addObject:dateRange];
+            startDate = currDate;
+            endDate = currDate;
+        }
+    }
+    NSMutableArray<NSNumber *> *dateRange = [NSMutableArray<NSNumber *> new];
+    [dateRange addObject:@(startDate.timeIntervalSince1970)];
+    [dateRange addObject:@(endDate.timeIntervalSince1970)];
+    [result addObject:dateRange];
+    return result;
 }
 
 - (BOOL)isInDatesSelected:(NSDate *)date {
@@ -240,9 +289,16 @@
     if(self.datesSelected.count == 0){
         [self.reserveNowButton setTitle:@"Please select day(s) to reserve item" forState:UIControlStateNormal];
     }else{
-        NSRange range = NSMakeRange(1, self.priceLabel.text.length - 6);
-        NSString *substring = [self.priceLabel.text substringWithRange:range];
-        CGFloat total = [substring floatValue] * self.datesSelected.count;
+        CGFloat total = 0.0;
+        if(self.listing.dynamicPrice){
+            for(NSDate *date in self.datesSelected){
+                total += [[self.datesToPrices objectForKey:date]doubleValue];
+            }
+        } else{
+            NSRange range = NSMakeRange(1, self.priceLabel.text.length - 6);
+            NSString *substring = [self.priceLabel.text substringWithRange:range];
+            total = [substring floatValue] * self.datesSelected.count;
+        }
         NSString *buttonText = @"Reserve now for $";
         buttonText = [buttonText stringByAppendingString:[[NSNumber numberWithFloat:total] stringValue]];
         [self.reserveNowButton setTitle:buttonText forState:UIControlStateNormal];
