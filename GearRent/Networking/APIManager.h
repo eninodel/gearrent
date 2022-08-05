@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern void fetchAllCategories(void(^completion)(NSArray<Category *> *, NSError *));
 extern void fetchDynamicPrice(Listing *listing, NSMutableArray<NSMutableArray<NSNumber *> *> *dateRanges, void(^completion)(NSDictionary<NSNumber *, NSNumber *> *, NSError *));
-extern void fetchListingsWithCoordinates(NSArray<CLLocation *> *coordinates, void(^completion)(NSArray<Listing *> *, NSError *error));
+extern void fetchListingsWithPolygons(NSArray<CLLocation *> *outerPolygonCoordinates,NSArray<NSArray<CLLocation *>*> *innerPolygonCoordinates, void(^completion)(NSArray<Listing *> *, NSError *error));
 
 @interface APIManager : NSObject
 
