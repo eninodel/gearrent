@@ -16,6 +16,7 @@
 
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *reservations;
+@property (strong, nonatomic) IBOutlet UILabel *noReservationsLabel;
 
 - (IBAction)didTapBack:(id)sender;
 
@@ -25,6 +26,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.noReservationsLabel setHidden:YES];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.reservations = [[NSArray alloc] init];
@@ -35,8 +37,12 @@
     [query findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
-            strongSelf.reservations = objects;
-            [strongSelf.tableView reloadData];
+            if(objects.count == 0) {
+                [strongSelf.noReservationsLabel setHidden:NO];
+            } else {
+                strongSelf.reservations = objects;
+                [strongSelf.tableView reloadData];
+            }
         }else{
             NSLog(@"END: Error fetching reservation dates");
         }

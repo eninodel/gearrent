@@ -65,10 +65,14 @@
             NSLog(@"END: Error in getting user in DetailsViewController");
         }
     }];
-    NSString *priceString = @"$";
-    priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
-    priceString = [priceString stringByAppendingString:@" / day"];
-    self.priceLabel.text = priceString;
+    if(self.listing.dynamicPrice) {
+        [self.priceLabel setHidden:YES];
+    } else {
+        NSString *priceString = @"$";
+        priceString = [priceString stringByAppendingString:[[NSNumber numberWithFloat:self.listing.price] stringValue]];
+        priceString = [priceString stringByAppendingString:@" / day"];
+        self.priceLabel.text = priceString;
+    }
     self.calendarManager = [JTCalendarManager new];
     self.calendarManager.delegate = self;
     [self.calendarManager setMenuView:self.calendarMenuView];
@@ -84,6 +88,10 @@
     self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
     self.locationManager.distanceFilter = 200;
     [self.locationManager requestWhenInUseAuthorization];
+    CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
+    MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
+    MKCoordinateRegion region = MKCoordinateRegionMake(coordinates, span);
+    [self.mapView setRegion:region];
     PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
     [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
     [listingQuery includeKey: @"availabilities"];
@@ -173,15 +181,17 @@
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
-    if([self.datesToPrices objectForKey:dayView.date]) {
-        dayView.textLabel.text = [[self.datesToPrices objectForKey:dayView.date] stringValue];
+    if([self.datesToPrices objectForKey:dayView.date] != nil && self.listing.dynamicPrice) {
+        dayView.textLabel.text = [dayView.textLabel.text stringByAppendingFormat: @"$\r%@",[[self.datesToPrices objectForKey:dayView.date] stringValue]];
+        [dayView.textLabel setNumberOfLines:0];
+        [dayView.textLabel setFont:[UIFont systemFontOfSize:10]];
     }
     if([self isInDatesSelected:dayView.date]){ // date is selected
-        dayView.circleView.backgroundColor = UIColor.orangeColor;
+        dayView.circleView.backgroundColor = [self colorFromHexString:@"#E0CCCC"];
     } else if([self isDateReserved:dayView.date] == YES){ // date is reserved already
-        dayView.circleView.backgroundColor = UIColor.blackColor;
+        dayView.circleView.backgroundColor = [self colorFromHexString:@"#8D8D9E"];
     } else if([self isDateAvailable:dayView.date] == YES){ // date is available
-        dayView.circleView.backgroundColor = UIColor.blueColor;
+        dayView.circleView.backgroundColor = [self colorFromHexString:@"#AAB6CC"];
         NSDate *today = [NSDate date];
         if([today compare:dayView.date] == NSOrderedAscending){
             [self.datesForDynamicPricingSet addObject:dayView.date];
@@ -203,6 +213,7 @@
 }
 
 - (BOOL)isDateAvailable:(NSDate *)date {
+    // TODO: make dates before today not available
     if(self.listing.isAlwaysAvailable == YES) return YES;
     for(int i = 0; i < self.datesAvailable.count; i++){
         NSDateInterval *interval = self.datesAvailable[i];
@@ -318,12 +329,6 @@
     [self.locationManager startUpdatingLocation];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
-    MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
-    MKCoordinateRegion region = MKCoordinateRegionMake(locations[0].coordinate, span);
-    [self.mapView setRegion:region];
-}
-
 - (nonnull __kindof UICollectionViewCell *)collectionView:(nonnull UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
     ImageCarouselCollectionViewCell *cell = [self.carouselCollectionView dequeueReusableCellWithReuseIdentifier:@"ImageCarouselCollectionViewCell" forIndexPath:indexPath];
     PFFileObject *image = (PFFileObject *) self.listing.images[indexPath.row];
@@ -335,6 +340,14 @@
 
 - (NSInteger)collectionView:(nonnull UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.listing.images.count;
+}
+
+- (UIColor *)colorFromHexString:(NSString *)hexString {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
 @end

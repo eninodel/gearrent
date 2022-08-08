@@ -28,6 +28,10 @@
 
 - (void)initializeCell {
     self.currentStatusLabel.text = self.reservation.status;
+    if(![self.reservation.status isEqualToString:@"UNCONFIRMED"]) {
+        [self.declineButton setHidden:YES];
+        [self.acceptButton setHidden:YES];
+    }
     NSString *datesLeasedString = @"Dates leased: ";
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     dateFormatter.dateFormat = @"dd-MM-yyyy";
@@ -54,6 +58,8 @@
 - (IBAction)didDecline:(id)sender {
     self.reservation.status = @"DECLINED";
     self.currentStatusLabel.text = self.reservation.status;
+    [self.declineButton setHidden:YES];
+    [self.acceptButton setHidden:YES];
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(error == nil) {
             NSLog(@"END: successfullly declined reservation");
@@ -67,6 +73,8 @@
     // TODO: After reservation is accepted, don't allow other reservations on same dates to be accepted as well
     self.reservation.status = @"CONFIRMED";
     self.currentStatusLabel.text = self.reservation.status;
+    [self.declineButton setHidden:YES];
+    [self.acceptButton setHidden:YES];
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         if(error == nil) {
             NSLog(@"END: successfullly accepted reservation");

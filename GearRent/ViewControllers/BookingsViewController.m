@@ -14,6 +14,7 @@
 
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *reservations;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 @end
 
@@ -23,10 +24,10 @@
     [super viewDidLoad];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(fetchData) forControlEvents:UIControlEventValueChanged];
+    [self.tableView addSubview:self.refreshControl];
+    [self.refreshControl beginRefreshing];
     [self fetchData];
 }
 
@@ -39,6 +40,7 @@
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
             strongSelf.reservations = objects;
+            [strongSelf.refreshControl endRefreshing];
             [strongSelf.tableView reloadData];
         } else{
             NSLog(@"END: Error fetching reservations for user");

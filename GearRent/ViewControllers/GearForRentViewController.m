@@ -39,6 +39,7 @@
 @property (strong, nonatomic) NSMutableArray<CLLocation *> *outerPolygonPoints;
 @property (strong, nonatomic) NSMutableArray<NSMutableArray<CLLocation *> *> *innerPolygonPoints;
 @property (assign, nonatomic) BOOL isAddingInnerPolygons;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 - (IBAction)didLogOut:(id)sender;
 - (IBAction)didChangeListing:(id)sender;
@@ -81,9 +82,10 @@
     fingerTap.numberOfTouchesRequired = 1;
     [self.mapView addGestureRecognizer:fingerTap];
     [self.FiltersTableView setHidden:YES];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(fetchData) forControlEvents:UIControlEventValueChanged];
+    [self.listingsTableView addSubview:self.refreshControl];
+    [self.refreshControl beginRefreshing];
     [self fetchData];
 }
 
@@ -177,6 +179,7 @@
         if(error == nil){
             if(strongSelf){
                 strongSelf.categories = categories;
+                [strongSelf.refreshControl endRefreshing];
                 [strongSelf.FiltersTableView reloadData];
             }
         } else{

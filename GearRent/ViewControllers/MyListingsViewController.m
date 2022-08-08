@@ -18,6 +18,7 @@
 
 @property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
 @property (strong, nonatomic) NSArray *tableData;
+@property (strong, nonatomic) UIRefreshControl *refreshControl;
 
 - (IBAction)didCreateListing:(id)sender;
 
@@ -29,10 +30,10 @@
     [super viewDidLoad];
     self.listingsTableView.delegate = self;
     self.listingsTableView.dataSource = self;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self action:@selector(fetchData) forControlEvents:UIControlEventValueChanged];
+    [self.listingsTableView addSubview:self.refreshControl];
+    [self.refreshControl beginRefreshing];
     [self fetchData];
 }
 
@@ -48,6 +49,7 @@
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf) {
             strongSelf.tableData = objects;
+            [strongSelf.refreshControl endRefreshing];
             [strongSelf.listingsTableView reloadData];
         } else {
             NSLog(@"END: Error in querying listings");
