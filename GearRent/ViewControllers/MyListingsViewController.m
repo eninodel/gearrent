@@ -53,6 +53,14 @@
             [strongSelf.listingsTableView reloadData];
         } else {
             NSLog(@"END: Error in querying listings");
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@ Error", error.domain]
+                                           message:@"Could not fetch listings, please try again"
+                                           preferredStyle:UIAlertControllerStyleAlert];
+             
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+               handler:^(UIAlertAction * action) {}];
+            [alert addAction:defaultAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     }];
 }

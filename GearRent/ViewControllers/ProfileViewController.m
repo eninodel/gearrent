@@ -124,6 +124,14 @@
         }else {
             NSLog(@"END: Error in saving user in didSaveProfile");
             NSLog(@"%@", error.description);
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@ Error", error.domain]
+                                           message:@"Could not save profile. Please try again"
+                                           preferredStyle:UIAlertControllerStyleAlert];
+             
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+               handler:^(UIAlertAction * action) {}];
+            [alert addAction:defaultAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     }];
     [self setEditingHidden: NO];

@@ -35,12 +35,18 @@
 }
 
 -(void)displayOptions {
-    self.cellOptionsView.hidden = !self.cellOptionsView.hidden;
+    [UIView transitionWithView:self.cellOptionsView duration:0.2 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+        self.cellOptionsView.hidden = ![self.cellOptionsView isHidden];
+    } completion:^(BOOL finished) {
+        
+    }];
     [self bringSubviewToFront:self.cellOptionsView];
 }
 
 - (void)initializeCell {
     self.cellOptionsView.hidden = YES;
+    self.cellOptionsView.layer.cornerRadius = 15;
+    self.cellOptionsView.layer.masksToBounds = YES;
     self.titleLabel.text = self.listing.title;
     self.locationLabel.text = self.listing.location;
     if(self.listing.images.count > 0){

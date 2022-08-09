@@ -70,7 +70,7 @@
     self.mapView.hidden = YES;
     self.removePointsButton.hidden = YES;
     self.searchPolygonButton.hidden = YES;
-    self.listingTypeButton.titleLabel.text = @"Map";
+    [self.listingTypeButton setTitle:@"Map" forState:UIControlStateNormal];
     self.mapView.delegate = self;
     self.locationManager = [CLLocationManager new];
     self.locationManager.delegate = self;
@@ -179,11 +179,22 @@
         if(error == nil){
             if(strongSelf){
                 strongSelf.categories = categories;
-                [strongSelf.refreshControl endRefreshing];
                 [strongSelf.FiltersTableView reloadData];
             }
         } else{
+            [strongSelf.refreshControl endRefreshing];
             NSLog(@"%@", error);
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@ Error", error.domain]
+                                           message:@"Please try again"
+                                           preferredStyle:UIAlertControllerStyleAlert];
+             
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+               handler:^(UIAlertAction * action) {}];
+            [alert addAction:defaultAction];
+            [self presentViewController:alert animated:YES completion:nil];
+        }
+        if(strongSelf){
+            [strongSelf.refreshControl endRefreshing];
         }
     };
     fetchAllCategories(completion);
@@ -257,7 +268,7 @@
         [self.mapView setHidden:NO];
         [self.removePointsButton setHidden:NO];
         [self.searchPolygonButton setHidden:NO];
-        [self.listingTypeButton.titleLabel setText:@"List"];
+        [self.listingTypeButton setTitle:@"Listings" forState:UIControlStateNormal];
         [self.FiltersButton setHidden:YES];
         [self.FiltersTableView setHidden:YES];
         [self.addExcludingPolygonButton setHidden:NO];
@@ -265,7 +276,7 @@
         [self.mapView setHidden:YES];
         [self.removePointsButton setHidden:YES];
         [self.searchPolygonButton setHidden:YES];
-        [self.listingTypeButton.titleLabel setText:@"Map"];
+        [self.listingTypeButton setTitle:@"Map" forState:UIControlStateNormal];
         [self.FiltersButton setHidden: NO];
         [self.addExcludingPolygonButton setHidden:YES];
     }

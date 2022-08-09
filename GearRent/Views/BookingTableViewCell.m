@@ -66,6 +66,7 @@
 - (IBAction)didCancelReservation:(id)sender {
     self.reservation.status = @"DECLINED";
     __weak typeof(self) weakSelf = self;
+    [self.cancelReservationButton setHidden:YES];
     [self.reservation saveInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
         typeof(self) strongSelf = weakSelf;
         if(error == nil) {
@@ -75,6 +76,7 @@
             NSLog(@"END: Successfully cancelled reservation");
         }else {
             NSLog(@"END: Error in canceling reservation");
+            [self.cancelReservationButton setHidden:NO];
         }
     }];
 }

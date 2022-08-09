@@ -26,7 +26,7 @@
 @property (strong, nonatomic) NSMutableArray *carouselImages;
 @property (strong, nonatomic) NSMutableArray *datesAvailable;
 @property (strong, nonatomic) NSMutableArray *datesSelected;
-@property (strong, nonatomic) NSMutableArray *datesReserved;
+@property (strong, nonatomic) NSMutableArray<Reservation *> *reservations;
 @property (strong, nonatomic) IBOutlet UILabel *addImagesLabel;
 @property (strong, nonatomic) IBOutlet UITextField *titleTextField;
 @property (strong, nonatomic) IBOutlet UITextField *priceTextField;
@@ -43,6 +43,7 @@
 @property(strong, nonatomic) NSArray<Category *> *categories;
 @property (strong, nonatomic) IBOutlet UISwitch *dynamicPricingSwitch;
 @property (strong, nonatomic) IBOutlet UITextField *minimumPriceTextField;
+@property (strong, nonatomic) IBOutlet UIButton *reservedColorButton;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -68,7 +69,7 @@
     self.carouselImages = [[NSMutableArray alloc] init];
     self.datesSelected = [[NSMutableArray alloc] init];
     self.datesAvailable = [[NSMutableArray alloc] init];
-    self.datesReserved = [[NSMutableArray alloc] init];
+    self.reservations = [NSMutableArray<Reservation *> new];
     self.imageCarouselCollectionView.hidden = true;
     self.calendarManager = [JTCalendarManager new];
     self.calendarManager.delegate = self;
@@ -107,7 +108,9 @@
         }
     };
     fetchAllCategories(completion);
+    [self.reservedColorButton setHidden:YES];
     if(self.listing != nil) {
+        [self.reservedColorButton setHidden:NO];
         NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
         formatter.numberStyle = NSNumberFormatterCurrencyStyle;
         [self.minimumPriceTextField setHidden: !self.listing.dynamicPrice];
@@ -123,11 +126,14 @@
         self.locationLabel.text = self.listing.location;
         self.descriptionTextField.text = self.listing.itemDescription;
         [self.isAlwaysAvailableSwitch setOn: self.listing.isAlwaysAvailable];
-        CLLocationCoordinate2D listingCoordinate = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
+        CLLocationCoordinate2D coordinates = CLLocationCoordinate2DMake(self.listing.geoPoint.latitude, self.listing.geoPoint.longitude);
+        MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
+        MKCoordinateRegion region = MKCoordinateRegionMake(coordinates, span);
         MKPointAnnotation *pa = [[MKPointAnnotation alloc] init];
-        pa.coordinate = listingCoordinate;
-        pa.title = @"Item Location";
+        pa.coordinate = coordinates;
+        pa.title = @"Listing location";
         [self.mapView addAnnotation:pa];
+        [self.mapView setRegion:region];
         PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
         [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
         [listingQuery includeKey: @"availabilities"];
@@ -148,8 +154,7 @@
                     if(error == nil) {
                         for(int i = 0; i < objects.count; i++) {
                             Reservation *reservation = (Reservation *) objects[i];
-                            NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
-                            [strongSelf.datesReserved addObject:dateInterval];
+                            [strongSelf.reservations addObject:reservation];
                         }
                         [strongSelf populateDatesSelected];
                         [strongSelf.calendarManager reload];
@@ -223,6 +228,14 @@
             [self dismissViewControllerAnimated:YES completion:nil];
         } else{
             NSLog(@"%@", error.description);
+            UIAlertController* alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@ Error", error.domain]
+                                           message:@"Could not save listing. Please try again"
+                                           preferredStyle:UIAlertControllerStyleAlert];
+             
+            UIAlertAction* defaultAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+               handler:^(UIAlertAction * action) {}];
+            [alert addAction:defaultAction];
+            [self presentViewController:alert animated:YES completion:nil];
         }
     }];
 }
@@ -270,17 +283,19 @@
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray<CLLocation *> *)locations {
-    MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
-    MKCoordinateRegion region = MKCoordinateRegionMake(locations[0].coordinate, span);
-    [self.mapView setRegion:region];
+    if(self.listing == nil) {
+        MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
+        MKCoordinateRegion region = MKCoordinateRegionMake(locations[0].coordinate, span);
+        [self.mapView setRegion:region];
+    }
 }
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
     dayView.circleView.hidden = NO;
     if([self isDateReserved:dayView.date]) { // date is reserved already
-        dayView.circleView.backgroundColor = UIColor.blackColor;
+        dayView.circleView.backgroundColor = [self colorFromHexString:@"#8D8D9E"];
     } else if([self isInDatesSelected:dayView.date]){ // date is available
-        dayView.circleView.backgroundColor = UIColor.blueColor;
+        dayView.circleView.backgroundColor = [self colorFromHexString:@"#AAB6CC"];
     } else if ([self.isAlwaysAvailableSwitch isOn] == NO) { // date not avaiable
         dayView.circleView.hidden = YES;
     }
@@ -311,9 +326,11 @@
 }
 
 - (BOOL)isDateReserved:(NSDate *)date {
-    for(int i = 0; i < self.datesReserved.count; i++) {
-        NSDateInterval *interval = self.datesReserved[i];
-        if([interval containsDate:date]) {
+    for(int i = 0; i < self.reservations.count; i++) {
+        Reservation *reservation = self.reservations[i];
+        NSString *status = reservation.status;
+        NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:reservation.dates.startDate endDate:reservation.dates.endDate];
+        if([dateInterval containsDate:date] && [status isEqualToString:@"CONFIRMED"]) {
             return YES;
         }
     }
@@ -467,6 +484,14 @@
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
     Category *category = self.categories[row];
     return category[@"title"];
+}
+
+- (UIColor *)colorFromHexString:(NSString *)hexString {
+    unsigned rgbValue = 0;
+    NSScanner *scanner = [NSScanner scannerWithString:hexString];
+    [scanner setScanLocation:1]; // bypass '#' character
+    [scanner scanHexInt:&rgbValue];
+    return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
 }
 
 @end
