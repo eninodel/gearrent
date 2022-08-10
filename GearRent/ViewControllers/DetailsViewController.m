@@ -35,6 +35,7 @@
 @property (strong, nonatomic) NSMutableSet<NSDate *> *datesForDynamicPricingSet;
 @property (strong, nonatomic) NSMutableArray<NSMutableArray<NSNumber *> *> *dateRanges;
 @property (strong, nonatomic) NSMutableDictionary<NSDate *, NSNumber *> *datesToPrices;
+@property (strong, nonatomic) IBOutlet UILabel *categoryLabel;
 
 - (IBAction)didReserveNow:(id)sender;
 - (IBAction)didTapBack:(id)sender;
@@ -51,8 +52,11 @@
     self.carouselCollectionView.delegate = self;
     self.carouselCollectionView.dataSource = self;
     self.titleLabel.text = self.listing.title;
+    self.titleLabel.minimumScaleFactor = 0.5;
+    self.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.locationLabel.text = self.listing.location;
     self.descriptionLabel.text = self.listing.itemDescription;
+    self.categoryLabel.text = self.listing[@"category"][@"title"];
     PFQuery *query = [PFUser query];
     [query whereKey:@"objectId" equalTo: self.listing.ownerId];
     __weak typeof(self) weakSelf = self;
@@ -92,6 +96,8 @@
     MKCoordinateSpan span = MKCoordinateSpanMake(0.1, 0.1);
     MKCoordinateRegion region = MKCoordinateRegionMake(coordinates, span);
     [self.mapView setRegion:region];
+    self.mapView.layer.cornerRadius = 20;
+    self.mapView.layer.masksToBounds = YES;
     PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
     [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
     [listingQuery includeKey: @"availabilities"];

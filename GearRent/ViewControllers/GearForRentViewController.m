@@ -34,6 +34,7 @@
 @property (strong, nonatomic) NSArray<Category *> *categories;
 @property (strong, nonatomic) NSMutableSet<NSString *> *selectedCategories;
 @property (strong, nonatomic) NSArray<Listing *> *filteredListings;
+@property (strong, nonatomic) NSMutableDictionary<NSString *, Category*> *idToCategory;
 @property (strong, nonatomic) CLLocation *userLocation;
 @property (strong, nonatomic) IBOutlet UIButton *addExcludingPolygonButton;
 @property (strong, nonatomic) NSMutableArray<CLLocation *> *outerPolygonPoints;
@@ -55,6 +56,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    self.idToCategory = [NSMutableDictionary<NSString *, Category*> new];
     self.isAddingInnerPolygons = NO;
     self.innerPolygonPoints = [NSMutableArray<NSMutableArray<CLLocation *> *> new];
     self.outerPolygonPoints = [NSMutableArray<CLLocation *> new];
@@ -179,7 +181,12 @@
         if(error == nil){
             if(strongSelf){
                 strongSelf.categories = categories;
+                for(int i = 0 ; i < strongSelf.categories.count; i++){
+                    Category *category = strongSelf.categories[i];
+                    [self.idToCategory setValue:category forKey:[category objectId]];
+                }
                 [strongSelf.FiltersTableView reloadData];
+                [strongSelf.listingsTableView reloadData];
             }
         } else{
             [strongSelf.refreshControl endRefreshing];
@@ -197,7 +204,7 @@
             [strongSelf.refreshControl endRefreshing];
         }
     };
-    fetchAllCategories(completion);
+    
     PFQuery *query = [PFQuery queryWithClassName: @"Listing"];
     [query orderByDescending:@"createdAt"];
     [query includeKey:@"availabilities"];
@@ -207,7 +214,7 @@
         if(error == nil && strongSelf) {
             strongSelf.tableData = objects;
             strongSelf.filteredListings = (NSArray<Listing *> *)objects;
-            [strongSelf.listingsTableView reloadData];
+            fetchAllCategories(completion);
         } else {
             NSLog(@"END: Error in querying listings");
         }
@@ -298,6 +305,7 @@
     if(tableView == self.listingsTableView){
         ListingTableViewCell *cell = [self.listingsTableView dequeueReusableCellWithIdentifier:@"ListingTableViewCell"];
         cell.listing = self.filteredListings[indexPath.row];
+        cell.listing[@"category"] = [self.idToCategory valueForKey: cell.listing.categoryId];
         [cell initializeCell];
         return cell;
     } else{ // filters table view

@@ -14,7 +14,7 @@
 #import "Reservation.h"
 #import "TimeInterval.h"
 
-@interface MyListingsViewController ()<UITableViewDelegate, UITableViewDataSource, ListingTableViewCellDelegate>
+@interface MyListingsViewController ()<UITableViewDelegate, UITableViewDataSource, ListingTableViewCellDelegate, CreateListingViewControllerDelegate>
 
 @property (strong, nonatomic) IBOutlet UITableView *listingsTableView;
 @property (strong, nonatomic) NSArray *tableData;
@@ -68,6 +68,8 @@
 - (IBAction)didCreateListing:(id)sender {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"CreateListingNavigationController"];
+    CreateListingViewController *createVC = (CreateListingViewController *) navigationVC.topViewController;
+    createVC.delegate = self;
     [self presentViewController:navigationVC animated:YES completion:nil];
 }
 
@@ -94,6 +96,7 @@
     UINavigationController *navigationVC = [storyboard instantiateViewControllerWithIdentifier:@"CreateListingNavigationController"];
     CreateListingViewController *createVC = (CreateListingViewController *) navigationVC.topViewController;
     createVC.listing = listing;
+    createVC.delegate = self;
     [self presentViewController:navigationVC animated:YES completion:nil];
 }
 
@@ -104,5 +107,11 @@
     reservationsVC.listing = listing;
     [self presentViewController:navigationVC animated:YES completion:nil];
 }
+
+- (void)CRUDListing{
+    [self.refreshControl beginRefreshing];
+    [self fetchData];
+}
+
 
 @end

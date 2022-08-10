@@ -44,6 +44,7 @@
 @property (strong, nonatomic) IBOutlet UISwitch *dynamicPricingSwitch;
 @property (strong, nonatomic) IBOutlet UITextField *minimumPriceTextField;
 @property (strong, nonatomic) IBOutlet UIButton *reservedColorButton;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *refreshControl;
 
 
 - (IBAction)didAddImages:(id)sender;
@@ -61,6 +62,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self.minimumPriceTextField setHidden:YES];
+    [self.refreshControl setHidden:YES];
     self.deleteListingButton.hidden = YES;
     self.navigationItem.title = @"Create a Listing";
     self.nameLabel.text =  [PFUser currentUser][@"name"];
@@ -109,6 +111,8 @@
     };
     fetchAllCategories(completion);
     [self.reservedColorButton setHidden:YES];
+    self.mapView.layer.cornerRadius = 20;
+    self.mapView.layer.masksToBounds = YES;
     if(self.listing != nil) {
         [self.reservedColorButton setHidden:NO];
         NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
@@ -134,38 +138,56 @@
         pa.title = @"Listing location";
         [self.mapView addAnnotation:pa];
         [self.mapView setRegion:region];
-        PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
-        [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
-        [listingQuery includeKey: @"availabilities"];
-        __weak typeof(self) weakSelf = self;
-        [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-            typeof(self) strongSelf = weakSelf;
-            if(error == nil && strongSelf) {
-                Listing *listing = (Listing *) objects[0];
-                for(int i = 0; i < listing.availabilities.count; i++) {
-                    TimeInterval *interval = (TimeInterval *) listing.availabilities[i];
-                    NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
-                    [strongSelf.datesAvailable addObject:dateInterval];
-                }
-                PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
-                [reservationQuery whereKey:@"itemId" equalTo: [strongSelf.listing objectId]];
-                [reservationQuery includeKey:@"dates"];
-                [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
-                    if(error == nil) {
-                        for(int i = 0; i < objects.count; i++) {
-                            Reservation *reservation = (Reservation *) objects[i];
-                            [strongSelf.reservations addObject:reservation];
-                        }
-                        [strongSelf populateDatesSelected];
-                        [strongSelf.calendarManager reload];
-                    }else {
-                        NSLog(@"END: Error in querying reservations");
+        if(!self.listing.isAlwaysAvailable) {
+            PFQuery *listingQuery = [PFQuery queryWithClassName:@"Listing"];
+            [listingQuery whereKey:@"objectId" equalTo:[self.listing objectId] ];
+            [listingQuery includeKey: @"availabilities"];
+            __weak typeof(self) weakSelf = self;
+            [listingQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+                typeof(self) strongSelf = weakSelf;
+                if(error == nil && strongSelf) {
+                    Listing *listing = (Listing *) objects[0];
+                    for(int i = 0; i < listing.availabilities.count; i++) {
+                        TimeInterval *interval = (TimeInterval *) listing.availabilities[i];
+                        NSDateInterval *dateInterval = [[NSDateInterval alloc] initWithStartDate:interval.startDate endDate:interval.endDate];
+                        [strongSelf.datesAvailable addObject:dateInterval];
                     }
-                }];
-            }else {
-                NSLog(@"END: Error in querying listing in details view");
-            }
-        }];
+                    PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
+                    [reservationQuery whereKey:@"itemId" equalTo: [strongSelf.listing objectId]];
+                    [reservationQuery includeKey:@"dates"];
+                    [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+                        if(error == nil) {
+                            for(int i = 0; i < objects.count; i++) {
+                                Reservation *reservation = (Reservation *) objects[i];
+                                [strongSelf.reservations addObject:reservation];
+                            }
+                            [strongSelf populateDatesSelected];
+                            [strongSelf.calendarManager reload];
+                        }else {
+                            NSLog(@"END: Error in querying reservations");
+                        }
+                    }];
+                }else {
+                    NSLog(@"END: Error in querying listing in details view");
+                }
+            }];
+        } else{
+            PFQuery *reservationQuery = [PFQuery queryWithClassName:@"Reservation"];
+            [reservationQuery whereKey:@"itemId" equalTo: [self.listing objectId]];
+            [reservationQuery includeKey:@"dates"];
+            [reservationQuery findObjectsInBackgroundWithBlock:^(NSArray * _Nullable objects, NSError * _Nullable error) {
+                typeof(self) strongSelf = weakSelf;
+                if(error == nil && strongSelf) {
+                    for(int i = 0; i < objects.count; i++) {
+                        Reservation *reservation = (Reservation *) objects[i];
+                        [strongSelf.reservations addObject:reservation];
+                    }
+                    [strongSelf.calendarManager reload];
+                }else {
+                    NSLog(@"END: Error in querying reservations");
+                }
+            }];
+        }
         self.imageCarouselCollectionView.hidden = NO;
         self.addImagesLabel.hidden = true;
         [self.imageCarouselCollectionView reloadData];
@@ -193,6 +215,12 @@
 }
 
 - (IBAction)didList:(id)sender {
+    [self.refreshControl setHidden:NO];
+    [self.refreshControl startAnimating];
+    [self.scrollView setContentOffset:
+        CGPointMake(0, -self.scrollView.contentInset.top) animated:YES];
+    [self.scrollView setScrollEnabled:NO];
+    self.refreshControl.bounds = [UIScreen mainScreen].bounds;
     Listing *newListing = [Listing new];
     newListing.reservations = [[NSMutableArray alloc] init];
     newListing.images = [self imagesToPFFiles:self.carouselImages];
@@ -226,6 +254,7 @@
         if(succeeded) {
             NSLog(@"END: Listing successfully saved");
             [self dismissViewControllerAnimated:YES completion:nil];
+            [self.delegate CRUDListing];
         } else{
             NSLog(@"%@", error.description);
             UIAlertController* alert = [UIAlertController alertControllerWithTitle:[NSString stringWithFormat:@"%@ Error", error.domain]
@@ -291,6 +320,10 @@
 }
 
 - (void)calendar:(JTCalendarManager *)calendar prepareDayView:(JTCalendarDayView *)dayView {
+    if(![self isDateAvailable:dayView.date]){
+        dayView.circleView.hidden = YES;
+        return;
+    }
     dayView.circleView.hidden = NO;
     if([self isDateReserved:dayView.date]) { // date is reserved already
         dayView.circleView.backgroundColor = [self colorFromHexString:@"#8D8D9E"];
@@ -303,7 +336,7 @@
 
 - (void)calendar:(JTCalendarManager *)calendar didTouchDayView:(JTCalendarDayView *)dayView {
     // deselect date
-    if([self isDateReserved:dayView.date]) return;
+    if([self isDateReserved:dayView.date] || ![self isDateAvailable:dayView.date]) return;
     if([self.isAlwaysAvailableSwitch isOn]) {
         [self.datesSelected removeAllObjects];
         [self.isAlwaysAvailableSwitch setOn:NO];
@@ -338,14 +371,8 @@
 }
 
 - (BOOL)isDateAvailable:(NSDate *)date {
-    if(self.listing.isAlwaysAvailable) return YES;
-    for(int i = 0; i < self.datesAvailable.count; i++) {
-        NSDateInterval *interval = self.datesAvailable[i];
-        if([interval containsDate:date]){
-            return YES;
-        }
-    }
-    return NO;
+    NSDate *today = [self dateWithHour:0 minute:0 second:0];
+    return [today compare:date] != NSOrderedDescending;
 }
 
 - (nonnull __kindof UICollectionViewCell *)collectionView:(nonnull UICollectionView *)collectionView cellForItemAtIndexPath:(nonnull NSIndexPath *)indexPath {
@@ -431,6 +458,7 @@
         if(error == nil) {
             NSLog(@"END: Successfully deleted listing");
             [self dismissViewControllerAnimated:YES completion:nil];
+            [self.delegate CRUDListing];
         }else {
             NSLog(@"END: Failed to delete listing");
         }
@@ -492,6 +520,19 @@
     [scanner setScanLocation:1]; // bypass '#' character
     [scanner scanHexInt:&rgbValue];
     return [UIColor colorWithRed:((rgbValue & 0xFF0000) >> 16)/255.0 green:((rgbValue & 0xFF00) >> 8)/255.0 blue:(rgbValue & 0xFF)/255.0 alpha:1.0];
+}
+
+-(NSDate *)dateWithHour:(NSInteger)hour minute:(NSInteger)minute second:(NSInteger)second {
+   NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components: NSCalendarUnitYear|
+                                    NSCalendarUnitMonth|
+                                    NSCalendarUnitDay
+                                               fromDate:[NSDate date]];
+    [components setHour:hour];
+    [components setMinute:minute];
+    [components setSecond:second];
+    NSDate *newDate = [calendar dateFromComponents:components];
+    return newDate;
 }
 
 @end

@@ -15,6 +15,7 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *reservations;
 @property (strong, nonatomic) UIRefreshControl *refreshControl;
+@property (strong, nonatomic) IBOutlet UILabel *noBookingsMadeLabel;
 
 @end
 
@@ -22,6 +23,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.noBookingsMadeLabel setHidden:YES];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.refreshControl = [[UIRefreshControl alloc] init];
@@ -40,6 +42,9 @@
         typeof(self) strongSelf = weakSelf;
         if(error == nil && strongSelf){
             strongSelf.reservations = objects;
+            if(strongSelf.reservations.count == 0){
+                [strongSelf.noBookingsMadeLabel setHidden:NO];
+            }
             [strongSelf.refreshControl endRefreshing];
             [strongSelf.tableView reloadData];
         } else{

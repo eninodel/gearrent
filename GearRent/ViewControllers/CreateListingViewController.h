@@ -10,7 +10,16 @@
 #import "Listing.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@protocol CreateListingViewControllerDelegate <NSObject>
+
+- (void)CRUDListing;
+
+@end
+
 @interface CreateListingViewController : UIViewController<JTCalendarDelegate>
+
+@property (nonatomic, weak) id<CreateListingViewControllerDelegate> delegate;
 
 @property (strong, nonatomic)Listing * _Nullable listing;
 

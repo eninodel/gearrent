@@ -21,6 +21,7 @@
 @property (strong, nonatomic) IBOutlet UIView *cellOptionsView;
 @property (strong, nonatomic) IBOutlet UIButton *editListingButton;
 @property (strong, nonatomic) IBOutlet UIButton *viewReservationsButton;
+@property (strong, nonatomic) IBOutlet UILabel *categoryLabel;
 
 - (IBAction)didViewReservations:(id)sender;
 - (IBAction)didEditListing:(id)sender;
@@ -48,6 +49,8 @@
     self.cellOptionsView.layer.cornerRadius = 15;
     self.cellOptionsView.layer.masksToBounds = YES;
     self.titleLabel.text = self.listing.title;
+    self.titleLabel.minimumScaleFactor = 0.5;
+    self.titleLabel.adjustsFontSizeToFitWidth = YES;
     self.locationLabel.text = self.listing.location;
     if(self.listing.images.count > 0){
         PFFileObject *image = (PFFileObject *) self.listing.images[0];
@@ -55,8 +58,17 @@
         [self.listingImageView setImageWithURL: imageURL];
     }
     self.statusLabel.hidden = YES;
+    self.categoryLabel.hidden = YES;
     if(self.findStatus == YES){
         [self statusForCell];
+    }
+    
+    @try{
+        self.categoryLabel.text = self.listing[@"category"][@"title"];
+        [self.categoryLabel setHidden:NO];
+    }
+    @catch(id anException) {
+        // no category.
     }
 }
 
